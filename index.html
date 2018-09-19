@@ -3,52 +3,21 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
     <title>InsideISA Email Generator</title>
     <link href="./.assets/style.css" type="text/css" rel="stylesheet">
-    <!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="/home/jessereitz/Documents/dev/WriteFree/css/site.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="/home/jessereitz/Documents/dev/WriteFree/build/js/writefree.min.js"></script>
 
   </head>
   <body>
     <!-- Controller -->
-    <div class="controller">
+    <!-- <div class="controller">
 
       <button id="copyCodeBtn" class="standardBtn standardBtn--dark">Copy Code</button>
       <button id="addSectionBtn" class="standardBtn standardBtn--dark">Add Section</button>
       <button id="startoverBtn" class="standardBtn standardBtn--dark">Start Over</button>
 
-    </div>
+    </div> -->
     <!-- End Controller -->
-
-    <div class="hide">
-      <table id="copyTarget" align="center" border="0" cellpadding="0" cellspacing="0" style="width: 600px; overflow: hidden; box-sizing: border-box; font-family: 'Times';">
-        <tbody id="copyTarget-contentSectionsCtn">
-          <!-- Introduction Section -->
-          <tr>
-            <td id="copyTarget-introCtn" style="border-bottom: 3px solid #ddd; padding: 20px;">
-              <div style="margin:0;padding-top:7px;padding-bottom:7px;">Hey [person_first_name]!</div>
-
-              <!-- <p contenteditable="true" class="editable">Greetings from the Program Advisor team here at ISA! We hope your search for the perfect study abroad program is going well. To help you in your search, we've put together some of our favorite resources below. Check them out and
-                give us a call at 512-480-8522 or <a href="https://internationalstudiesabroad.simplybook.me/sheduler/manage">choose a time</a> to chat with us and we'll reach out to you!<br>
-                <br> Talk to you soon!<br>
-                <br> The Program Advisor Team</p> -->
-            </td>
-          </tr>
-          <!-- End Introduction Section -->
-
-          <!-- Content Section -->
-          <tr>
-
-          <!-- End Content Section -->
-
-
-          <tr id='copyTarget-bottomBtns'>
-            <td style="padding: 20px 0;"><a href="https://internationalstudiesabroad.simplybook.me/sheduler/manage/event/29" style="display: block; border: 1px solid #ddd; padding: 20px; text-align: center; font-family: 'Helvetica', sans-serif; font-size: 24px; color: white; background: rgb(0,37,61); text-decoration: none;">Book a Free Advising Session</a></td>
-          </tr>
-          <tr>
-            <td style="padding: 0; padding-bottom: 20px;"><a href="https://studiesabroad.com/applyOnline.php" style="display: block; border: 1px solid #ddd; padding: 20px; text-align: center; font-family: 'Helvetica', sans-serif; font-size: 24px; color: white; background: rgb(0,37,61); text-decoration: none;">Apply Now</a></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
     <div class="email-preview">
       <div style="width=100%;background:white;table-layout:fixed;min-width:600px;'">
@@ -99,23 +68,9 @@
 
                     <table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 600px; overflow: hidden; box-sizing: border-box; font-family: 'Times';">
                       <tbody id="contentSectionsCtn">
-                        <!-- Introduction Section -->
                         <tr>
-                          <td id="introCtn" style="border-bottom: 3px solid #ddd; padding: 20px;">
-                            <div style="margin:0;padding-top:7px;padding-bottom:7px;">Hey [person_first_name]!</div>
-
-                            <!-- <p contenteditable="true" class="editable">Greetings from the Program Advisor team here at ISA! We hope your search for the perfect study abroad program is going well. To help you in your search, we've put together some of our favorite resources below. Check them out and
-                              give us a call at 512-480-8522 or <a href="https://internationalstudiesabroad.simplybook.me/sheduler/manage">choose a time</a> to chat with us and we'll reach out to you!<br>
-                              <br> Talk to you soon!<br>
-                              <br> The Program Advisor Team</p> -->
-                          </td>
+                          <div id="wfeditor"></div>
                         </tr>
-                        <!-- End Introduction Section -->
-
-                        <!-- Content Section -->
-                        <tr>
-
-                        <!-- End Content Section -->
 
 
                         <tr id='bottomBtns'>
@@ -258,7 +213,10 @@
         </table>
       </div>
     </div>
-
-    <script type="text/javascript" src="./.assets/site.js"></script>
+    <script src="./.assets/wfconfig.js" type="text/javascript"></script>
+    <!-- <script type="text/javascript">
+      const editor = WriteFree(document.getElementById('wfeditor'));
+    </script> -->
+    <!-- <script type="text/javascript" src="./.assets/site.js"></script> -->
   </body>
 </html>
