@@ -1,9 +1,7 @@
 const containerStyle = {
-  // margin: '20px',
   'box-sizing': 'border-box',
   padding: '20px',
   width: '600px',
-  outline: 'none',
 };
 
 const largeHeadingStyle = {
