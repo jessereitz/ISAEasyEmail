@@ -1,6 +1,9 @@
 const containerStyle = {
-  margin: '20px',
-  width: '80%'
+  // margin: '20px',
+  'box-sizing': 'border-box',
+  padding: '20px',
+  width: '600px',
+  outline: 'none',
 };
 
 const largeHeadingStyle = {
@@ -26,7 +29,7 @@ const imgStyle = {
 }
 
 const sectionStyle = {
-  width: '600px',
+  width: '100%',
   overflow: 'hidden',
   'box-sizing': 'border-box',
   'font-family': 'Times',
