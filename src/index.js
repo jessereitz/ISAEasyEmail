@@ -1,30 +1,29 @@
-(function InitializeInsideISAEmailGenerator() {
-  'use strict';
 
-/////////////////////////////
-/////     UTILITIES     /////
-/////////////////////////////
 function generateElement(tagName, klasses, id) {
-  /* Provides a simple function to create an element with classes and an id.*/
+  /* Provides a simple function to create an element with classes and an id. */
   if (!tagName) {
     return false;
   }
-  var el = document.createElement(tagName);
+  const el = document.createElement(tagName);
   if (id) {
     el.setAttribute('id', id);
   }
   if (klasses) {
-    for (let klass of klasses) {
-      el.classList.add(klass);
-    }
+    klasses.forEach(klass => el.classList.add(klass));
   }
-    return el;
+  return el;
 }
 
-//////////////////////////
-/////     Popout     /////
-//////////////////////////
-var Popout = {
+/*
+########   #######  ########   #######  ##     ## ########
+##     ## ##     ## ##     ## ##     ## ##     ##    ##
+##     ## ##     ## ##     ## ##     ## ##     ##    ##
+########  ##     ## ########  ##     ## ##     ##    ##
+##        ##     ## ##        ##     ## ##     ##    ##
+##        ##     ## ##        ##     ## ##     ##    ##
+##         #######  ##         #######   #######     ##
+*/
+const Popout = {
   /* A generic pop-up box used for containing dynamic content.
 
   Attributes:
@@ -32,18 +31,17 @@ var Popout = {
     popoutDefaultOffClickHandler (function): the default function called when
       a user clicks off this popout.
   */
-  initPopout: function() {
+  initPopout() {
     /* Initialize the popout. */
     this.$ctn = generateElement('div', ['popoutCtn', 'hide']);
     document.body.append(this.$ctn);
     this.replaceOffClickHandler(this.popoutDefaultOffClickHandler.bind(this));
-    this.$ctn.addEventListener('paste', pasteAsPlainText.bind(this));
   },
-  fillWithContent: function($content) {
+  fillWithContent($content) {
     // fill $ctn with content.
     this.$ctn.append($content);
   },
-  displayPopout: function(xPos, yPos) {
+  displayPopout(xPos, yPos) {
     // Displays the popout at given coorddinates.
     this.$ctn.style.top = yPos;
     this.$ctn.style.left = xPos;
@@ -60,18 +58,18 @@ var Popout = {
         be included in the vertical position of the Popout. If false, it will
         not be included.
     */
-    var rect = $el.getBoundingClientRect();
-    var right = rect.right + 25;
-    var offset;
+    const rect = $el.getBoundingClientRect();
+    const right = rect.right + 25;
+    let offset;
     if (includeOffset) {
       offset = window.scrollY;
     } else {
       offset = 0;
     }
-    var top = rect.top + offset;
+    const top = rect.top + offset;
     this.displayPopout(right, top);
   },
-  hidePopout: function() {
+  hidePopout() {
     // while (this.$ctn.firstChild) {
     //   this.$ctn.removeChild(this.$ctn.firstChild);
     // }
@@ -80,7 +78,7 @@ var Popout = {
   },
   empty() {
     // removes all children from $ctn.
-    while(this.$ctn.firstChild) {
+    while (this.$ctn.firstChild) {
       this.$ctn.removeChild(this.$ctn.firstChild);
     }
   },
@@ -102,10 +100,10 @@ var Popout = {
     }
     this.offClickHandler = handler;
     document.addEventListener('click', this.offClickHandler);
-  }
+  },
 };
 
-var EmailGenerator = {
+const EmailGenerator = {
   /* The overall generator tool. Encompasses the entire email.
 
   The EmailGenerator encompasses the entire InsideISA email. From the
@@ -125,19 +123,19 @@ var EmailGenerator = {
       be briefly attached in order to allow it to copied to the
       clipboard.
   */
-  init: function() {
+  init() {
     /* Initializes the EmailGenerator. */
     this.$copyTarget = document.getElementById('copyTarget');
     this.createCopyPopout();
   },
-  createCopyTextarea: function(content) {
+  createCopyTextarea(content) {
     // Create and return a textarea with correct style filled with given content
-    var copyTextarea = document.createElement('textarea');
+    const copyTextarea = document.createElement('textarea');
     // copyTextarea.setAttribute('style', COPY_TEXTAREA_STYLE);
     copyTextarea.value = content;
     return copyTextarea;
   },
-  createCopyPopout: function() {
+  createCopyPopout() {
     /* Create a Popout to contain and display HTML content from email.
 
     This method creates a new object linked to Popout. It also creates the
@@ -154,7 +152,7 @@ var EmailGenerator = {
     // Create button to close the Popout
     this.copyPopout.$copyBtn = generateElement('button', ['standardBtn']);
     this.copyPopout.$copyBtn.addEventListener('click', this.copyPopout.hidePopout.bind(this.copyPopout));
-    this.copyPopout.$copyBtn.textContent = "Done";
+    this.copyPopout.$copyBtn.textContent = 'Done';
     // Create the textarea element to which the HTML will be copied
     this.copyPopout.textArea = generateElement('textarea', ['copyTextarea']);
 
@@ -164,31 +162,31 @@ var EmailGenerator = {
     this.copyPopout.fillWithContent(this.copyPopout.textArea);
     this.copyPopout.fillWithContent(this.copyPopout.$copyBtn);
     // method for filling the textarea with content
-    this.copyPopout.fillTextarea = function(content) {
+    this.copyPopout.fillTextarea = function fillTextArea(content) {
       this.textArea.value = content;
     };
     // method for copying the content.
-    this.copyPopout.copyContent = function() {
+    this.copyPopout.copyContent = function copyContent() {
       /* Copy the contents of the textarea to clipboard and display a success message. */
       this.textArea.focus();
       this.textArea.select();
-      var successful;
+      let successful;
       try {
         successful = document.execCommand('copy');
       } catch (err) {
         successful = false;
       }
       if (successful) {
-        this.$messageHeading.textContent = "Email content copied!";
-        this.$message.textContent = "You can now paste the email content into GRS.";
+        this.$messageHeading.textContent = 'Email content copied!';
+        this.$message.textContent = 'You can now paste the email content into GRS.';
       } else {
-        this.$messageHeading.textContent = "Uh oh...";
+        this.$messageHeading.textContent = 'Uh oh...';
         this.$message.textContent = "We couldn't copy the email content. Try again or manually copy the content below";
       }
       return successful;
     };
   },
-  copyToClipboard: function($displayEl) {
+  copyToClipboard($displayEl) {
     /* Copy the content of the email to the clipboard.
 
     In order to make the transferring of the InsideISA content to GRS as
@@ -207,23 +205,14 @@ var EmailGenerator = {
     focusing and selecting, allowing us to copy the code to the
     clipboard. The TextArea is then removed.
     */
-    var copyTarget = this.$copyTarget.cloneNode(true);
-    var contentCtn = copyTarget.querySelector('#copyTarget-contentSectionsCtn');
-    var introCtn = copyTarget.querySelector('#copyTarget-introCtn');
-    var bottomBtns = copyTarget.querySelector('#copyTarget-bottomBtns');
-
-    introCtn.append(this.introduction.renderFinal());
-    for (let contentSection of this.contentSections) {
-      var sec = contentSection.renderFinal();
-      contentCtn.insertBefore(sec, bottomBtns);
-    }
+    const copyTarget = this.$copyTarget.cloneNode(true);
     this.copyPopout.fillTextarea(copyTarget.outerHTML);
     this.copyPopout.displayAtElement($displayEl, false);
     this.copyPopout.copyContent();
   },
 };
 
-var Controller = {
+const Controller = {
   /* The controller/menu for controlling broad functions of the web app.
 
   The Controller contains several buttons which allow the user to operate
@@ -237,7 +226,7 @@ var Controller = {
     $startOverBtn (HTML Element): Refreshes the page to discard all
       changes.
   */
-  init: function() {
+  init() {
     this.$copyCodeBtn = document.getElementById('copyCodeBtn');
     this.$addSectionBtn = document.getElementById('addSectionBtn');
     this.$startOverBtn = document.getElementById('startoverBtn');
@@ -247,29 +236,27 @@ var Controller = {
     this.$startOverBtn.addEventListener('click', this.startOverHandler.bind(this));
   },
 
-  copyCodeHandler: function(e) {
+  copyCodeHandler(e) {
     // click handler to copy code.
     e.preventDefault();
     // stop propogation to prevent automatically closing the Popout
     e.stopPropagation();
     EmailGenerator.copyToClipboard(e.target);
   },
-  addSectionHandler: function(e) {
+  addSectionHandler(e) {
     // click handler to add a ContentSection.
     e.preventDefault();
     EmailGenerator.generateSection();
   },
-  startOverHandler: function(e) {
+  startOverHandler(e) {
     // click handler to refresh the page and start over.
     e.preventDefault();
-    location.reload();
-  }
+    window.location.reload();
+  },
 };
 
-document.addEventListener('DOMContentLoaded', function(e) {
+document.addEventListener('DOMContentLoaded', () => {
   // Prep the web app when the page has loaded.
   EmailGenerator.init();
-  PopoutEditor.init();
   Controller.init();
 });
-})();
