@@ -1,5 +1,8 @@
+import WriteFree from 'writefree';
 import Modal from './views/modal.js';
 import SettingsView from './views/settingsView.js';
+
+
 
 const containerStyle = {
   'box-sizing': 'border-box',
@@ -47,13 +50,8 @@ const options = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  // let wfeditor = document.getElementById('wfeditor');
-  // wfeditor = WriteFree(wfeditor, options);
-  const ctn = document.createElement('div');
-  ctn.innerHTML = `
-    <label>Advising Session URL:</label><br>
-    <input type="text" placeholder="Advising session URL">
-  `;
+  const editorCtn = document.getElementById('wfeditor');
+  const editor = WriteFree(editorCtn, options);
   const modal = Object.create(Modal);
   modal.init();
   const settings = Object.create(SettingsView);
