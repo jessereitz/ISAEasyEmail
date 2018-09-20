@@ -15,6 +15,33 @@ function defaultSaveButtonHandler() {
   }
 }
 
+/**
+ * keydownHandler - Handle keydown events. If the modal is open and the user
+ *  presses 'Enter', a click on the save button is simulated. If the 'Escape'
+ *  key is pressed, a click on the close button is simulated.
+ *
+ * @param {Event} e The keydown event.
+ *
+ */
+function keydownHandler(e) {
+  if (e.key === 'Enter') {
+    this.$saveBtn.click();
+  } else if (e.key === 'Escape') {
+    this.$closeBtn.click();
+  }
+}
+
+/**
+ * clickOffHandler - When open, checks to see if the user clicked off the modal
+ *  window.
+ *
+ * @param {Event} e The click event.
+ *
+ */
+function clickOffHandler(e) {
+  if (e.target === this.$overlay) this.hide();
+}
+
 const Modal = {
   /**
    * init - Initializes the Modal. Creates the necessary elements to display
@@ -26,6 +53,8 @@ const Modal = {
     this.createOverlay();
     this.createWindow();
     this.createControlButtons();
+    this.keydownHandler = keydownHandler.bind(this);
+    this.clickOffHandler = clickOffHandler.bind(this);
   },
 
   /**
@@ -71,6 +100,7 @@ const Modal = {
       'box-shadow': '0.2rem 0.2rem 2rem 0.75rem rgba(0,0,0,0.3)',
     };
     this.$window = generateElement('div', { style });
+
     this.$overlay.appendChild(this.$window);
     return this.window;
   },
@@ -138,6 +168,8 @@ const Modal = {
     this.$currentContent = $content;
     this.$window.insertBefore(this.$currentContent, this.$btnCtn);
     this.$overlay.style.display = 'block';
+    document.addEventListener('keydown', this.keydownHandler);
+    document.addEventListener('click', this.clickOffHandler);
     return this.$overlay;
   },
 
@@ -146,6 +178,8 @@ const Modal = {
    *
    */
   hide() {
+    document.removeEventListener('keydown', this.keydownHandler);
+    document.removeEventListener('click', this.clickOffHandler);
     this.$overlay.style.display = 'none';
     if (this.$currentContent) this.$window.removeChild(this.$currentContent);
     this.$currentContent = null;
