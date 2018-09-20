@@ -1,5 +1,20 @@
 import { generateElement } from './lib.js';
 
+/**
+ * defaultSaveButtonHandler - The default function to call when the save button
+ *  is clicked. If the saveBtn has a proper saveHandler attached, this function
+ *  will call that one.
+ *
+ */
+function defaultSaveButtonHandler() {
+  if (
+    this.$saveBtn.saveHandler
+    && typeof this.$saveBtn.saveHandler === 'function'
+  ) {
+    this.$saveBtn.saveHandler();
+  }
+}
+
 const Modal = {
   /**
    * init - Initializes the Modal. Creates the necessary elements to display
@@ -79,6 +94,8 @@ const Modal = {
       },
     );
     this.$saveBtn.textContent = 'Save';
+    this.$saveBtn.addEventListener('click', defaultSaveButtonHandler.bind(this));
+
     this.$closeBtn = generateElement(
       'button',
       { klasses: ['standardBtn', 'standardBtn--dark'] },
@@ -89,6 +106,24 @@ const Modal = {
     this.$btnCtn.appendChild(this.$closeBtn);
     this.$window.appendChild(this.$btnCtn);
     return this.$btnCtn;
+  },
+
+  /**
+   * setSaveHandler - Sets the saveBtn's textContent and handler to those given.
+   *
+   * @param {string} text The text for the saveBtn to display.
+   * @param {function} handler The function to call when the saveBtn is clicked.
+   *
+   * @returns {boolean} Returns true if the saveHandler was successfully set.
+   *  Otherwise returns false.
+   */
+  setSaveHandler(text, handler) {
+    if (handler && typeof handler === 'function') {
+      this.$saveBtn.textContent = text;
+      this.$saveBtn.saveHandler = handler;
+      return true;
+    }
+    return false;
   },
 
   /**
@@ -114,6 +149,7 @@ const Modal = {
     this.$overlay.style.display = 'none';
     if (this.$currentContent) this.$window.removeChild(this.$currentContent);
     this.$currentContent = null;
+    this.$saveBtn.saveHandler = null;
   },
 };
 
