@@ -12,9 +12,10 @@
     <!-- Controller -->
     <div class="controller">
 
-      <button id="copyCodeBtn" class="standardBtn standardBtn--dark">Copy Code</button>
       <button id="startoverBtn" class="standardBtn standardBtn--dark">Start Over</button>
-
+      <button id="copyCodeBtn" class="standardBtn standardBtn--dark">Copy Code</button>
+      <button id="saveLoadBtn" class="standardBtn standardBtn--dark">Save / Load</button>
+      <button id="settingsBtn" class="standardBtn standardBtn--dark">Settings</button>
     </div>
     <!-- End Controller -->
 
@@ -73,10 +74,10 @@
 
 
                         <tr id='bottomBtns'>
-                          <td style="padding: 20px 0;"><a href="https://internationalstudiesabroad.simplybook.me/sheduler/manage/event/29" style="display: block; border: 1px solid #ddd; padding: 20px; text-align: center; font-family: 'Helvetica', sans-serif; font-size: 24px; color: white; background: rgb(0,37,61); text-decoration: none;">Book a Free Advising Session</a></td>
+                          <td style="padding: 20px 0;"><a id="advisingLink" href="https://internationalstudiesabroad.simplybook.me/sheduler/manage/event/29" style="display: block; border: 1px solid #ddd; padding: 20px; text-align: center; font-family: 'Helvetica', sans-serif; font-size: 24px; color: white; background: rgb(0,37,61); text-decoration: none;">Book a Free Advising Session</a></td>
                         </tr>
                         <tr>
-                          <td style="padding: 0; padding-bottom: 20px;"><a href="https://studiesabroad.com/applyOnline.php" style="display: block; border: 1px solid #ddd; padding: 20px; text-align: center; font-family: 'Helvetica', sans-serif; font-size: 24px; color: white; background: rgb(0,37,61); text-decoration: none;">Apply Now</a></td>
+                          <td style="padding: 0; padding-bottom: 20px;"><a id="applicationLink" href="https://studiesabroad.com/applyOnline.php" style="display: block; border: 1px solid #ddd; padding: 20px; text-align: center; font-family: 'Helvetica', sans-serif; font-size: 24px; color: white; background: rgb(0,37,61); text-decoration: none;">Apply Now</a></td>
                         </tr>
                       </tbody>
                     </table>
@@ -212,7 +213,7 @@
         </table>
       </div>
     </div>
-    <script src="./.assets/wfconfig.js" type="text/javascript"></script>
+    <script src="./src/wfconfig.js" type="module"></script>
     <!-- <script type="text/javascript">
       const editor = WriteFree(document.getElementById('wfeditor'));
     </script> -->
