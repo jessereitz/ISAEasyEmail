@@ -1,7 +1,7 @@
 module.exports = {
-  input: 'src/wfconfig.js',
+  input: 'src/index.js',
   output: {
-    file: 'build/site.js',
+    file: 'build/index.js',
     format: 'iife',
     sourcemap: true,
   },
