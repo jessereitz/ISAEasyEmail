@@ -1,3 +1,6 @@
+import Modal from './modal.js';
+import SettingsView from './settings.js';
+
 const containerStyle = {
   'box-sizing': 'border-box',
   padding: '20px',
@@ -22,7 +25,7 @@ const imgStyle = {
   'max-width': '100%',
   'text-align': 'center',
   'margin-left': 'auto',
-  'margin-right': 'auto'
+  'margin-right': 'auto',
 };
 
 const sectionStyle = {
@@ -43,7 +46,25 @@ const options = {
   sectionStyle,
 };
 
-document.addEventListener('DOMContentLoaded', (e) => {
-  let wfeditor = document.getElementById('wfeditor');
-  wfeditor = WriteFree(wfeditor, options);
+document.addEventListener('DOMContentLoaded', () => {
+  // let wfeditor = document.getElementById('wfeditor');
+  // wfeditor = WriteFree(wfeditor, options);
+  const ctn = document.createElement('div');
+  ctn.innerHTML = `
+    <label>Advising Session URL:</label><br>
+    <input type="text" placeholder="Advising session URL">
+  `;
+  const modal = Object.create(Modal);
+  modal.init();
+  const settings = Object.create(SettingsView);
+  settings.init(modal);
+
+  const settingsBtn = document.getElementById('settingsBtn');
+
+  document.addEventListener('click', (e) => {
+    if (e.target === settingsBtn) {
+      settings.display();
+      settingsBtn.blur();
+    }
+  });
 });
