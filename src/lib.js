@@ -76,3 +76,24 @@ export function generateElement(tagName = 'div', options = {}) {
   }
   return $el;
 }
+
+/**
+ * validateURL - A very simple url validator that checks for at least one dot
+ *  and for http or https. If it has a dot but no http(s), http:// will be
+ *  prepended before the url is returned.
+ *
+ * @param {string} url The url to validate
+ *
+ * @returns {string || boolean} Returns the url (with http:// prepended if
+*   applicable) if url is valid. Else returns false.
+ */
+export function validateURL(url) {
+  let returnVal;
+  if (!url.includes('.')) return false;
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    returnVal = `http://${url}`;
+  } else {
+    returnVal = url;
+  }
+  return returnVal;
+}
