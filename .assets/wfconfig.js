@@ -7,16 +7,15 @@ const containerStyle = {
 const largeHeadingStyle = {
   'font-family': "'Helvetica', sans-serif",
   'font-weight': 'normal',
-  'font-size': '32px',
+  'font-size': '24px',
   color: '#333',
 }
 
 const smallHeadingStyle = {
   'font-family': "'Helvetica', sans-serif",
   'font-weight': 'normal',
-  'font-size': '24px',
+  'font-size': '20px',
   color: '#888',
-  'margin-top': '0',
 }
 
 const imgStyle = {
@@ -31,7 +30,7 @@ const sectionStyle = {
   overflow: 'hidden',
   'box-sizing': 'border-box',
   'font-family': 'Times',
-  'font-size': '20px',
+  'font-size': '16px',
 
 }
 
