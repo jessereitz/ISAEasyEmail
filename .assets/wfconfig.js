@@ -9,21 +9,21 @@ const largeHeadingStyle = {
   'font-weight': 'normal',
   'font-size': '24px',
   color: '#333',
-}
+};
 
 const smallHeadingStyle = {
   'font-family': "'Helvetica', sans-serif",
   'font-weight': 'normal',
   'font-size': '20px',
   color: '#888',
-}
+};
 
 const imgStyle = {
   'max-width': '100%',
   'text-align': 'center',
   'margin-left': 'auto',
   'margin-right': 'auto'
-}
+};
 
 const sectionStyle = {
   width: '100%',
@@ -32,12 +32,7 @@ const sectionStyle = {
   'font-family': 'Times',
   'font-size': '16px',
 
-}
-
-// const linkStyle = {
-//   display: 'block'
-// }
-
+};
 
 const options = {
   divOrPar: 'p',
