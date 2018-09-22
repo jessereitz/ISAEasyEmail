@@ -60,6 +60,8 @@ function createSettingsField(labelText, targetID) {
 }
 
 const SettingsView = {
+  $ctn: generateElement('div'),
+  $heading: generateElement('h1', { textContent: 'Settings' }),
 
   /**
    * init - Initialize the Settings view. Creates the applicable fields to allow
@@ -71,10 +73,21 @@ const SettingsView = {
    */
   init(modal) {
     this.modal = modal;
+    this.$ctn.appendChild(this.$heading);
+    this.generateFields();
+
+
+    return this;
+  },
+
+  generateFields() {
     this.fields = [];
     this.fields.push(createSettingsField('Advising Session URL:', 'advisingLink'));
     this.fields.push(createSettingsField('Application URL:', 'applicationLink'));
-    return this;
+    this.fields.forEach((field) => {
+      field.load();
+      this.$ctn.appendChild(field.ctn);
+    });
   },
 
   /**
@@ -83,16 +96,8 @@ const SettingsView = {
    * @returns {Element} Returns the modal containing this view.
    */
   display() {
-    const ctn = generateElement('div');
-    const heading = generateElement('h1');
-    heading.textContent = 'Settings';
-    ctn.appendChild(heading);
-    this.fields.forEach((field) => {
-      field.load();
-      ctn.appendChild(field.ctn);
-    });
     this.modal.setSaveHandler('Save', this.save.bind(this));
-    return this.modal.display(ctn);
+    return this.modal.display(this.$ctn);
   },
 
   /**
