@@ -1,8 +1,7 @@
 import WriteFree from 'writefree';
 import Modal from './modalViews/modal.js';
 import SettingsView from './modalViews/settingsView.js';
-
-
+import CopyView from './modalViews/copyView.js';
 
 const containerStyle = {
   'box-sizing': 'border-box',
@@ -56,13 +55,20 @@ document.addEventListener('DOMContentLoaded', () => {
   modal.init();
   const settings = Object.create(SettingsView);
   settings.init(modal);
+  const copyview = Object.create(CopyView);
+  copyview.init(modal);
 
   const settingsBtn = document.getElementById('settingsBtn');
+  const copyCodeBtn = document.getElementById('copyCodeBtn');
 
   document.addEventListener('click', (e) => {
     if (e.target === settingsBtn) {
       settings.display();
       settingsBtn.blur();
+    } else if (e.target === copyCodeBtn) {
+      // copyview.fillText('this is some text.');
+      copyview.displayAndCopy(editor.html());
+      copyCodeBtn.blur();
     }
   });
 });

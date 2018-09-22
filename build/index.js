@@ -1678,7 +1678,7 @@
      * @returns {Element} The Editor in HTML form.
      */
     html() {
-      return this.$innerCtn;
+      return this.$innerCtn.outerHTML;
     },
 
     /**
@@ -1853,6 +1853,10 @@
           addStyleFromObj$1($el, options[attr]);
         } else if (attr === 'klasses') {
           addClasses$1($el, options[attr]);
+        } else if (attr === 'textContent') {
+          $el.textContent = options[attr];
+        } else if (attr === 'innerHTML') {
+          $el.innerHTML = options[attr];
         } else {
           $el.setAttribute(attr, options[attr]);
         }
@@ -1957,6 +1961,7 @@
         bottom: '0',
         background: 'rgba(0,0,0,0.4)',
         'text-align': 'center',
+        overflow: 'scroll',
       };
       this.$overlay = generateElement$1('div', { style });
       document.body.appendChild(this.$overlay);
@@ -2032,7 +2037,7 @@
      */
     setSaveHandler(text, handler) {
       if (handler && typeof handler === 'function') {
-        this.$saveBtn.textContent = text;
+        this.$saveBtn.innerHTML = text;
         this.$saveBtn.saveHandler = handler;
         return true;
       }
@@ -2130,6 +2135,8 @@
   }
 
   const SettingsView = {
+    $ctn: generateElement$1('div'),
+    $heading: generateElement$1('h1', { textContent: 'Settings' }),
 
     /**
      * init - Initialize the Settings view. Creates the applicable fields to allow
@@ -2141,10 +2148,21 @@
      */
     init(modal) {
       this.modal = modal;
+      this.$ctn.appendChild(this.$heading);
+      this.generateFields();
+
+
+      return this;
+    },
+
+    generateFields() {
       this.fields = [];
       this.fields.push(createSettingsField('Advising Session URL:', 'advisingLink'));
       this.fields.push(createSettingsField('Application URL:', 'applicationLink'));
-      return this;
+      this.fields.forEach((field) => {
+        field.load();
+        this.$ctn.appendChild(field.ctn);
+      });
     },
 
     /**
@@ -2153,16 +2171,8 @@
      * @returns {Element} Returns the modal containing this view.
      */
     display() {
-      const ctn = generateElement$1('div');
-      const heading = generateElement$1('h1');
-      heading.textContent = 'Settings';
-      ctn.appendChild(heading);
-      this.fields.forEach((field) => {
-        field.load();
-        ctn.appendChild(field.ctn);
-      });
       this.modal.setSaveHandler('Save', this.save.bind(this));
-      return this.modal.display(ctn);
+      return this.modal.display(this.$ctn);
     },
 
     /**
@@ -2176,6 +2186,99 @@
       this.fields.forEach(field => field.save());
       this.modal.hide();
       return true;
+    },
+  };
+
+  const CopyView = {
+    $ctn: generateElement$1('div'),
+    $heading: generateElement$1('h1', { textContent: 'Copy Your Email' }),
+    $description: generateElement$1('p'),
+    $textarea: generateElement$1(
+      'textarea',
+      {
+        style: {
+          width: '35rem',
+          height: '10rem',
+          resize: 'vertical',
+        },
+      },
+    ),
+    /**
+     * init - Initialize the copy view. The copy view displays a text box filled
+     *  with the content of the email editor.
+     *
+     * @param {Modal} modal The Modal in which the CopyView will be displayed.
+     *
+     * @returns {CopyView} Returns this view.
+     */
+    init(modal) {
+      this.modal = modal;
+      this.$description.textContent = 'Copy the code for your email below.';
+
+      this.$ctn.appendChild(this.$heading);
+      this.$ctn.appendChild(this.$description);
+      this.$ctn.appendChild(this.$textarea);
+      return this;
+    },
+
+    /**
+     * fillText - Fill the view with the text to be copied.
+     *
+     * @param {string} text The text to be copied.
+     *
+     */
+    fillText(text) {
+      this.$textarea.value = text;
+      return this.$textarea;
+    },
+
+    /**
+     * copyContents - Copy the contents of the copy view.
+     *
+     * @returns {string} Returns the copied content.
+     */
+    copyContents() {
+      this.$textarea.focus();
+      this.$textarea.select();
+      let successful;
+      try {
+        successful = document.execCommand('copy');
+      } catch (exc) {
+        successful = false;
+      }
+      if (successful) {
+        this.$heading.textContent = 'Email Content Copied!';
+        this.$description.textContent = 'You can now paste the email content into GRS.';
+      } else {
+        this.$heading.textContent = 'Uh oh...';
+        this.$description.textContent = "We couldn't copy the email content. Try again or manually copy the content below";
+      }
+      return successful;
+    },
+
+    /**
+     * display - Displays the view, utilizing the modal.
+     *
+     * @returns {Element} Returns the modal containing this view.
+     */
+    display() {
+      // debugger;
+      this.modal.setSaveHandler('Copy', this.copyContents.bind(this));
+      return this.modal.display(this.$ctn);
+    },
+
+    /**
+     * displayAndCopy - This function fills, copies, and displays the copyView in
+     *  one fell swoop.
+     *
+     * @param {string} content The content to be displayed/copied.
+     *
+     * @returns {boolean} Returns true if successfully copied. Else returns false.
+     */
+    displayAndCopy(content) {
+      this.fillText(content);
+      this.display();
+      return this.copyContents();
     },
   };
 
@@ -2231,13 +2334,20 @@
     modal.init();
     const settings = Object.create(SettingsView);
     settings.init(modal);
+    const copyview = Object.create(CopyView);
+    copyview.init(modal);
 
     const settingsBtn = document.getElementById('settingsBtn');
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
 
     document.addEventListener('click', (e) => {
       if (e.target === settingsBtn) {
         settings.display();
         settingsBtn.blur();
+      } else if (e.target === copyCodeBtn) {
+        // copyview.fillText('this is some text.');
+        copyview.displayAndCopy(editor.html());
+        copyCodeBtn.blur();
       }
     });
   });
