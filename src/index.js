@@ -47,7 +47,16 @@ const options = {
   sectionStyle,
 };
 
+function setButtons() {
+  return {
+    $startoverBtn: document.getElementById('startoverBtn'),
+    $copyCodeBtn: document.getElementById('copyCodeBtn'),
+    $settingsBtn: document.getElementById('settingsBtn'),
+  };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  const btns = setButtons();
   const $copyTargetCtn = document.getElementById('copyTargetCtn');
   const $copyTargetInnerCtn = document.getElementById('copyTargetInnerCtn');
 
@@ -55,23 +64,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const editor = WriteFree(editorCtn, options);
   const modal = Object.create(Modal);
   modal.init();
-  const settings = Object.create(SettingsView);
-  settings.init(modal);
+  const settingsview = Object.create(SettingsView);
+  settingsview.init(modal);
   const copyview = Object.create(CopyView);
   copyview.init(modal);
 
-  const $settingsBtn = document.getElementById('settingsBtn');
-  const $copyCodeBtn = document.getElementById('copyCodeBtn');
-
   document.addEventListener('click', (e) => {
-    if (e.target === $settingsBtn) {
-      settings.display();
-      $settingsBtn.blur();
-    } else if (e.target === $copyCodeBtn) {
+    if (e.target === btns.$startoverBtn) {
+      window.location.reload();
+    } else if (e.target === btns.$copyCodeBtn) {
       $copyTargetInnerCtn.innerHTML = editor.html();
-      // copyview.fillText('this is some text.');
       copyview.displayAndCopy($copyTargetCtn.outerHTML);
-      $copyCodeBtn.blur();
+      btns.$copyCodeBtn.blur();
+    } else if (e.target === btns.$settingsBtn) {
+      settingsview.display();
+      btns.$settingsBtn.blur();
     }
   });
 });

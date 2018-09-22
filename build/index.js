@@ -1675,10 +1675,15 @@
     /**
      * html - Returns the Editor in HTML form.
      *
+     * @param {boolean} [editable=false] Determines whether the returned HTML will
+     *  have contenteditable set to true or false, according to given value.
+     *
      * @returns {Element} The Editor in HTML form.
      */
-    html() {
-      return this.$innerCtn.outerHTML;
+    html(editable = false) {
+      const returnEl = this.$innerCtn.cloneNode(true);
+      returnEl.setAttribute('contenteditable', editable);
+      return returnEl.outerHTML;
     },
 
     /**
@@ -2326,7 +2331,16 @@
     sectionStyle,
   };
 
+  function setButtons() {
+    return {
+      $startoverBtn: document.getElementById('startoverBtn'),
+      $copyCodeBtn: document.getElementById('copyCodeBtn'),
+      $settingsBtn: document.getElementById('settingsBtn'),
+    };
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    const btns = setButtons();
     const $copyTargetCtn = document.getElementById('copyTargetCtn');
     const $copyTargetInnerCtn = document.getElementById('copyTargetInnerCtn');
 
@@ -2334,23 +2348,21 @@
     const editor = WriteFree(editorCtn, options);
     const modal = Object.create(Modal);
     modal.init();
-    const settings = Object.create(SettingsView);
-    settings.init(modal);
+    const settingsview = Object.create(SettingsView);
+    settingsview.init(modal);
     const copyview = Object.create(CopyView);
     copyview.init(modal);
 
-    const $settingsBtn = document.getElementById('settingsBtn');
-    const $copyCodeBtn = document.getElementById('copyCodeBtn');
-
     document.addEventListener('click', (e) => {
-      if (e.target === $settingsBtn) {
-        settings.display();
-        $settingsBtn.blur();
-      } else if (e.target === $copyCodeBtn) {
+      if (e.target === btns.$startoverBtn) {
+        window.location.reload();
+      } else if (e.target === btns.$copyCodeBtn) {
         $copyTargetInnerCtn.innerHTML = editor.html();
-        // copyview.fillText('this is some text.');
         copyview.displayAndCopy($copyTargetCtn.outerHTML);
-        $copyCodeBtn.blur();
+        btns.$copyCodeBtn.blur();
+      } else if (e.target === btns.$settingsBtn) {
+        settingsview.display();
+        btns.$settingsBtn.blur();
       }
     });
   });
