@@ -2284,7 +2284,7 @@
 
   const containerStyle = {
     'box-sizing': 'border-box',
-    padding: '20px',
+    padding: '20px 5px',
     width: '600px',
   };
 
@@ -2305,8 +2305,7 @@
   const imgStyle = {
     'max-width': '100%',
     'text-align': 'center',
-    'margin-left': 'auto',
-    'margin-right': 'auto',
+    margin: '1em auto',
   };
 
   const sectionStyle = {
@@ -2328,6 +2327,9 @@
   };
 
   document.addEventListener('DOMContentLoaded', () => {
+    const $copyTargetCtn = document.getElementById('copyTargetCtn');
+    const $copyTargetInnerCtn = document.getElementById('copyTargetInnerCtn');
+
     const editorCtn = document.getElementById('wfeditor');
     const editor = WriteFree(editorCtn, options);
     const modal = Object.create(Modal);
@@ -2337,17 +2339,18 @@
     const copyview = Object.create(CopyView);
     copyview.init(modal);
 
-    const settingsBtn = document.getElementById('settingsBtn');
-    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const $settingsBtn = document.getElementById('settingsBtn');
+    const $copyCodeBtn = document.getElementById('copyCodeBtn');
 
     document.addEventListener('click', (e) => {
-      if (e.target === settingsBtn) {
+      if (e.target === $settingsBtn) {
         settings.display();
-        settingsBtn.blur();
-      } else if (e.target === copyCodeBtn) {
+        $settingsBtn.blur();
+      } else if (e.target === $copyCodeBtn) {
+        $copyTargetInnerCtn.innerHTML = editor.html();
         // copyview.fillText('this is some text.');
-        copyview.displayAndCopy(editor.html());
-        copyCodeBtn.blur();
+        copyview.displayAndCopy($copyTargetCtn.outerHTML);
+        $copyCodeBtn.blur();
       }
     });
   });
