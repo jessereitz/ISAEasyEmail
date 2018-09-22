@@ -60,12 +60,12 @@ const saveLoadView = {
     event.preventDefault();
     const fileInput = generateElement(
       'input',
-      { type: 'file' },
+      { type: 'file', style: { display: 'none' } },
     );
     fileInput.addEventListener('change', this.parseFile.bind(this));
     document.body.appendChild(fileInput);
     fileInput.click();
-    // document.body.removeChild(fileInput); // TODO: Does this work here?
+    document.body.removeChild(fileInput);
   },
 
   /**
@@ -78,7 +78,6 @@ const saveLoadView = {
    *
    */
   parseFile(event) {
-    // TODO: Does this work or should fileInput be attached to 'this'?
     const file = event.target.files[0];
     if (!file) return false;
     const reader = new FileReader();
