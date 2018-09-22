@@ -101,3 +101,10 @@ export function validateURL(url) {
   }
   return returnVal;
 }
+
+export function generateStandardButton(textContent, addOptions = {}) {
+  const options = addOptions;
+  options.textContent = textContent;
+  options.klasses = ['standardBtn', 'standardBtn--dark'];
+  return generateElement('button', options);
+}
