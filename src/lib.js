@@ -68,6 +68,10 @@ export function generateElement(tagName = 'div', options = {}) {
         addStyleFromObj($el, options[attr]);
       } else if (attr === 'klasses') {
         addClasses($el, options[attr]);
+      } else if (attr === 'textContent') {
+        $el.textContent = options[attr];
+      } else if (attr === 'innerHTML') {
+        $el.innerHTML = options[attr];
       } else {
         $el.setAttribute(attr, options[attr]);
       }
