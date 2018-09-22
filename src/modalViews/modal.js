@@ -1,4 +1,4 @@
-import { generateElement } from '../lib.js';
+import { generateElement, generateStandardButton } from '../lib.js';
 
 /**
  * defaultSaveButtonHandler - The default function to call when the save button
@@ -117,21 +117,13 @@ const Modal = {
    */
   createControlButtons() {
     this.$btnCtn = generateElement('div');
-    this.$saveBtn = generateElement(
-      'button',
-      {
-        klasses: ['standardBtn', 'standardBtn--dark'],
-        style: { 'margin-right': '1rem' },
-      },
+    this.$saveBtn = generateStandardButton(
+      'Save',
+      { style: { 'margin-right': '1rem' } },
     );
-    this.$saveBtn.textContent = 'Save';
     this.$saveBtn.addEventListener('click', defaultSaveButtonHandler.bind(this));
 
-    this.$closeBtn = generateElement(
-      'button',
-      { klasses: ['standardBtn', 'standardBtn--dark'] },
-    );
-    this.$closeBtn.textContent = 'Close';
+    this.$closeBtn = generateStandardButton('Close');
     this.$closeBtn.addEventListener('click', this.hide.bind(this));
     this.$btnCtn.appendChild(this.$saveBtn);
     this.$btnCtn.appendChild(this.$closeBtn);

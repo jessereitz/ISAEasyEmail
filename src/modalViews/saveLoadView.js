@@ -12,9 +12,10 @@ const saveLoadView = {
       style: {
         width: '1px',
         height: '10rem',
-        background: '#333',
+        background: '#ddd',
         display: 'inline-block',
         'vertical-align': 'middle',
+        margin: '1rem',
       },
     },
   ),
@@ -56,6 +57,7 @@ const saveLoadView = {
    *
    */
   load(event) {
+    event.preventDefault();
     const fileInput = generateElement(
       'input',
       { type: 'file' },
@@ -63,7 +65,7 @@ const saveLoadView = {
     fileInput.addEventListener('change', this.parseFile.bind(this));
     document.body.appendChild(fileInput);
     fileInput.click();
-    document.body.removeChild(fileInput); // TODO: Does this work here?
+    // document.body.removeChild(fileInput); // TODO: Does this work here?
   },
 
   /**
@@ -77,15 +79,22 @@ const saveLoadView = {
    */
   parseFile(event) {
     // TODO: Does this work or should fileInput be attached to 'this'?
+    console.log('parsing');
+    console.log(event.target);
     const file = event.target.files[0];
+    console.log(file);
+    // debugger;
     if (!file) return false;
     const reader = new FileReader();
-    reader.onload = function handleLoadedFile() {
+    reader.onload = (e) => {
+      console.log('loaded');
       const docInfo = JSON.parse(reader.result);
+      console.log(docInfo);
       if (!docInfo.fileType === 'ISAEmail_config') return false;
       this.loadCallback(docInfo);
       return docInfo;
     };
+    reader.readAsText(file);
     return true;
   },
 
@@ -101,9 +110,10 @@ const saveLoadView = {
    */
   save(e) {
     e.preventDefault();
-    const docInfo = JSON.stringify(this.getDocInfo());
-    if (!docInfo) return false;
-    docInfo.fileType = this.fileType;
+    const rawDocInfo = this.getDocInfo();
+    if (!rawDocInfo) return false;
+    rawDocInfo.fileType = this.fileType;
+    const docInfo = JSON.stringify(rawDocInfo);
     const href = `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(docInfo))}`;
     const downloadLink = generateElement(
       'a',

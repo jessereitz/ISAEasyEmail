@@ -1673,6 +1673,39 @@
     */
 
     /**
+     * load - Load a previous version of the editor. The given htmlSTring MUST be
+     *  that returned by this.html(true). If the given htmlString doesn not
+     *  contain the appropriate $innerCtn class, it will be rejected. If passed
+     *  correctly, the given htmlString will replace the current editor's
+     *  $innerCtn.
+     *
+     * @param {string} htmlString A string containing a previous state of a
+     *  writefree editor.
+     *
+     * @returns {boolean} Returns true if the given htmlString was formatted
+     *  properly and was inserted into the editor. Else returns false.
+     */
+    load(htmlString) {
+      const parser = new DOMParser();
+      let html = htmlString;
+      if (typeof htmlString === 'string') {
+        html = parser.parseFromString(htmlString, 'text/html');
+      }
+      let innerCtn = null;
+      try {
+        innerCtn = html.body.firstChild;
+      } catch (exc) {
+        return false;
+      }
+      if (innerCtn && innerCtn.classList.contains(this.classes.main)) {
+        this.$ctn.innerHTML = '';
+        this.$ctn.appendChild(innerCtn);
+        this.$innerCtn = innerCtn;
+      }
+      return this.$ctn.contains(innerCtn);
+    },
+
+    /**
      * html - Returns the Editor in HTML form.
      *
      * @param {boolean} [editable=false] Determines whether the returned HTML will
@@ -1732,13 +1765,13 @@
     'margin-right': 'auto',
   };
 
-  const defaultLargeHeadingStyle = Object.create(defaultSectionStyle);
+  const defaultLargeHeadingStyle = Object.assign({}, defaultSectionStyle);
   defaultLargeHeadingStyle['font-size'] = '2rem';
 
-  const defaultSmallHeadingStyle = Object.create(defaultSectionStyle);
+  const defaultSmallHeadingStyle = Object.assign({}, defaultSectionStyle);
   defaultSmallHeadingStyle['font-size'] = '1.5rem';
 
-  const defaultImgStyle = Object.create(defaultSectionStyle);
+  const defaultImgStyle = Object.assign({}, defaultSectionStyle);
   defaultImgStyle['max-width'] = '100%';
 
 
@@ -1782,7 +1815,6 @@
     // Create and initialize the editor.
     const Editor = Object.create(editorBase);
     Editor.initWFEditor($ctn, options);
-
     return {
       html: Editor.html.bind(Editor),
     };
@@ -1890,6 +1922,13 @@
       returnVal = url;
     }
     return returnVal;
+  }
+
+  function generateStandardButton(textContent, addOptions = {}) {
+    const options = addOptions;
+    options.textContent = textContent;
+    options.klasses = ['standardBtn', 'standardBtn--dark'];
+    return generateElement$1('button', options);
   }
 
   /**
@@ -2009,21 +2048,13 @@
      */
     createControlButtons() {
       this.$btnCtn = generateElement$1('div');
-      this.$saveBtn = generateElement$1(
-        'button',
-        {
-          klasses: ['standardBtn', 'standardBtn--dark'],
-          style: { 'margin-right': '1rem' },
-        },
+      this.$saveBtn = generateStandardButton(
+        'Save',
+        { style: { 'margin-right': '1rem' } },
       );
-      this.$saveBtn.textContent = 'Save';
       this.$saveBtn.addEventListener('click', defaultSaveButtonHandler.bind(this));
 
-      this.$closeBtn = generateElement$1(
-        'button',
-        { klasses: ['standardBtn', 'standardBtn--dark'] },
-      );
-      this.$closeBtn.textContent = 'Close';
+      this.$closeBtn = generateStandardButton('Close');
       this.$closeBtn.addEventListener('click', this.hide.bind(this));
       this.$btnCtn.appendChild(this.$saveBtn);
       this.$btnCtn.appendChild(this.$closeBtn);
@@ -2287,6 +2318,146 @@
     },
   };
 
+  const saveLoadView = {
+    fileType: 'ISAEmail_config',
+    $ctn: generateElement$1('div'),
+    $heading: generateElement$1('h1', { textContent: 'Save / Load an Email' }),
+    $loadBtn: generateStandardButton('Load', { style: { display: 'inline-block' } }),
+    $saveBtn: generateStandardButton('Save', { style: { display: 'inline-block' } }),
+    $btnSeparator: generateElement$1(
+      'div',
+      {
+        style: {
+          width: '1px',
+          height: '10rem',
+          background: '#ddd',
+          display: 'inline-block',
+          'vertical-align': 'middle',
+          margin: '1rem',
+        },
+      },
+    ),
+
+    /**
+     * init - Initialize the saveLoadView. Saves a reference to the modal it will
+     *  use as well as a loadCallBack called when the user updloads a config file,
+     *  and a getDocInfo function used when generating a config file for saving.
+     *
+     * @param {Modal} modal           The modal used to display the saveLoadView.
+     * @param {function} loadCallback The function called once the file uploaded
+     *  by a user is processed.
+     * @param {function} getDocInfo   The function called to get information about
+     *  the doucment to be saved (eg. title, contents, etc)
+     *
+     * @returns {saveLoadView} Returns this saveLoadView.
+     */
+    init(modal, loadCallback, getDocInfo) {
+      this.modal = modal;
+      this.loadCallback = loadCallback;
+      this.getDocInfo = getDocInfo;
+
+      this.$ctn.append(this.$heading);
+      this.$ctn.append(this.$loadBtn);
+      this.$ctn.append(this.$btnSeparator);
+      this.$ctn.append(this.$saveBtn);
+
+      this.$loadBtn.addEventListener('click', this.load.bind(this));
+      this.$saveBtn.addEventListener('click', this.save.bind(this));
+      return this;
+    },
+
+    /**
+     * load - This function, attached as a 'click' handler for $loadBtn, prompts
+     *  the user to select a config file, parses that file, and loads that file in
+     *  the editor.
+     *
+     * @param {Event} event The click event to handle.
+     *
+     */
+    load(event) {
+      event.preventDefault();
+      const fileInput = generateElement$1(
+        'input',
+        { type: 'file' },
+      );
+      fileInput.addEventListener('change', this.parseFile.bind(this));
+      document.body.appendChild(fileInput);
+      fileInput.click();
+      // document.body.removeChild(fileInput); // TODO: Does this work here?
+    },
+
+    /**
+     * parseFile - This function is attached as a 'change' handler to the
+     *  fileInput created in this.load. It parses the uploaded file, ensures it's
+     *  the proper format and type of file, then calls the loadCallback, passing
+     *  in the configuration information for the Editor to load.
+     *
+     * @param {Event} event The change event to handle.
+     *
+     */
+    parseFile(event) {
+      // TODO: Does this work or should fileInput be attached to 'this'?
+      console.log('parsing');
+      console.log(event.target);
+      const file = event.target.files[0];
+      console.log(file);
+      // debugger;
+      if (!file) return false;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        console.log('loaded');
+        const docInfo = JSON.parse(reader.result);
+        console.log(docInfo);
+        if (!docInfo.fileType === 'ISAEmail_config') return false;
+        this.loadCallback(docInfo);
+        return docInfo;
+      };
+      reader.readAsText(file);
+      return true;
+    },
+
+    /**
+     * save - This function is attached as a 'click' handler to this.$saveBtn.
+     *  When called, this function will generate the configuration file by calling
+     *  the this.getDocInfo function. If there is a title in the doc info
+     *  obtained, this will be used as the name of the file. Otherwise it will use
+     *  a generic name.
+     *
+     * @returns {boolean} Returns true if the file was successfully created. Else
+     *  it returns false.
+     */
+    save(e) {
+      e.preventDefault();
+      const rawDocInfo = this.getDocInfo();
+      if (!rawDocInfo) return false;
+      rawDocInfo.fileType = this.fileType;
+      const docInfo = JSON.stringify(rawDocInfo);
+      const href = `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(docInfo))}`;
+      const downloadLink = generateElement$1(
+        'a',
+        {
+          href,
+          download: `${docInfo.title}.isaemail`,
+          style: { display: 'none' },
+        },
+      );
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      return true;
+    },
+
+    /**
+     * display - Calls the modal's display method, passing in this.$ctn.
+     *
+     * @returns {Element} Returns the modal containing this saveLoadView.
+     */
+    display() {
+      this.modal.setSaveHandler('Ok', this.modal.hide());
+      return this.modal.display(this.$ctn);
+    },
+  };
+
   const containerStyle = {
     'box-sizing': 'border-box',
     padding: '20px 5px',
@@ -2335,6 +2506,7 @@
     return {
       $startoverBtn: document.getElementById('startoverBtn'),
       $copyCodeBtn: document.getElementById('copyCodeBtn'),
+      $saveLoadBtn: document.getElementById('saveLoadBtn'),
       $settingsBtn: document.getElementById('settingsBtn'),
     };
   }
@@ -2346,12 +2518,28 @@
 
     const editorCtn = document.getElementById('wfeditor');
     const editor = WriteFree(editorCtn, options);
+    window.ed = editor;
+
+    function loadEditorFile(docInfo) {
+      editor.load(docInfo.contents);
+    }
+
+    function getDocInfo() {
+      return {
+        title: 'Test Title',
+        contents: editor.html(true),
+      };
+    }
+
     const modal = Object.create(Modal);
     modal.init();
     const settingsview = Object.create(SettingsView);
     settingsview.init(modal);
     const copyview = Object.create(CopyView);
     copyview.init(modal);
+    const saveLoadView$$1 = Object.create(saveLoadView);
+    saveLoadView$$1.init(modal, loadEditorFile, getDocInfo);
+
 
     document.addEventListener('click', (e) => {
       if (e.target === btns.$startoverBtn) {
@@ -2360,6 +2548,9 @@
         $copyTargetInnerCtn.innerHTML = editor.html();
         copyview.displayAndCopy($copyTargetCtn.outerHTML);
         btns.$copyCodeBtn.blur();
+      } else if (e.target === btns.$saveLoadBtn) {
+        saveLoadView$$1.display();
+        btns.$saveLoadBtn.blur();
       } else if (e.target === btns.$settingsBtn) {
         settingsview.display();
         btns.$settingsBtn.blur();
