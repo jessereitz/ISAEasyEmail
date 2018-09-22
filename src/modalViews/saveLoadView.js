@@ -79,17 +79,11 @@ const saveLoadView = {
    */
   parseFile(event) {
     // TODO: Does this work or should fileInput be attached to 'this'?
-    console.log('parsing');
-    console.log(event.target);
     const file = event.target.files[0];
-    console.log(file);
-    // debugger;
     if (!file) return false;
     const reader = new FileReader();
-    reader.onload = (e) => {
-      console.log('loaded');
+    reader.onload = () => {
       const docInfo = JSON.parse(reader.result);
-      console.log(docInfo);
       if (!docInfo.fileType === 'ISAEmail_config') return false;
       this.loadCallback(docInfo);
       return docInfo;
@@ -114,7 +108,7 @@ const saveLoadView = {
     if (!rawDocInfo) return false;
     rawDocInfo.fileType = this.fileType;
     const docInfo = JSON.stringify(rawDocInfo);
-    const href = `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(docInfo))}`;
+    const href = `data:text/plain;charset=utf-8,${encodeURIComponent(docInfo)}`;
     const downloadLink = generateElement(
       'a',
       {
