@@ -74,6 +74,7 @@ const Modal = {
       bottom: '0',
       background: 'rgba(0,0,0,0.4)',
       'text-align': 'center',
+      overflow: 'scroll',
     };
     this.$overlay = generateElement('div', { style });
     document.body.appendChild(this.$overlay);
@@ -149,7 +150,7 @@ const Modal = {
    */
   setSaveHandler(text, handler) {
     if (handler && typeof handler === 'function') {
-      this.$saveBtn.textContent = text;
+      this.$saveBtn.innerHTML = text;
       this.$saveBtn.saveHandler = handler;
       return true;
     }
