@@ -1,6 +1,6 @@
 import WriteFree from 'writefree';
-import Modal from './views/modal.js';
-import SettingsView from './views/settingsView.js';
+import Modal from './modalViews/modal.js';
+import SettingsView from './modalViews/settingsView.js';
 
 
 

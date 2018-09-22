@@ -30,6 +30,6 @@
     "rollup-plugin-uglify": "^6.0.0"
   },
   "dependencies": {
-    "writefree": "^1.0.4"
+    "writefree": "^1.0.5"
   }
 }
