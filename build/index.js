@@ -2443,6 +2443,7 @@
         const docInfo = JSON.parse(reader.result);
         if (!docInfo.fileType === 'ISAEmail_config') return false;
         this.loadCallback(docInfo);
+        this.modal.hide();
         return docInfo;
       };
       reader.readAsText(file);
@@ -2470,13 +2471,14 @@
         'a',
         {
           href,
-          download: `${cleanFileName(docInfo.title)}.isaemail`,
+          download: `${cleanFileName(rawDocInfo.title)}.isaemail`,
           style: { display: 'none' },
         },
       );
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
+      this.modal.hide();
       return true;
     },
 
@@ -2573,7 +2575,6 @@
 
       window.ed = this.editor;
       window.docInfo = this.docInfo;
-      console.log(this.docInfo);
       return this;
     },
 
@@ -2589,7 +2590,7 @@
       this.copyview = Object.create(CopyView);
       this.copyview.init(this.modal);
       this.saveLoadView = Object.create(saveLoadView);
-      this.saveLoadView.init(this.modal, this.loadEditorFile, this.getDocInfo);
+      this.saveLoadView.init(this.modal, this.setDocInfo.bind(this), this.getDocInfo.bind(this));
     },
 
     /**
@@ -2618,24 +2619,16 @@
           },
         });
       }
-      const newDocInfo = {};
       if (
         docInfo
         && docInfo.title
         && docInfo.contents
       ) {
         if (docInfo.fileType !== DocumentFileType) return false;
-        Object.assign(newDocInfo, docInfo);
+        Object.keys(docInfo).forEach((key) => {
+          this.docInfo[key] = docInfo[key];
+        });
       }
-      // else {
-      //   newDocInfo.dateCreated = generateCurrentDateString();
-      //   newDocInfo.title = `ISA Email ${newDocInfo.dateCreated}`;
-      //   newDocInfo.contents = this.editor.html(true);
-      //   newDocInfo.fileType = DocumentFileType;
-      // }
-      Object.keys(newDocInfo).forEach((key) => {
-        this.docInfo[key] = newDocInfo[key];
-      });
       return this.docInfo;
     },
 
@@ -2646,10 +2639,7 @@
      * @returns {object} The meta information for the document.
      */
     getDocInfo() {
-      return {
-        title: 'Test Title',
-        contents: this.editor.html(true),
-      };
+      return this.docInfo;
     },
 
     /**
