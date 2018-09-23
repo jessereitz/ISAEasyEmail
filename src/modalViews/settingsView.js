@@ -112,7 +112,7 @@ const SettingsView = {
 
   generateFields() {
     this.fields = [];
-    this.fields.push(createSettingsField('Title', '', loadTitle.bind(this), saveTitle.bind(this)));
+    this.fields.push(createSettingsField('Email Title', '', loadTitle.bind(this), saveTitle.bind(this)));
     this.fields.push(createSettingsField('Advising Session URL:', 'advisingLink'));
     this.fields.push(createSettingsField('Application URL:', 'applicationLink'));
     this.loadFields();
