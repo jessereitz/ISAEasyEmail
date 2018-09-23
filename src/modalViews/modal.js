@@ -140,12 +140,14 @@ const Modal = {
    * @returns {boolean} Returns true if the saveHandler was successfully set.
    *  Otherwise returns false.
    */
-  setSaveHandler(text, handler) {
+  setSaveHandler(text = null, handler = null) {
     if (handler && typeof handler === 'function') {
       this.$saveBtn.innerHTML = text;
       this.$saveBtn.saveHandler = handler;
+      this.$saveBtn.classList.remove('hide');
       return true;
     }
+    this.$saveBtn.classList.add('hide');
     return false;
   },
 
