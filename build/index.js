@@ -1692,18 +1692,18 @@
       if (typeof htmlString === 'string') {
         html = parser.parseFromString(htmlString, 'text/html');
       }
-      let innerCtn = null;
+      let newInnerCtn = null;
       try {
-        innerCtn = html.body.firstChild;
+        newInnerCtn = html.body.firstChild;
       } catch (exc) {
         return false;
       }
-      if (innerCtn && innerCtn.classList.contains(this.innerCtnClass)) {
-        this.$ctn.innerHTML = '';
-        this.$ctn.appendChild(innerCtn);
-        this.$innerCtn = innerCtn;
+      if (newInnerCtn && newInnerCtn.classList.contains(this.innerCtnClass)) {
+        this.$ctn.removeChild(this.$innerCtn);
+        this.$ctn.appendChild(newInnerCtn);
+        this.$innerCtn = newInnerCtn;
       }
-      return this.$ctn.contains(innerCtn);
+      return this.$ctn.contains(newInnerCtn);
     },
 
     /**
@@ -2399,12 +2399,18 @@
     },
   };
 
+  const style = {
+    display: 'inline-block',
+    width: '13em',
+    height: '7em',
+  };
+
   const saveLoadView = {
     fileType: 'ISAEmail_config',
     $ctn: generateElement$1('div'),
     $heading: generateElement$1('h1', { textContent: 'Save / Load an Email' }),
-    $loadBtn: generateStandardButton('Load', { style: { display: 'inline-block' } }),
-    $saveBtn: generateStandardButton('Save', { style: { display: 'inline-block' } }),
+    $loadBtn: generateStandardButton('Load a Previous Email', { style }),
+    $saveBtn: generateStandardButton('Save Current Email', { style }),
     $btnSeparator: generateElement$1(
       'div',
       {
@@ -2414,7 +2420,7 @@
           background: '#ddd',
           display: 'inline-block',
           'vertical-align': 'middle',
-          margin: '1rem',
+          margin: '1rem 2rem',
         },
       },
     ),

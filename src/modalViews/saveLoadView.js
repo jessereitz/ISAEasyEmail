@@ -4,12 +4,18 @@ import {
   generateStandardButton,
 } from '../lib.js';
 
+const style = {
+  display: 'inline-block',
+  width: '13em',
+  height: '7em',
+};
+
 const saveLoadView = {
   fileType: 'ISAEmail_config',
   $ctn: generateElement('div'),
   $heading: generateElement('h1', { textContent: 'Save / Load an Email' }),
-  $loadBtn: generateStandardButton('Load', { style: { display: 'inline-block' } }),
-  $saveBtn: generateStandardButton('Save', { style: { display: 'inline-block' } }),
+  $loadBtn: generateStandardButton('Load a Previous Email', { style }),
+  $saveBtn: generateStandardButton('Save Current Email', { style }),
   $btnSeparator: generateElement(
     'div',
     {
@@ -19,7 +25,7 @@ const saveLoadView = {
         background: '#ddd',
         display: 'inline-block',
         'vertical-align': 'middle',
-        margin: '1rem',
+        margin: '1rem 2rem',
       },
     },
   ),
