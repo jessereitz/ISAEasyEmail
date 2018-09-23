@@ -2559,11 +2559,14 @@
   };
 
   const sectionStyle = {
-    width: '100%',
     overflow: 'hidden',
+    width: '100%',
+    'padding-left': '10px',
+    'padding-right': '10px',
     'box-sizing': 'border-box',
     'font-family': 'Times',
     'font-size': '16px',
+    'line-height': '1.25em',
 
   };
 
@@ -2599,15 +2602,17 @@
      * @returns {Controller} Returns this.
      */
     init() {
+      // Initialize Controller HTML
       this.btns = setButtons();
       this.$copyTargetCtn = document.getElementById('copyTargetCtn');
       this.$copyTargetInnerCtn = document.getElementById('copyTargetInnerCtn');
-
+      this.$metaDisplay = document.getElementById('metaDisplay');
+      // Initialize the editor
       this.editorCtn = document.getElementById('wfeditor');
       this.editor = WriteFree(this.editorCtn, options);
-
+      // Set the document meta data
       this.setDocInfo();
-
+      // Initialize the modal views. This must come after setDocInfo.
       this.initModalViews();
 
       document.addEventListener('click', this.buttonClickHandler.bind(this));
@@ -2632,9 +2637,17 @@
       this.saveLoadView.init(this.modal, this.setDocInfo.bind(this), this.getDocInfo.bind(this));
     },
 
+    /**
+     * initDocInfo - Initialize the document info past what is done in property
+     *  declarations above. The properties defined here are done so because they
+     *  utilize getters and setters which must wait for other portions of the app
+     *  to initialize before they can be set up.
+     *
+     */
     initDocInfo() {
       if (!this.docInfo.contents) {
         const closureEditor = this.editor;
+        // docInfo.contents is linked up with the editor
         Object.defineProperty(this.docInfo, 'contents', {
           configurable: false,
           writeable: true,
@@ -2647,19 +2660,18 @@
           },
         });
       }
-      let closureTitle = '';
       if (!this.docInfo.title) {
-      //   Object.defineProperty(this.docInfo, '_title', {
-      //     configureable: false,
-      //     writeable: true,
-      //     enumerable: false,
-      //   });
+        let closureTitle = '';
+        const closureMetaDisplay = this.$metaDisplay;
+        // title defined with setter to facilitate side-effects like updating the
+        // current title at the bottom of the screen.
         Object.defineProperty(this.docInfo, 'title', {
           configurable: false,
           writeable: true,
           enumerable: true,
           set(val) {
             closureTitle = val;
+            closureMetaDisplay.textContent = val;
           },
           get() {
             return closureTitle;
