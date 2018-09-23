@@ -2506,52 +2506,107 @@
     };
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const btns = setButtons();
-    const $copyTargetCtn = document.getElementById('copyTargetCtn');
-    const $copyTargetInnerCtn = document.getElementById('copyTargetInnerCtn');
+  const Controller = {
 
-    const editorCtn = document.getElementById('wfeditor');
-    const editor = WriteFree(editorCtn, options);
-    window.ed = editor;
+    /**
+     * init - Initialize the Controller object. The Controller object is what, in
+     *  turn, initializes the editor and modalViews.
+     *
+     * @returns {Controller} Returns this.
+     */
+    init() {
+      this.btns = setButtons();
+      this.$copyTargetCtn = document.getElementById('copyTargetCtn');
+      this.$copyTargetInnerCtn = document.getElementById('copyTargetInnerCtn');
 
-    function loadEditorFile(docInfo) {
-      editor.load(docInfo.contents);
-    }
+      this.initModalViews();
 
-    function getDocInfo() {
+      this.editorCtn = document.getElementById('wfeditor');
+      this.editor = WriteFree(this.editorCtn, options);
+
+      this.setDocInfo();
+
+      document.addEventListener('click', this.buttonClickHandler.bind(this));
+
+      window.ed = this.editor;
+      return this;
+    },
+
+    /**
+     * initModalViews - Initialize the modal views.
+     *
+     */
+    initModalViews() {
+      this.modal = Object.create(Modal);
+      this.modal.init();
+      this.settingsview = Object.create(SettingsView);
+      this.settingsview.init(this.modal);
+      this.copyview = Object.create(CopyView);
+      this.copyview.init(this.modal);
+      this.saveLoadView = Object.create(saveLoadView);
+      this.saveLoadView.init(this.modal, this.loadEditorFile, this.getDocInfo);
+    },
+
+    /**
+     * setDocInfo - Sets the meta information for the current document.
+     *
+     */
+    setDocInfo() {
+      return null;
+    },
+
+    /**
+     * getDocInfo - Retrieve the meta information for the current document in
+     *  JSON format. The returned object includes the ocntent of the editor.
+     *
+     * @returns {object} The meta information for the document.
+     */
+    getDocInfo() {
       return {
         title: 'Test Title',
-        contents: editor.html(true),
+        contents: this.editor.html(true),
       };
-    }
+    },
 
-    const modal = Object.create(Modal);
-    modal.init();
-    const settingsview = Object.create(SettingsView);
-    settingsview.init(modal);
-    const copyview = Object.create(CopyView);
-    copyview.init(modal);
-    const saveLoadView$$1 = Object.create(saveLoadView);
-    saveLoadView$$1.init(modal, loadEditorFile, getDocInfo);
+    /**
+     * loadEditorFile - Loads the given docInfo into the current document. Sets
+     *  the contents of the editor and updates the title of the current document.
+     *
+     * @param {object} docInfo The meta information, including editor contents, of
+     *  the document to be loaded.
+     *
+     * @returns {type} Description
+     */
+    loadEditorFile(docInfo) {
+      this.editor.load(docInfo.contents);
+    },
 
-
-    document.addEventListener('click', (e) => {
-      if (e.target === btns.$startoverBtn) {
+    /**
+     * buttonClickHandler - Handle clicks on the Controller buttons.
+     *
+     * @param {event} e The click event.
+     *
+     */
+    buttonClickHandler(e) {
+      if (e.target === this.btns.$startoverBtn) {
         window.location.reload();
-      } else if (e.target === btns.$copyCodeBtn) {
-        $copyTargetInnerCtn.innerHTML = editor.html();
-        copyview.displayAndCopy($copyTargetCtn.outerHTML);
-        btns.$copyCodeBtn.blur();
-      } else if (e.target === btns.$saveLoadBtn) {
-        saveLoadView$$1.display();
-        btns.$saveLoadBtn.blur();
-      } else if (e.target === btns.$settingsBtn) {
-        settingsview.display();
-        btns.$settingsBtn.blur();
+      } else if (e.target === this.btns.$copyCodeBtn) {
+        this.$copyTargetInnerCtn.innerHTML = this.editor.html();
+        this.copyview.displayAndCopy(this.$copyTargetCtn.outerHTML);
+        this.btns.$copyCodeBtn.blur();
+      } else if (e.target === this.btns.$saveLoadBtn) {
+        this.saveLoadView.display();
+        this.btns.$saveLoadBtn.blur();
+      } else if (e.target === this.btns.$settingsBtn) {
+        this.settingsview.display();
+        this.btns.$settingsBtn.blur();
       }
-    });
-  });
+    },
+
+  };
+
+  // Initialize the Controller object.
+  document.addEventListener('DOMContentLoaded', Controller.init.bind(Controller));
 
 }());
 //# sourceMappingURL=index.js.map
