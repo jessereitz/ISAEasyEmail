@@ -54,6 +54,7 @@ const options = {
   smallHeadingStyle,
   imgStyle,
   sectionStyle,
+  emptyPlaceholder: 'Compose your email here...',
 };
 
 function setButtons() {
