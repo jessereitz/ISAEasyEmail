@@ -1945,9 +1945,9 @@
     const date = new Date();
     const dateString = {};
     dateString.year = date.getFullYear();
-    dateString.month = date.getMonth();
+    dateString.month = date.getMonth() + 1;
     dateString.dateNum = date.getDate();
-    dateString.hours = date.getHours() + 1;
+    dateString.hours = date.getHours();
     dateString.minutes = date.getMinutes();
     Object.keys(dateString).forEach((key) => {
       const valAsString = String(dateString[key]);
