@@ -1,3 +1,5 @@
+export const DocumentFileType = 'ISAEmail_config';
+
 /**
  * addStyleFromObj - Adds inline-style to a given HTML Element from the given
  *  style Object.
@@ -107,4 +109,40 @@ export function generateStandardButton(textContent, addOptions = {}) {
   options.textContent = textContent;
   options.klasses = ['standardBtn', 'standardBtn--dark'];
   return generateElement('button', options);
+}
+
+/**
+* generateCurrentDateString - Create a string representing the current date in
+*  the format YYYY-MM-DD.
+*
+* @returns {string} Returns the current date in the format YYYY-MM-DD.
+*/
+export function generateCurrentDateString() {
+  const date = new Date();
+  const dateString = {};
+  dateString.year = date.getFullYear();
+  dateString.month = date.getMonth();
+  dateString.dateNum = date.getDate();
+  dateString.hours = date.getHours() + 1;
+  dateString.minutes = date.getMinutes();
+  Object.keys(dateString).forEach((key) => {
+    const valAsString = String(dateString[key]);
+    dateString[key] = (valAsString.length < 2) ? `0${valAsString}` : valAsString;
+  });
+  return `${dateString.year}-${dateString.month}-${dateString.dateNum} ${dateString.hours}:${dateString.minutes}`;
+}
+
+/**
+ * cleanFileName - Replaces any illegal file characters with legal ones.
+ *
+ * @param {string} string The string to clean.
+ *
+ * @returns {string} Returns the cleaned string.
+ */
+export function cleanFileName(string) {
+  // No control chars, no: /, \, ?, %, *, :, |, ", <, >
+  let cleanedString = string.replace(/\/|\\|\?|%|\*|\|"|'|<|>'/g, '');
+  cleanedString = cleanedString.replace(/:/g, '-');
+  cleanedString = cleanedString.replace(/ /g, '_');
+  return cleanedString;
 }
