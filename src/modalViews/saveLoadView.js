@@ -89,6 +89,7 @@ const saveLoadView = {
       const docInfo = JSON.parse(reader.result);
       if (!docInfo.fileType === 'ISAEmail_config') return false;
       this.loadCallback(docInfo);
+      this.modal.hide();
       return docInfo;
     };
     reader.readAsText(file);
@@ -116,13 +117,14 @@ const saveLoadView = {
       'a',
       {
         href,
-        download: `${cleanFileName(docInfo.title)}.isaemail`,
+        download: `${cleanFileName(rawDocInfo.title)}.isaemail`,
         style: { display: 'none' },
       },
     );
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+    this.modal.hide();
     return true;
   },
 
