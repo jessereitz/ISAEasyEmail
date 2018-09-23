@@ -2555,6 +2555,8 @@
     'font-weight': 'normal',
     'font-size': '24px',
     color: '#333',
+    'padding-left': '10px',
+    'padding-right': '10px',
   };
 
   const smallHeadingStyle = {
@@ -2562,6 +2564,8 @@
     'font-weight': 'normal',
     'font-size': '20px',
     color: '#888',
+    'padding-left': '10px',
+    'padding-right': '10px',
   };
 
   const imgStyle = {
