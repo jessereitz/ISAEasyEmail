@@ -1,4 +1,8 @@
-import { generateElement, generateStandardButton } from '../lib.js';
+import {
+  cleanFileName,
+  generateElement,
+  generateStandardButton,
+} from '../lib.js';
 
 const saveLoadView = {
   fileType: 'ISAEmail_config',
@@ -112,7 +116,7 @@ const saveLoadView = {
       'a',
       {
         href,
-        download: `${docInfo.title}.isaemail`,
+        download: `${cleanFileName(docInfo.title)}.isaemail`,
         style: { display: 'none' },
       },
     );
