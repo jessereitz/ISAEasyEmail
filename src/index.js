@@ -91,7 +91,6 @@ const Controller = {
 
     window.ed = this.editor;
     window.docInfo = this.docInfo;
-    console.log(this.docInfo);
     return this;
   },
 
@@ -107,7 +106,7 @@ const Controller = {
     this.copyview = Object.create(CopyView);
     this.copyview.init(this.modal);
     this.saveLoadView = Object.create(SaveLoadView);
-    this.saveLoadView.init(this.modal, this.loadEditorFile, this.getDocInfo);
+    this.saveLoadView.init(this.modal, this.setDocInfo.bind(this), this.getDocInfo.bind(this));
   },
 
   /**
@@ -136,24 +135,16 @@ const Controller = {
         },
       });
     }
-    const newDocInfo = {};
     if (
       docInfo
       && docInfo.title
       && docInfo.contents
     ) {
       if (docInfo.fileType !== DocumentFileType) return false;
-      Object.assign(newDocInfo, docInfo);
+      Object.keys(docInfo).forEach((key) => {
+        this.docInfo[key] = docInfo[key];
+      });
     }
-    // else {
-    //   newDocInfo.dateCreated = generateCurrentDateString();
-    //   newDocInfo.title = `ISA Email ${newDocInfo.dateCreated}`;
-    //   newDocInfo.contents = this.editor.html(true);
-    //   newDocInfo.fileType = DocumentFileType;
-    // }
-    Object.keys(newDocInfo).forEach((key) => {
-      this.docInfo[key] = newDocInfo[key];
-    });
     return this.docInfo;
   },
 
@@ -164,10 +155,7 @@ const Controller = {
    * @returns {object} The meta information for the document.
    */
   getDocInfo() {
-    return {
-      title: 'Test Title',
-      contents: this.editor.html(true),
-    };
+    return this.docInfo;
   },
 
   /**
