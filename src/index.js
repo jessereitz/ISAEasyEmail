@@ -4,6 +4,11 @@ import SettingsView from './modalViews/settingsView.js';
 import CopyView from './modalViews/copyView.js';
 import SaveLoadView from './modalViews/saveLoadView.js';
 
+import {
+  DocumentFileType,
+  generateCurrentDateString,
+} from './lib.js';
+
 const containerStyle = {
   'box-sizing': 'border-box',
   padding: '20px 5px',
@@ -58,6 +63,11 @@ function setButtons() {
 }
 
 const Controller = {
+  docInfo: {
+    title: `ISA Email ${generateCurrentDateString()}`,
+    fileType: DocumentFileType,
+    dateCreated: generateCurrentDateString(),
+  },
 
   /**
    * init - Initialize the Controller object. The Controller object is what, in
@@ -80,6 +90,8 @@ const Controller = {
     document.addEventListener('click', this.buttonClickHandler.bind(this));
 
     window.ed = this.editor;
+    window.docInfo = this.docInfo;
+    console.log(this.docInfo);
     return this;
   },
 
@@ -99,11 +111,50 @@ const Controller = {
   },
 
   /**
-   * setDocInfo - Sets the meta information for the current document.
+   * setDocInfo - Sets the meta information for the current document. If given
+   *  passed a docInfo object, it will attempt to set the docInfo of the current
+   *  document to match that. Otherwise, it will provide generic defaults.
+   *
+   * @param {object} [docInfo] An optional object containing information about a
+   *  document.
+   *
+   * @returns {object} returns the current docInfo.
    *
    */
-  setDocInfo() {
-    return null;
+  setDocInfo(docInfo = null) {
+    if (!this.docInfo.contents) {
+      const closureEditor = this.editor;
+      Object.defineProperty(this.docInfo, 'contents', {
+        configurable: false,
+        writeable: true,
+        enumerable: true,
+        get() {
+          return closureEditor.html(true);
+        },
+        set(htmlString) {
+          return closureEditor.load(htmlString);
+        },
+      });
+    }
+    const newDocInfo = {};
+    if (
+      docInfo
+      && docInfo.title
+      && docInfo.contents
+    ) {
+      if (docInfo.fileType !== DocumentFileType) return false;
+      Object.assign(newDocInfo, docInfo);
+    }
+    // else {
+    //   newDocInfo.dateCreated = generateCurrentDateString();
+    //   newDocInfo.title = `ISA Email ${newDocInfo.dateCreated}`;
+    //   newDocInfo.contents = this.editor.html(true);
+    //   newDocInfo.fileType = DocumentFileType;
+    // }
+    Object.keys(newDocInfo).forEach((key) => {
+      this.docInfo[key] = newDocInfo[key];
+    });
+    return this.docInfo;
   },
 
   /**

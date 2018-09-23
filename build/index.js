@@ -1822,6 +1822,8 @@
     };
   }
 
+  const DocumentFileType = 'ISAEmail_config';
+
   /**
    * addStyleFromObj - Adds inline-style to a given HTML Element from the given
    *  style Object.
@@ -1931,6 +1933,42 @@
     options.textContent = textContent;
     options.klasses = ['standardBtn', 'standardBtn--dark'];
     return generateElement$1('button', options);
+  }
+
+  /**
+  * generateCurrentDateString - Create a string representing the current date in
+  *  the format YYYY-MM-DD.
+  *
+  * @returns {string} Returns the current date in the format YYYY-MM-DD.
+  */
+  function generateCurrentDateString() {
+    const date = new Date();
+    const dateString = {};
+    dateString.year = date.getFullYear();
+    dateString.month = date.getMonth();
+    dateString.dateNum = date.getDate();
+    dateString.hours = date.getHours() + 1;
+    dateString.minutes = date.getMinutes();
+    Object.keys(dateString).forEach((key) => {
+      const valAsString = String(dateString[key]);
+      dateString[key] = (valAsString.length < 2) ? `0${valAsString}` : valAsString;
+    });
+    return `${dateString.year}-${dateString.month}-${dateString.dateNum} ${dateString.hours}:${dateString.minutes}`;
+  }
+
+  /**
+   * cleanFileName - Replaces any illegal file characters with legal ones.
+   *
+   * @param {string} string The string to clean.
+   *
+   * @returns {string} Returns the cleaned string.
+   */
+  function cleanFileName(string) {
+    // No control chars, no: /, \, ?, %, *, :, |, ", <, >
+    let cleanedString = string.replace(/\/|\\|\?|%|\*|\|"|'|<|>'/g, '');
+    cleanedString = cleanedString.replace(/:/g, '-');
+    cleanedString = cleanedString.replace(/ /g, '_');
+    return cleanedString;
   }
 
   /**
@@ -2432,7 +2470,7 @@
         'a',
         {
           href,
-          download: `${docInfo.title}.isaemail`,
+          download: `${cleanFileName(docInfo.title)}.isaemail`,
           style: { display: 'none' },
         },
       );
@@ -2507,6 +2545,11 @@
   }
 
   const Controller = {
+    docInfo: {
+      title: `ISA Email ${generateCurrentDateString()}`,
+      fileType: DocumentFileType,
+      dateCreated: generateCurrentDateString(),
+    },
 
     /**
      * init - Initialize the Controller object. The Controller object is what, in
@@ -2529,6 +2572,8 @@
       document.addEventListener('click', this.buttonClickHandler.bind(this));
 
       window.ed = this.editor;
+      window.docInfo = this.docInfo;
+      console.log(this.docInfo);
       return this;
     },
 
@@ -2548,11 +2593,50 @@
     },
 
     /**
-     * setDocInfo - Sets the meta information for the current document.
+     * setDocInfo - Sets the meta information for the current document. If given
+     *  passed a docInfo object, it will attempt to set the docInfo of the current
+     *  document to match that. Otherwise, it will provide generic defaults.
+     *
+     * @param {object} [docInfo] An optional object containing information about a
+     *  document.
+     *
+     * @returns {object} returns the current docInfo.
      *
      */
-    setDocInfo() {
-      return null;
+    setDocInfo(docInfo = null) {
+      if (!this.docInfo.contents) {
+        const closureEditor = this.editor;
+        Object.defineProperty(this.docInfo, 'contents', {
+          configurable: false,
+          writeable: true,
+          enumerable: true,
+          get() {
+            return closureEditor.html(true);
+          },
+          set(htmlString) {
+            return closureEditor.load(htmlString);
+          },
+        });
+      }
+      const newDocInfo = {};
+      if (
+        docInfo
+        && docInfo.title
+        && docInfo.contents
+      ) {
+        if (docInfo.fileType !== DocumentFileType) return false;
+        Object.assign(newDocInfo, docInfo);
+      }
+      // else {
+      //   newDocInfo.dateCreated = generateCurrentDateString();
+      //   newDocInfo.title = `ISA Email ${newDocInfo.dateCreated}`;
+      //   newDocInfo.contents = this.editor.html(true);
+      //   newDocInfo.fileType = DocumentFileType;
+      // }
+      Object.keys(newDocInfo).forEach((key) => {
+        this.docInfo[key] = newDocInfo[key];
+      });
+      return this.docInfo;
     },
 
     /**
