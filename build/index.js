@@ -2151,12 +2151,23 @@
     },
   };
 
+  /**
+   * loadField - Loads the value of a link field
+   *
+   * @returns {string} Returns the value of the href attribute of designated link.
+   */
   function loadField() {
     this.targetHTML = document.getElementById(this.targetID);
     this.input.value = this.targetHTML.href;
     return this;
   }
 
+  /**
+   * saveField - Saves the current value of the input as the href of the
+   *  designated link.
+   *
+   * @returns {boolean} Returns true if href set correctly. Else returns false.
+   */
   function saveField() {
     const url = validateURL$1(this.input.value);
     if (url) {
@@ -2164,6 +2175,26 @@
       return true;
     }
     return false;
+  }
+
+  /**
+   * loadTitle - Loads the title of the document's docInfo.
+   *
+   * @returns {string} Returns the current title of the document.
+   */
+  function loadTitle(input) {
+    const innerInput = input;
+    innerInput.value = this.docInfo.title;
+  }
+
+  /**
+   * saveTitle - Sets the title of the current document to the given value.
+   *
+   * @param {string} value The value to which to set the title of the document.
+   *
+   */
+  function saveTitle(value) {
+    this.docInfo.title = value;
   }
 
   /**
@@ -2180,7 +2211,7 @@
    *
    * @returns {Field} Returns the newly created field.
    */
-  function createSettingsField(labelText, targetID) {
+  function createSettingsField(labelText, targetID, loadCallback, saveCallback) {
     const ctn = generateElement$1('div', { style: { 'text-align': 'left' } });
     const label = generateElement$1('label');
     label.textContent = labelText;
@@ -2204,8 +2235,8 @@
       label,
       input,
       targetID,
-      load: loadField,
-      save: saveField,
+      load: loadCallback && typeof loadCallback === 'function' ? loadCallback : loadField,
+      save: saveCallback && typeof saveCallback === 'function' ? saveCallback : saveField,
     };
     return field;
   }
@@ -2222,21 +2253,29 @@
      *
      * @returns {SettingsView} Returns this view.
      */
-    init(modal) {
+    init(modal, docInfo) {
       this.modal = modal;
+      this.docInfo = docInfo;
       this.$ctn.appendChild(this.$heading);
       this.generateFields();
-
-
       return this;
     },
 
     generateFields() {
       this.fields = [];
+      this.fields.push(createSettingsField('Title', '', loadTitle.bind(this), saveTitle.bind(this)));
       this.fields.push(createSettingsField('Advising Session URL:', 'advisingLink'));
       this.fields.push(createSettingsField('Application URL:', 'applicationLink'));
+      this.loadFields();
+    },
+
+    /**
+     * loadFields - Updates the current value of the fields.
+     *
+     */
+    loadFields() {
       this.fields.forEach((field) => {
-        field.load();
+        field.load(field.input);
         this.$ctn.appendChild(field.ctn);
       });
     },
@@ -2259,7 +2298,7 @@
      *  Otherwise returns false.
      */
     save() {
-      this.fields.forEach(field => field.save());
+      this.fields.forEach(field => field.save(field.input.value));
       this.modal.hide();
       return true;
     },
@@ -2548,7 +2587,7 @@
 
   const Controller = {
     docInfo: {
-      title: `ISA Email ${generateCurrentDateString()}`,
+      // title: `ISA Email ${generateCurrentDateString()}`,
       fileType: DocumentFileType,
       dateCreated: generateCurrentDateString(),
     },
@@ -2564,12 +2603,12 @@
       this.$copyTargetCtn = document.getElementById('copyTargetCtn');
       this.$copyTargetInnerCtn = document.getElementById('copyTargetInnerCtn');
 
-      this.initModalViews();
-
       this.editorCtn = document.getElementById('wfeditor');
       this.editor = WriteFree(this.editorCtn, options);
 
       this.setDocInfo();
+
+      this.initModalViews();
 
       document.addEventListener('click', this.buttonClickHandler.bind(this));
 
@@ -2586,25 +2625,14 @@
       this.modal = Object.create(Modal);
       this.modal.init();
       this.settingsview = Object.create(SettingsView);
-      this.settingsview.init(this.modal);
+      this.settingsview.init(this.modal, this.docInfo);
       this.copyview = Object.create(CopyView);
       this.copyview.init(this.modal);
       this.saveLoadView = Object.create(saveLoadView);
       this.saveLoadView.init(this.modal, this.setDocInfo.bind(this), this.getDocInfo.bind(this));
     },
 
-    /**
-     * setDocInfo - Sets the meta information for the current document. If given
-     *  passed a docInfo object, it will attempt to set the docInfo of the current
-     *  document to match that. Otherwise, it will provide generic defaults.
-     *
-     * @param {object} [docInfo] An optional object containing information about a
-     *  document.
-     *
-     * @returns {object} returns the current docInfo.
-     *
-     */
-    setDocInfo(docInfo = null) {
+    initDocInfo() {
       if (!this.docInfo.contents) {
         const closureEditor = this.editor;
         Object.defineProperty(this.docInfo, 'contents', {
@@ -2619,6 +2647,41 @@
           },
         });
       }
+      let closureTitle = '';
+      if (!this.docInfo.title) {
+      //   Object.defineProperty(this.docInfo, '_title', {
+      //     configureable: false,
+      //     writeable: true,
+      //     enumerable: false,
+      //   });
+        Object.defineProperty(this.docInfo, 'title', {
+          configurable: false,
+          writeable: true,
+          enumerable: true,
+          set(val) {
+            closureTitle = val;
+          },
+          get() {
+            return closureTitle;
+          },
+        });
+        this.docInfo.title = `ISA Email ${this.docInfo.dateCreated}`;
+      }
+    },
+
+    /**
+     * setDocInfo - Sets the meta information for the current document. If given
+     *  passed a docInfo object, it will attempt to set the docInfo of the current
+     *  document to match that. Otherwise, it will provide generic defaults.
+     *
+     * @param {object} [docInfo] An optional object containing information about a
+     *  document.
+     *
+     * @returns {object} returns the current docInfo.
+     *
+     */
+    setDocInfo(docInfo = null) {
+      this.initDocInfo();
       if (
         docInfo
         && docInfo.title

@@ -64,7 +64,7 @@ function setButtons() {
 
 const Controller = {
   docInfo: {
-    title: `ISA Email ${generateCurrentDateString()}`,
+    // title: `ISA Email ${generateCurrentDateString()}`,
     fileType: DocumentFileType,
     dateCreated: generateCurrentDateString(),
   },
@@ -80,12 +80,12 @@ const Controller = {
     this.$copyTargetCtn = document.getElementById('copyTargetCtn');
     this.$copyTargetInnerCtn = document.getElementById('copyTargetInnerCtn');
 
-    this.initModalViews();
-
     this.editorCtn = document.getElementById('wfeditor');
     this.editor = WriteFree(this.editorCtn, options);
 
     this.setDocInfo();
+
+    this.initModalViews();
 
     document.addEventListener('click', this.buttonClickHandler.bind(this));
 
@@ -102,25 +102,14 @@ const Controller = {
     this.modal = Object.create(Modal);
     this.modal.init();
     this.settingsview = Object.create(SettingsView);
-    this.settingsview.init(this.modal);
+    this.settingsview.init(this.modal, this.docInfo);
     this.copyview = Object.create(CopyView);
     this.copyview.init(this.modal);
     this.saveLoadView = Object.create(SaveLoadView);
     this.saveLoadView.init(this.modal, this.setDocInfo.bind(this), this.getDocInfo.bind(this));
   },
 
-  /**
-   * setDocInfo - Sets the meta information for the current document. If given
-   *  passed a docInfo object, it will attempt to set the docInfo of the current
-   *  document to match that. Otherwise, it will provide generic defaults.
-   *
-   * @param {object} [docInfo] An optional object containing information about a
-   *  document.
-   *
-   * @returns {object} returns the current docInfo.
-   *
-   */
-  setDocInfo(docInfo = null) {
+  initDocInfo() {
     if (!this.docInfo.contents) {
       const closureEditor = this.editor;
       Object.defineProperty(this.docInfo, 'contents', {
@@ -135,6 +124,41 @@ const Controller = {
         },
       });
     }
+    let closureTitle = '';
+    if (!this.docInfo.title) {
+    //   Object.defineProperty(this.docInfo, '_title', {
+    //     configureable: false,
+    //     writeable: true,
+    //     enumerable: false,
+    //   });
+      Object.defineProperty(this.docInfo, 'title', {
+        configurable: false,
+        writeable: true,
+        enumerable: true,
+        set(val) {
+          closureTitle = val;
+        },
+        get() {
+          return closureTitle;
+        },
+      });
+      this.docInfo.title = `ISA Email ${this.docInfo.dateCreated}`;
+    }
+  },
+
+  /**
+   * setDocInfo - Sets the meta information for the current document. If given
+   *  passed a docInfo object, it will attempt to set the docInfo of the current
+   *  document to match that. Otherwise, it will provide generic defaults.
+   *
+   * @param {object} [docInfo] An optional object containing information about a
+   *  document.
+   *
+   * @returns {object} returns the current docInfo.
+   *
+   */
+  setDocInfo(docInfo = null) {
+    this.initDocInfo();
     if (
       docInfo
       && docInfo.title

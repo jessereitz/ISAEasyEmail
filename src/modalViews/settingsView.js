@@ -1,11 +1,22 @@
 import { generateElement, validateURL } from '../lib.js';
 
+/**
+ * loadField - Loads the value of a link field
+ *
+ * @returns {string} Returns the value of the href attribute of designated link.
+ */
 function loadField() {
   this.targetHTML = document.getElementById(this.targetID);
   this.input.value = this.targetHTML.href;
   return this;
 }
 
+/**
+ * saveField - Saves the current value of the input as the href of the
+ *  designated link.
+ *
+ * @returns {boolean} Returns true if href set correctly. Else returns false.
+ */
 function saveField() {
   const url = validateURL(this.input.value);
   if (url) {
@@ -13,6 +24,26 @@ function saveField() {
     return true;
   }
   return false;
+}
+
+/**
+ * loadTitle - Loads the title of the document's docInfo.
+ *
+ * @returns {string} Returns the current title of the document.
+ */
+function loadTitle(input) {
+  const innerInput = input;
+  innerInput.value = this.docInfo.title;
+}
+
+/**
+ * saveTitle - Sets the title of the current document to the given value.
+ *
+ * @param {string} value The value to which to set the title of the document.
+ *
+ */
+function saveTitle(value) {
+  this.docInfo.title = value;
 }
 
 /**
@@ -29,7 +60,7 @@ function saveField() {
  *
  * @returns {Field} Returns the newly created field.
  */
-function createSettingsField(labelText, targetID) {
+function createSettingsField(labelText, targetID, loadCallback, saveCallback) {
   const ctn = generateElement('div', { style: { 'text-align': 'left' } });
   const label = generateElement('label');
   label.textContent = labelText;
@@ -53,8 +84,8 @@ function createSettingsField(labelText, targetID) {
     label,
     input,
     targetID,
-    load: loadField,
-    save: saveField,
+    load: loadCallback && typeof loadCallback === 'function' ? loadCallback : loadField,
+    save: saveCallback && typeof saveCallback === 'function' ? saveCallback : saveField,
   };
   return field;
 }
@@ -71,21 +102,29 @@ const SettingsView = {
    *
    * @returns {SettingsView} Returns this view.
    */
-  init(modal) {
+  init(modal, docInfo) {
     this.modal = modal;
+    this.docInfo = docInfo;
     this.$ctn.appendChild(this.$heading);
     this.generateFields();
-
-
     return this;
   },
 
   generateFields() {
     this.fields = [];
+    this.fields.push(createSettingsField('Title', '', loadTitle.bind(this), saveTitle.bind(this)));
     this.fields.push(createSettingsField('Advising Session URL:', 'advisingLink'));
     this.fields.push(createSettingsField('Application URL:', 'applicationLink'));
+    this.loadFields();
+  },
+
+  /**
+   * loadFields - Updates the current value of the fields.
+   *
+   */
+  loadFields() {
     this.fields.forEach((field) => {
-      field.load();
+      field.load(field.input);
       this.$ctn.appendChild(field.ctn);
     });
   },
@@ -108,7 +147,7 @@ const SettingsView = {
    *  Otherwise returns false.
    */
   save() {
-    this.fields.forEach(field => field.save());
+    this.fields.forEach(field => field.save(field.input.value));
     this.modal.hide();
     return true;
   },
