@@ -1,0 +1,51 @@
+simpleHelp
+
+init (steps):
+  this.steps = steps;
+  this.steps.forEach(step => allSteps.append(step))
+  this.currentStep = 0
+  this.setCurrentStep(0)
+  $prevBtn.click -> prevStep()
+  $nextBtn.click -> nextStep()
+  $displayAll.click -> toggleDisplayAll()
+
+# Set the current step to that given, if exists. Display the new current step.
+setCurrentStep(step):
+  if (step === 'all'):
+    this.$ctn.remove(this.steps[currentStep])
+    this.$ctn.append(this.allSteps)
+  if not this.steps[step] return false
+  this.$ctn.remove(this.steps[currentStep])
+  this.currentStep = step
+  this.$ctn.append(this.steps[currentStep])
+  this.toggleDisabledButtons()
+
+# Toggle disabled states on $nextBtn and $prevBtn
+toggleDisabledButtons():
+  if (!this.steps[this.currentStep - 1])
+    this.$prevBtn.disable -> true
+  else:
+    this.$prevBtn.disable -> false
+
+  if (!this.steps[this.currentStep + 1])
+    this.$nextBtn.disable -> true
+  else:
+    this.$nextBtn.disable -> false
+
+# Advance to the previous step, if applicable
+prevStep:
+  if (this.steps[currentStep - 1])
+    this.setCurrentStep(currentStep - 1)
+
+# Advance to the next step, if applicable
+nextStep:
+  if (this.steps[currentStep + 1])
+    this.setCurrentStep(currentStep + 1)
+
+toggleDisplayAll():
+  if displayAll:
+    this.setCurrentStep('all')
+    this.$displayAllBtn.textContent = 'display single step'
+  else:
+    this.setCurrentStep(0)
+    this.$displayAllBtn.text = 'display all steps'

@@ -2039,18 +2039,8 @@
      * @returns {Element} The overlay Element.
      */
     createOverlay() {
-      const style = {
-        display: 'none',
-        position: 'fixed',
-        left: '0',
-        right: '0',
-        top: '0',
-        bottom: '0',
-        background: 'rgba(0,0,0,0.4)',
-        'text-align': 'center',
-        overflow: 'scroll',
-      };
-      this.$overlay = generateElement$1('div', { style });
+      const klasses = ['modal-overlay'];
+      this.$overlay = generateElement$1('div', { klasses });
       document.body.appendChild(this.$overlay);
       return this.overlay;
     },
@@ -2062,20 +2052,8 @@
      * @returns {Element} Returns the window Element.
      */
     createWindow() {
-      const style = {
-        position: 'relative',
-        'max-width': '700px',
-        margin: '0 auto',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        padding: '1em 1rem',
-        background: '#666',
-        color: 'white',
-        'font-family': "'Open Sans', sans-serif",
-        'box-shadow': '0.2rem 0.2rem 2rem 0.75rem rgba(0,0,0,0.3)',
-      };
-      this.$window = generateElement$1('div', { style });
-
+      const klasses = 'modal-window';
+      this.$window = generateElement$1('div', { klasses });
       this.$overlay.appendChild(this.$window);
       return this.window;
     },
@@ -2137,6 +2115,12 @@
       this.$currentContent = $content;
       this.$window.insertBefore(this.$currentContent, this.$btnCtn);
       this.$overlay.style.display = 'block';
+      const windowRect = this.$window.getBoundingClientRect();
+      if (windowRect.height > window.innerHeight) {
+        this.$window.classList.add('no-transform');
+      } else {
+        this.$window.classList.remove('no-transform');
+      }
       document.addEventListener('keydown', this.keydownHandler);
       document.addEventListener('click', this.clickOffHandler);
       return this.$overlay;
@@ -2543,6 +2527,166 @@
     },
   };
 
+  const SimpleHelp = {
+    $ctn: generateElement$1('div'),
+    $heading: generateElement$1('h1'),
+    $allSteps: generateElement$1('div'),
+    $btnCtn: generateElement$1('div'),
+    $prevBtn: generateStandardButton('Previous'),
+    $nextBtn: generateStandardButton('Next'),
+    $displayAllBtn: generateStandardButton('Display All Steps'),
+
+    /**
+     * init - Initializes this simpleHelp view. The simpleHelp view simply
+     *  displays a list of steps, one at a time or all at once. The user can click
+     *  through each step or choose to display all on a single page.
+     *
+     * @param {string} title The title of the simpleHelp view. This is used in the
+     *  H1 element at the top of the modal.
+     * @param {Element[]} steps An array of HTML elements, steps represents each
+     *  step for the help view.
+     *
+     * @returns {simpleHelp} Returns this simpleHelp view.
+     */
+    init(title, steps) {
+      this.$heading.textContent = title;
+      this.steps = steps;
+      this.steps.forEach(step => this.$allSteps.appendChild(step));
+      this.setCurrentStep(0);
+
+      this.$ctn.appendChild(this.$heading);
+
+      this.$btnCtn.appendChild(this.$prevBtn);
+      this.$btnCtn.appendChild(this.$displayAllBtn);
+      this.$btnCtn.appendChild(this.$nextBtn);
+      this.$ctn.appendChild(this.$btnCtn);
+      return this;
+    },
+
+    /**
+     * setCurrentStep - Sets the current step index to that given or to all then
+     *  displays the appropriate step.
+     *
+     * @param {number|string} stepIndex If number, this function will display the
+     *  step at the corresponding index in this.steps. If 'all', this function
+     *  will display all steps.
+     *
+     * @returns {boolean} Returns true if the requested step is displayed properly
+     *  otherwise returns false.
+     */
+    setCurrentStep(stepIndex) {
+      if (stepIndex.toLowerCase() !== 'all' || !this.steps[stepIndex]) return false;
+      let stepHTML = null;
+      // Remove currently displayed step.
+      if (this.currentStep === 'all') {
+        this.$ctn.removeChild(this.$allSteps);
+      } else {
+        this.$ctn.removeChild(this.steps[this.currentStep]);
+      }
+      this.currentStep = stepIndex;
+      // Set and display new current step.
+      if (stepIndex.toLowerCase() === 'all') {
+        stepHTML = this.$allSteps;
+      } else {
+        stepHTML = this.steps[stepIndex];
+      }
+      this.$ctn.insertBefore(stepHTML, this.$btnCtn);
+      this.toggleDisabledButtons();
+      return true;
+    },
+
+    /**
+     * toggleDisabledButtons - Toggles the disabled state on $nextBtn and $prevBtn.
+     *  If there is no step after the current one, $nextBtn will be disabled. If
+     *  there is no step before the current one, $prevBtn will be disabled.
+     *
+     */
+    toggleDisabledButtons() {
+      let prevDisabled = false;
+      let nextDisabled = false;
+      let displayAllText = 'Display All Steps';
+      if (this.currentStep === 'all') {
+        nextDisabled = true;
+        prevDisabled = true;
+        displayAllText = 'Display Single Step';
+      } else {
+        displayAllText = 'Display All Steps';
+        if (this.steps[this.currentStep - 1]) {
+          prevDisabled = false;
+        } else {
+          prevDisabled = true;
+        }
+        if (this.steps[this.currentSteps + 1]) {
+          nextDisabled = false;
+        } else {
+          nextDisabled = true;
+        }
+      }
+      this.$prevBtn.disabled = prevDisabled;
+      this.$nextBtn.disabled = nextDisabled;
+      this.$displayAllBtn.textContent = displayAllText;
+    },
+
+    /**
+     * prevStep - Displays the previous step, if it exists.
+     *
+     */
+    prevStep() {
+      if (this.currentStep !== 'all' && this.steps[this.currentStep - 1]) {
+        this.setCurrentStep(this.currentStep - 1);
+      }
+    },
+
+    /**
+     * nextStep - Displays the next step, if it exists.
+     *
+     */
+    nextStep() {
+      if (this.currentStep !== 'all' && this.steps[this.currentStep + 1]) {
+        this.setCurrentStep(this.currentStep + 1);
+      }
+    },
+
+    /**
+     * toggleDisplayAll - Will either display all steps on a single page or the
+     *  first step, depending on what is already displayed.
+     *
+     */
+    toggleDisplayAll() {
+      if (this.currentStep === 'all') {
+        this.setCurrentStep(0);
+      } else {
+        this.setCurrentStep('all');
+      }
+    },
+
+    /**
+     * render - Renders this simpleHelp by returning the HTML for this.$ctn.
+     *
+     * @returns {Element} Returns this.$ctn.
+     */
+    render() {
+      return this.$ctn;
+    },
+  };
+
+  const SimpleHelpStep = {
+    $ctn: generateElement$1('div'),
+    $heading: generateElement$1('h2'),
+
+    init(title, content = null) {
+      this.$heading.textContent = title;
+      this.$ctn.appendChild(this.$heading);
+      if (content) this.$ctn.appendChild(content);
+    },
+
+    addContent(content) {
+      if (content instanceof Element) {
+        this.$ctn.appendChild(content);
+      }
+    },
+  };
+
   const descriptionHTML = `
   <p>Welcome to the ISA Easy Email Generator! This editor is here to provide
   a simple, easy-to-use tool to compose your HTML emails. Though this editor
@@ -2554,11 +2698,20 @@
   read the "GRS Help" and "Images Help" sections below to learn about how you
   should create the GRS portion of your email and add images to the ISA server
   for use here.</p>
+
+  <p>If it's your first time using this editor, please click the "Tutorial"
+  button below to learn about its features and how to use them. You should also
+  read the "GRS Help" and "Images Help" sections below to learn about how you
+  should create the GRS portion of your email and add images to the ISA server
+  for use here.</p>
+  <p>If it's your first time using this editor, please click the "Tutorial"
+  button below to learn about its features and how to use them. You should also
+  read the "GRS Help" and "Images Help" sections below to learn about how you
+  should create the GRS portion of your email and add images to the ISA server
+  for use here.</p>
 `;
 
   const btnStyle = {
-    // 'margin-left': '1rem',
-    // 'margin-right': '1rem',
     display: 'block',
     padding: '2em 1rem',
     'margin-left': 'auto',
@@ -2573,28 +2726,40 @@
       'div',
       {
         innerHTML: descriptionHTML,
-        style: { 'text-align': 'left' },
+        style: { 'text-align': 'left', 'max-width': '35em', margin: '2em auto' },
       },
     ),
     $tutorialBtn: generateStandardButton('Tutorial', { style: btnStyle }),
     $grsBtn: generateStandardButton('GRS Help', { style: btnStyle }),
     $imagesBtn: generateStandardButton('Images Help', { style: btnStyle }),
 
+    /**
+     * init - Initialize the helpView. Saves a reference to the moadl it will use
+     *  and prepares the container to display in the modal.
+     *
+     * @param {Modal} modal The modal used to display the helpView.
+     *
+     * @returns {helpView} Returns this helpView.
+     */
     init(modal) {
       this.modal = modal;
 
-      this.$ctn.appendChild(this.$heading);
-      this.$ctn.appendChild(this.$description);
-      this.$ctn.appendChild(this.$tutorialBtn);
-      this.$ctn.appendChild(this.$grsBtn);
-      this.$ctn.appendChild(this.$imagesBtn);
+      this.baseElements = [
+        this.$heading,
+        this.$description,
+        this.$tutorialBtn,
+        this.$grsBtn,
+        this.$imagesBtn,
+      ];
+      this.setBaseView();
     },
 
+    /**
+     * startTutorial - Starts the live tutorial.
+     *
+     * @returns {type} Description
+     */
     startTutorial() {
-      return null;
-    },
-
-    setModalBackBtn() {
       return null;
     },
 
@@ -2606,8 +2771,25 @@
       return null;
     },
 
-    display() {
+    /**
+     * setBaseView - Sets the view to display the base information, that is to
+     *  say, sets the view to display everything in the baseElements array. It
+     *  also sets the modal savehandler to null which also hides the auxiliary
+     *  button on the modal.
+     *
+     * @returns {type} Description
+     */
+    setBaseView() {
+      this.$ctn.innerHTML = '';
+      this.baseElements.forEach(el => this.$ctn.appendChild(el));
       this.modal.setSaveHandler(null);
+    },
+
+    /**
+     * display - Display the modal, passing in this.$ctn.
+     *
+     */
+    display() {
       this.modal.display(this.$ctn);
     },
   };
