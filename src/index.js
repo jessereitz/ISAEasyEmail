@@ -3,6 +3,7 @@ import Modal from './modalViews/modal.js';
 import SettingsView from './modalViews/settingsView.js';
 import CopyView from './modalViews/copyView.js';
 import SaveLoadView from './modalViews/saveLoadView.js';
+import HelpView from './modalViews/helpView.js';
 
 import {
   DocumentFileType,
@@ -67,6 +68,7 @@ function setButtons() {
     $copyCodeBtn: document.getElementById('copyCodeBtn'),
     $saveLoadBtn: document.getElementById('saveLoadBtn'),
     $settingsBtn: document.getElementById('settingsBtn'),
+    $helpBtn: document.getElementById('helpBtn'),
   };
 }
 
@@ -117,6 +119,8 @@ const Controller = {
     this.copyview.init(this.modal);
     this.saveLoadView = Object.create(SaveLoadView);
     this.saveLoadView.init(this.modal, this.setDocInfo.bind(this), this.getDocInfo.bind(this));
+    this.helpView = Object.create(HelpView);
+    this.helpView.init(this.modal);
   },
 
   /**
@@ -230,6 +234,9 @@ const Controller = {
       this.btns.$saveLoadBtn.blur();
     } else if (e.target === this.btns.$settingsBtn) {
       this.settingsview.display();
+      this.btns.$settingsBtn.blur();
+    } else if (e.target === this.btns.$helpBtn) {
+      this.helpView.display();
       this.btns.$settingsBtn.blur();
     }
   },

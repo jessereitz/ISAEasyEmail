@@ -70,6 +70,18 @@ body {
   cursor: default;
 }
 
+#helpBtnCtn {
+  position: fixed;
+  bottom: 1em;
+  left: 1rem;
+}
+
+#helpBtn {
+  height: 2.25rem;
+  width: 2.25rem;
+  border-radius: 50%;
+}
+
 *.hide {
   display: none !important;
 }
