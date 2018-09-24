@@ -60,6 +60,31 @@ body {
   margin: 0 auto;
 }
 
+.modal-overlay {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  text-align: center;
+  overflow: scroll;
+}
+
+.modal-window {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 1em 1rem;
+  background: #666;
+  color: white;
+  font-family: "Open Sans"; sans-serif;
+  box-shadow: 0.2rem 0.2rem 2rem 0.75rem rgba(0,0,0,0.3);
+}
+
 #metaDisplayCtn {
   position: fixed;
   bottom: 1em;
@@ -80,6 +105,12 @@ body {
   height: 2.25rem;
   width: 2.25rem;
   border-radius: 50%;
+}
+
+.no-transform {
+  transform: none;
+  margin: 1em auto;
+  top: auto;
 }
 
 *.hide {

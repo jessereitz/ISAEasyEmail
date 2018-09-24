@@ -65,18 +65,8 @@ const Modal = {
    * @returns {Element} The overlay Element.
    */
   createOverlay() {
-    const style = {
-      display: 'none',
-      position: 'fixed',
-      left: '0',
-      right: '0',
-      top: '0',
-      bottom: '0',
-      background: 'rgba(0,0,0,0.4)',
-      'text-align': 'center',
-      overflow: 'scroll',
-    };
-    this.$overlay = generateElement('div', { style });
+    const klasses = ['modal-overlay'];
+    this.$overlay = generateElement('div', { klasses });
     document.body.appendChild(this.$overlay);
     return this.overlay;
   },
@@ -88,20 +78,8 @@ const Modal = {
    * @returns {Element} Returns the window Element.
    */
   createWindow() {
-    const style = {
-      position: 'relative',
-      'max-width': '700px',
-      margin: '0 auto',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      padding: '1em 1rem',
-      background: '#666',
-      color: 'white',
-      'font-family': "'Open Sans', sans-serif",
-      'box-shadow': '0.2rem 0.2rem 2rem 0.75rem rgba(0,0,0,0.3)',
-    };
-    this.$window = generateElement('div', { style });
-
+    const klasses = 'modal-window';
+    this.$window = generateElement('div', { klasses });
     this.$overlay.appendChild(this.$window);
     return this.window;
   },
@@ -163,6 +141,12 @@ const Modal = {
     this.$currentContent = $content;
     this.$window.insertBefore(this.$currentContent, this.$btnCtn);
     this.$overlay.style.display = 'block';
+    const windowRect = this.$window.getBoundingClientRect();
+    if (windowRect.height > window.innerHeight) {
+      this.$window.classList.add('no-transform');
+    } else {
+      this.$window.classList.remove('no-transform');
+    }
     document.addEventListener('keydown', this.keydownHandler);
     document.addEventListener('click', this.clickOffHandler);
     return this.$overlay;
