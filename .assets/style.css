@@ -85,6 +85,11 @@ body {
   box-shadow: 0.2rem 0.2rem 2rem 0.75rem rgba(0,0,0,0.3);
 }
 
+.modal-window p,
+.modal-window dl {
+  text-align: left;
+}
+
 #metaDisplayCtn {
   position: fixed;
   bottom: 1em;
@@ -111,6 +116,10 @@ body {
   transform: none;
   margin: 1em auto;
   top: auto;
+}
+
+.img-max-width {
+  max-width: 100%;
 }
 
 *.hide {

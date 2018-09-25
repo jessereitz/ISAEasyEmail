@@ -1,4 +1,5 @@
-import SimpleHelp from './helpViewComponents/simpleHelp.js';
+// import SimpleHelp from './helpViewComponents/simpleHelp.js';
+import GRSHelp from './helpViewComponents/grsHelp.js';
 
 import {
   generateElement,
@@ -69,6 +70,8 @@ const helpView = {
       this.$grsBtn,
       this.$imagesBtn,
     ];
+
+    this.$grsBtn.addEventListener('click', this.displayGRSTutorial.bind(this));
     this.setBaseView();
   },
 
@@ -82,7 +85,9 @@ const helpView = {
   },
 
   displayGRSTutorial() {
-    return null;
+    this.modal.hide();
+    this.modal.setSaveHandler('Back', this.setBaseView.bind(this));
+    this.modal.display(GRSHelp.render());
   },
 
   displayImagesTutorial() {

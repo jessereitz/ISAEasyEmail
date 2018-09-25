@@ -27,8 +27,8 @@ export const SimpleHelp = {
   init(title, steps) {
     this.$heading.textContent = title;
     this.steps = steps;
-    this.steps.forEach(step => this.$allSteps.appendChild(step));
-    this.setCurrentStep(0);
+    console.log(this.steps);
+    // this.steps.map(step => this.$allSteps.appendChild(step));
 
     this.$ctn.appendChild(this.$heading);
 
@@ -36,6 +36,7 @@ export const SimpleHelp = {
     this.$btnCtn.appendChild(this.$displayAllBtn);
     this.$btnCtn.appendChild(this.$nextBtn);
     this.$ctn.appendChild(this.$btnCtn);
+    this.setCurrentStep(0);
     return this;
   },
 
@@ -51,21 +52,24 @@ export const SimpleHelp = {
    *  otherwise returns false.
    */
   setCurrentStep(stepIndex) {
-    if (stepIndex.toLowerCase() !== 'all' || !this.steps[stepIndex]) return false;
+    console.log(stepIndex);
+    // debugger;
+    if (String(stepIndex).toLowerCase() !== 'all' && !this.steps[stepIndex]) return false;
     let stepHTML = null;
     // Remove currently displayed step.
     if (this.currentStep === 'all') {
       this.$ctn.removeChild(this.$allSteps);
-    } else {
+    } else if (this.currentStep) {
       this.$ctn.removeChild(this.steps[this.currentStep]);
     }
     this.currentStep = stepIndex;
     // Set and display new current step.
-    if (stepIndex.toLowerCase() === 'all') {
+    if (String(stepIndex).toLowerCase() === 'all') {
       stepHTML = this.$allSteps;
     } else {
       stepHTML = this.steps[stepIndex];
     }
+    // debugger;
     this.$ctn.insertBefore(stepHTML, this.$btnCtn);
     this.toggleDisabledButtons();
     return true;
@@ -154,11 +158,16 @@ export const SimpleHelpStep = {
     this.$heading.textContent = title;
     this.$ctn.appendChild(this.$heading);
     if (content) this.$ctn.appendChild(content);
+    return this;
   },
 
   addContent(content) {
     if (content instanceof Element) {
       this.$ctn.appendChild(content);
     }
+  },
+
+  render() {
+    return this.$ctn;
   },
 };
