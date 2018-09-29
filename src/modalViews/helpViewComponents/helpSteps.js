@@ -1,8 +1,16 @@
-// array to hold each step
+/*
+ ######   ########   ######     ##     ## ######## ##       ########
+##    ##  ##     ## ##    ##    ##     ## ##       ##       ##     ##
+##        ##     ## ##          ##     ## ##       ##       ##     ##
+##   #### ########   ######     ######### ######   ##       ########
+##    ##  ##   ##         ##    ##     ## ##       ##       ##
+##    ##  ##    ##  ##    ##    ##     ## ##       ##       ##
+ ######   ##     ##  ######     ##     ## ######## ######## ##
+*/
+
 const grsHelpSteps = [];
 
-// steps
-const step0Content = ['1. Open GRS\'s HTML Template Editor', `
+grsHelpSteps[0] = ['1. Open GRS\'s HTML Template Editor', `
   <p>
     Your first step in sending your email through GRS is creating a template
     shell to contain your email content. To start, navigate to the
@@ -12,9 +20,8 @@ const step0Content = ['1. Open GRS\'s HTML Template Editor', `
   </p>
   <img class='img-max-width' src="./assets/images/grs-help/grs-tools.png" alt="Location of the GRS HTML Template Editor.">
 `];
-grsHelpSteps.push(step0Content);
 
-const step1Content = ['2. Create a New Template', `
+grsHelpSteps[1] = ['2. Create a New Template', `
   <p>
     You should now be in the HTML Template Editor seeing a screen similar to
     that below. Click "New Template" at the top of the screen.
@@ -26,9 +33,8 @@ const step1Content = ['2. Create a New Template', `
   </p>
   <img class='img-max-width' src="./assets/images/grs-help/new-template.png" alt="Creating a Standar Email">
 `];
-grsHelpSteps.push(step1Content);
 
-const step2Content = ['3. Complete Template Settings', `
+grsHelpSteps[2] = ['3. Complete Template Settings', `
   <p>
     You are now ready to begin creating your template. You will see a screen
     like the one below. Fill out the information as laid out below:
@@ -65,9 +71,8 @@ const step2Content = ['3. Complete Template Settings', `
     </p>
   <img class='img-max-width' src="./assets/images/grs-help/template-settings.png" alt="Initial template settings">
 `];
-grsHelpSteps.push(step2Content);
 
-const step3Content = ['4. Add Email Headers', `
+grsHelpSteps[3] = ['4. Add Email Headers', `
   <p>
     Headers are what keeps our HTML emails uniform and identifiable. As such,
     it is important that we include them on every email we send. After clicking
@@ -88,9 +93,8 @@ const step3Content = ['4. Add Email Headers', `
     clicking "Content" at the top of the page. Do <strong>not</strong> click "Save".
   </p>
 `];
-grsHelpSteps.push(step3Content);
 
-const step4Content = ['5. Finish the Template Shell', `
+grsHelpSteps[4] = ['5. Finish the Template Shell', `
   <p>
     Clicking "Content" at the top of the page will bring you to the standard
     interface for adding content to your email. This is the interface we are
@@ -120,9 +124,8 @@ const step4Content = ['5. Finish the Template Shell', `
     later.
   </p>
 `];
-grsHelpSteps.push(step4Content);
 
-const step5Content = ['6. Insert Your Content', `
+grsHelpSteps[5] = ['6. Insert Your Content', `
   <p>
     Once your Template Shell is created in GRS, you are ready to compose your
     email in the ISA Easy Email Generator. To do this, simply press "Copy Code"
@@ -135,25 +138,78 @@ const step5Content = ['6. Insert Your Content', `
   </p>
   <img class='img-max-width' src="./assets/images/grs-help/insert-source.png" alt="Inserting source code into the GRS HTML Template Editor.">
 `];
-grsHelpSteps.push(step5Content);
+
+/*
+#### ##     ##    ###     ######   ########    ##     ## ######## ##       ########
+ ##  ###   ###   ## ##   ##    ##  ##          ##     ## ##       ##       ##     ##
+ ##  #### ####  ##   ##  ##        ##          ##     ## ##       ##       ##     ##
+ ##  ## ### ## ##     ## ##   #### ######      ######### ######   ##       ########
+ ##  ##     ## ######### ##    ##  ##          ##     ## ##       ##       ##
+ ##  ##     ## ##     ## ##    ##  ##          ##     ## ##       ##       ##
+#### ##     ## ##     ##  ######   ########    ##     ## ######## ######## ##
+*/
+
 
 const imgHelpSteps = [];
-
-imgHelpSteps[0] = ['1. Upload Your Image to the ISA Server', `
+imgHelpSteps[0] = ['1. Preparing to Add Your Image', `
   <p>
-    Before you can add any images to your email, you must first create a template
-    shell in GRS's HTML Template editor. See the "GRS Help" section to learn how
-    to do this.
+    Before you can add any images to your email, you must first decide where they
+    are going to live. If you have found an image online (make sure it has a
+    license allowing for commercial use!) you can choose to either just copy its
+    address (right click > "Copy image address" or "Copy Image Location") and
+    paste it into the ISA Easy Email Generator. If you have an image saved to
+    your computer, it needs to be uploaded it to the ISA server. To do so, you must
+    first create a template shell in GRS's HTML Template editor. See the
+    "GRS Help" section to learn how to do this.
   </p>
   <p>
     Once you have created your template shell, you will need to navigate to the
-    "Content" section of your template shell.
+    "Content" section of your template shell. From here, click the "Image" button
+    in the editor control panel (see below) to launch the Image Properties editor.
   </p>
+  <img class="img-max-width" src="assets/images/img-help/add-image-btn.png" alt="Location of the Image button in the GRS HTML Template Editor.">
 `];
 
+imgHelpSteps[1] = ['2. Uploading Your Image to the ISA Server', `
+  <p>
+    You should now see a window like that below. Click the "Browse Server" button
+    to launch the server file browser.
+  </p>
+  <img class="img-max-width" src="./assets/images/img-help/image-properties-browse.png" alt="The Image Properties box.">
+  <p>
+    The File Browser (see below) functions similarly to that on Windows or Mac.
+    Choose the best folder in which to store your image, then click "Upload" in
+    the upper-left to upload your image. Once it has been uploaded, double click
+    it to select it and return to the "Image Properties" window.
+  </p>
+  <img class="img-max-width" src="./assets/images/img-help/file-browser.png" alt="GRS's image file browser">
+`];
 
-// Wrap each step in a containing div and export the resulting array
-const GRSHelpSteps = grsHelpSteps.map((step) => {
+imgHelpSteps[2] = ['3. Copying the Image URL', `
+  <p>
+    The "Image Properties" box should now have the URL to your image in its URL
+    box. Select the entire URL and copy it. You will paste this into the ISA
+    Easy Email Generator. Once you have copied the URL, click "Cancel" to close
+    the Image Properties window. You can now return to the ISA Easey Email Generator
+    to paste your image URL. You do not need to do anything else for your image
+    in GRS.
+  </p>
+  <img class="img-max-width" src="./assets/images/img-help/copy-url.png" alt="Copying the image URL from the Image Properties window">
+`];
+
+/*
+######## ##     ## ########   #######  ########  ########
+##        ##   ##  ##     ## ##     ## ##     ##    ##
+##         ## ##   ##     ## ##     ## ##     ##    ##
+######      ###    ########  ##     ## ########     ##
+##         ## ##   ##        ##     ## ##   ##      ##
+##        ##   ##  ##        ##     ## ##    ##     ##
+######## ##     ## ##         #######  ##     ##    ##
+*/
+
+
+// Wraps each step in a div and returns it to the new array.
+function wrapHelpSteps(step) {
   const ctn = document.createElement('div');
   const innerCtn = document.createElement('div');
   const heading = document.createElement('h2');
@@ -162,5 +218,7 @@ const GRSHelpSteps = grsHelpSteps.map((step) => {
   [heading.textContent, innerCtn.innerHTML] = step;
   ctn.classList.add('max-35');
   return ctn;
-});
-export default GRSHelpSteps;
+}
+
+export const GRSHelpSteps = grsHelpSteps.map(wrapHelpSteps);
+export const IMGHelpSteps = imgHelpSteps.map(wrapHelpSteps);
