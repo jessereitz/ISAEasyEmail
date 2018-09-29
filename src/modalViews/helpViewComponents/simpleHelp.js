@@ -4,14 +4,6 @@ import {
 } from '../../lib.js';
 
 export default {
-  $ctn: generateElement('div'),
-  $heading: generateElement('h1'),
-  $allSteps: generateElement('div'),
-  $btnCtn: generateElement('div'),
-  $prevBtn: generateStandardButton('Previous'),
-  $nextBtn: generateStandardButton('Next'),
-  $displayAllBtn: generateStandardButton('Display All Steps', { klasses: ['standardBtn--margin-right-large', 'standardBtn--margin-left-large'] }),
-
   /**
    * init - Initializes this simpleHelp view. The simpleHelp view simply
    *  displays a list of steps, one at a time or all at once. The user can click
@@ -25,9 +17,11 @@ export default {
    * @returns {simpleHelp} Returns this simpleHelp view.
    */
   init(title, steps, modal) {
+    this.initHTML();
     this.$heading.textContent = title;
     this.steps = steps;
     this.modal = modal;
+    console.log(steps);
     this.steps.map(step => this.$allSteps.appendChild(step.cloneNode(true)));
 
     this.$ctn.appendChild(this.$heading);
@@ -41,6 +35,16 @@ export default {
     this.$prevBtn.addEventListener('click', this.prevStep.bind(this));
     this.$displayAllBtn.addEventListener('click', this.toggleDisplayAll.bind(this));
     return this;
+  },
+
+  initHTML() {
+    this.$ctn = generateElement('div');
+    this.$heading = generateElement('h1');
+    this.$allSteps = generateElement('div');
+    this.$btnCtn = generateElement('div');
+    this.$prevBtn = generateStandardButton('Previous');
+    this.$nextBtn = generateStandardButton('Next');
+    this.$displayAllBtn = generateStandardButton('Display All Steps', { klasses: ['standardBtn--margin-right-large', 'standardBtn--margin-left-large'] });
   },
 
   /**
