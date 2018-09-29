@@ -2518,7 +2518,6 @@
       this.$heading.textContent = title;
       this.steps = steps;
       this.modal = modal;
-      console.log(steps);
       this.steps.map(step => this.$allSteps.appendChild(step.cloneNode(true)));
 
       this.$ctn.appendChild(this.$heading);
@@ -2656,6 +2655,54 @@
       this.setCurrentStep(newStep);
       this.modal.display(this.$ctn);
     },
+  };
+
+  const windowPosOffset = 20;
+  let currentStep = 0;
+
+  const Tutorial = {
+    $overlay: generateElement$1('div', { klasses: ['modal-overlay'] }),
+    $window: generateElement$1('div', { klasses: ['tutorial-window'] }),
+    steps: [],
+    init() {
+      currentStep = 0;
+      this.$window.innerHTML = '<p>hello?</p><p>Hello!</p>';
+      this.$overlay.appendChild(this.$window);
+      document.body.appendChild(this.$overlay);
+    },
+    nextStep() {
+      currentStep += 1;
+      this.steps[currentStep].call(this);
+    },
+
+    display() {
+      this.$overlay.style.display = 'block';
+    },
+
+    positionWindow(target) {
+      const modalRect = this.$window.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+
+      if (window.innerWidth - modalRect.width > targetRect.right) {
+        this.$window.style.left = targetRect.right + windowPosOffset;
+        this.$window.style.right = '';
+      } else {
+        this.$window.style.left = '';
+        this.$window.style.right = (window.innerWidth - targetRect.left) + windowPosOffset;
+      }
+
+      if (targetRect.bottom + modalRect.height < window.innerHeight) {
+        this.$window.style.top = targetRect.top;
+        this.$window.style.bottom = '';
+      } else {
+        this.$window.style.top = '';
+        this.$window.style.bottom = windowPosOffset;
+      }
+    },
+  };
+
+  Tutorial.steps[0] = function layoutOverview() {
+
   };
 
   /*
@@ -2941,6 +2988,22 @@
         this.$grsBtn,
         this.$imagesBtn,
       ];
+
+      this.walkthrough = Object.create(Tutorial);
+      this.walkthrough.init();
+      function callPosition(targThis) {
+        const targ = document.getElementById('metaDisplayCtn');
+        function callPositionInner() {
+          targThis.positionWindow(targ);
+        }
+        return callPositionInner;
+      }
+      const blah = callPosition(this.walkthrough);
+      setTimeout(blah, 500);
+      // this.walkthrough.positionWindow(document.getElementById('wfeditor'));
+      this.walkthrough.display();
+      window.tut = this.walkthrough;
+
       this.grsHelp = Object.create(SimpleHelp);
       this.grsHelp.init('Add and Send Your Email in GRS', GRSHelpSteps, this.modal);
       this.$grsBtn.addEventListener('click', this.displayGRSTutorial.bind(this));

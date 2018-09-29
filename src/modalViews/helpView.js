@@ -1,4 +1,5 @@
 import SimpleHelp from './helpViewComponents/simpleHelp.js';
+import Walkthrough from '../walkthrough/tutorial.js';
 import { GRSHelpSteps, IMGHelpSteps } from './helpViewComponents/helpSteps.js';
 
 import {
@@ -64,6 +65,22 @@ const helpView = {
       this.$grsBtn,
       this.$imagesBtn,
     ];
+
+    this.walkthrough = Object.create(Walkthrough);
+    this.walkthrough.init();
+    function callPosition(targThis) {
+      const targ = document.getElementById('metaDisplayCtn');
+      function callPositionInner() {
+        targThis.positionWindow(targ);
+      }
+      return callPositionInner;
+    }
+    const blah = callPosition(this.walkthrough);
+    setTimeout(blah, 500);
+    // this.walkthrough.positionWindow(document.getElementById('wfeditor'));
+    this.walkthrough.display();
+    window.tut = this.walkthrough;
+
     this.grsHelp = Object.create(SimpleHelp);
     this.grsHelp.init('Add and Send Your Email in GRS', GRSHelpSteps, this.modal);
     this.$grsBtn.addEventListener('click', this.displayGRSTutorial.bind(this));

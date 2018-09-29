@@ -82,6 +82,7 @@ body {
   background: rgba(0,0,0,0.4);
   text-align: center;
   overflow: scroll;
+  z-index: 1;
 }
 
 .modal-window {
@@ -156,6 +157,21 @@ border-bottom: 1px solid rgba(25,255,233, 1);
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+}
+
+.tutorial-window {
+  position: absolute;
+  max-width: 20em;
+  /* top: 10vh;
+  left: 10vw; */
+  padding: 1em 1rem;
+  background: #666;
+  color: white;
+  font-family: "Open Sans"; sans-serif;
+  box-shadow: 0.2rem 0.2rem 2rem 0.75rem rgba(0,0,0,0.3);
+  border-radius: 0.35em;
+  min-height: 1em;
+  min-width: 1em;
 }
 
 *.hide {
