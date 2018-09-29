@@ -129,6 +129,15 @@ const Modal = {
     return false;
   },
 
+  adjustHeight() {
+    const windowRect = this.$window.getBoundingClientRect();
+    if (windowRect.height > window.innerHeight) {
+      this.$window.classList.add('no-transform');
+    } else {
+      this.$window.classList.remove('no-transform');
+    }
+  },
+
   /**
    * display - Displays the Modal. Attaches the given content to the window and
    *  unhides the overlay.
@@ -141,12 +150,7 @@ const Modal = {
     this.$currentContent = $content;
     this.$window.insertBefore(this.$currentContent, this.$btnCtn);
     this.$overlay.style.display = 'block';
-    const windowRect = this.$window.getBoundingClientRect();
-    if (windowRect.height > window.innerHeight) {
-      this.$window.classList.add('no-transform');
-    } else {
-      this.$window.classList.remove('no-transform');
-    }
+    this.adjustHeight();
     document.addEventListener('keydown', this.keydownHandler);
     document.addEventListener('click', this.clickOffHandler);
     return this.$overlay;

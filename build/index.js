@@ -1054,8 +1054,7 @@
 
     generateClasses() {
       this.classes = {};
-      this.innerCtnClass = 'wf__editor';
-      this.classes.main = [this.innerCtnClass];
+      this.classes.main = ['wf__editor'];
       if (this.options.containerClass !== 'wf__edtior') {
         this.classes.main.push(this.options.containerClass);
       }
@@ -1674,39 +1673,6 @@
     */
 
     /**
-     * load - Load a previous version of the editor. The given htmlSTring MUST be
-     *  that returned by this.html(true). If the given htmlString doesn not
-     *  contain the appropriate $innerCtn class, it will be rejected. If passed
-     *  correctly, the given htmlString will replace the current editor's
-     *  $innerCtn.
-     *
-     * @param {string} htmlString A string containing a previous state of a
-     *  writefree editor.
-     *
-     * @returns {boolean} Returns true if the given htmlString was formatted
-     *  properly and was inserted into the editor. Else returns false.
-     */
-    load(htmlString) {
-      const parser = new DOMParser();
-      let html = htmlString;
-      if (typeof htmlString === 'string') {
-        html = parser.parseFromString(htmlString, 'text/html');
-      }
-      let newInnerCtn = null;
-      try {
-        newInnerCtn = html.body.firstChild;
-      } catch (exc) {
-        return false;
-      }
-      if (newInnerCtn && newInnerCtn.classList.contains(this.innerCtnClass)) {
-        this.$ctn.removeChild(this.$innerCtn);
-        this.$ctn.appendChild(newInnerCtn);
-        this.$innerCtn = newInnerCtn;
-      }
-      return this.$ctn.contains(newInnerCtn);
-    },
-
-    /**
      * html - Returns the Editor in HTML form.
      *
      * @param {boolean} [editable=false] Determines whether the returned HTML will
@@ -1744,7 +1710,7 @@
     },
   };
 
-  var toolbarStyle = '@import url("https://fonts.googleapis.com/css?family=Crimson+Text:400,700|Roboto");@keyframes fade-in {  from {    opacity: 0; }  to {    opacity: 1; } }@keyframes expand-width {  from {    width: 0; }  to {    width: 15em; } }.wf__toolbar {  position: fixed;  display: inline-block;  font-family: "Roboto", sans-serif;  background: linear-gradient(#555, #222);  padding: 0.25em 0.25rem;  border-radius: 0.25em;  box-shadow: 0.1rem 0.1rem 1rem 0.1rem rgba(0, 0, 0, 0.55);  animation: fade-in 0.15s ease-out;  transition: width 0.2s;  overflow: hidden;  min-width: 1em;  max-height: 1.9em; }  .wf__toolbar__btn-ctn {    transition: transform 0.2s; }  .wf__toolbar__btn {    box-sizing: border-box;    margin: 0 0.1rem;    background: none;    color: #fff;    border: 1px solid transparent;    border-radius: 0.25em;    transition: all 0.2s;    font-size: 1em;    width: 2em;    height: 1.75em;    line-height: 1.25em;    text-align: center;    padding: 0.25em 0.25rem;    outline: none;    z-index: 0;    vertical-align: baseline; }  .wf__toolbar__btn:hover {    border-color: #fff;    background: rgba(255, 255, 255, 0.075); }  .wf__toolbar__btn:active {    border-color: #bbb;    background: rgba(0, 0, 0, 0.2); }  .wf__toolbar__btn-active {    color: #A9D943;    border-color: #A9D943; }  .wf__toolbar__btn-disabled {    color: #666; }  .wf__toolbar__btn-disabled:hover {    border-color: transparent;    background: none; }  .wf__toolbar__input-ctn {    box-sizing: border-box;    position: absolute;    width: 15em;    height: 100%;    top: 0;    left: 0;    z-index: 1;    padding: 0.25em 0.25rem;    animation: fade-in 0.15s ease-out;    transition: all 0.2s; }    .wf__toolbar__input-ctn button {      display: inline-block;      position: absolute;      right: 0;      margin-right: 0; }  .wf__toolbar__input {    display: inline-block;    max-width: 100%;    height: 100%;    margin: 0;    padding: 0;    border: none;    outline: none;    background: none;    color: white;    padding-left: 0.1rem;    font-size: 1em; }  .wf__toolbar-hide-up {    transform: translateY(-150%);    visibility: hidden; }  .wf__toolbar-hide-down {    transform: translateY(150%);    visibility: hidden; }  .wf__toolbar-wide {    width: 15em; }  .wf__toolbar.hide {    display: none !important; }.wf__editor p:first-child:empty:not(:focus)::before,.wf__editor div:first-child:empty:not(:focus)::before {  content: "placeholder_text";  color: grey;  font-style: italic; }/*# sourceMappingURL=site.css.map */';
+  var toolbarStyle = '@import url("https://fonts.googleapis.com/css?family=Crimson+Text:400,700|Roboto");@keyframes fade-in {  from {    opacity: 0; }  to {    opacity: 1; } }@keyframes expand-width {  from {    width: 0; }  to {    width: 15em; } }.wf__toolbar {  position: fixed;  display: inline-block;  font-family: "Roboto", sans-serif;  background: linear-gradient(#555, #222);  padding: 0.25em 0.25rem;  border-radius: 0.25em;  box-shadow: 0.1rem 0.1rem 1rem 0.1rem rgba(0, 0, 0, 0.55);  animation: fade-in 0.15s ease-out;  transition: width 0.2s;  overflow: hidden;  min-width: 1em;  max-height: 1.9em; }  .wf__toolbar__btn-ctn {    transition: transform 0.2s; }  .wf__toolbar__btn {    box-sizing: border-box;    margin: 0 0.1rem;    background: none;    color: #fff;    border: 1px solid transparent;    border-radius: 0.25em;    transition: all 0.2s;    font-size: 1em;    width: 2em;    height: 1.75em;    line-height: 1.25em;    text-align: center;    padding: 0.25em 0.25rem;    outline: none;    z-index: 0;    vertical-align: baseline; }  .wf__toolbar__btn:hover {    border-color: #fff;    background: rgba(255, 255, 255, 0.075); }  .wf__toolbar__btn:active {    border-color: #bbb;    background: rgba(0, 0, 0, 0.2); }  .wf__toolbar__btn-active {    color: #A9D943;    border-color: #A9D943; }  .wf__toolbar__btn-disabled {    color: #666; }  .wf__toolbar__btn-disabled:hover {    border-color: transparent;    background: none; }  .wf__toolbar__input-ctn {    box-sizing: border-box;    position: absolute;    width: 15em;    height: 100%;    top: 0;    left: 0;    z-index: 1;    padding: 0.25em 0.25rem;    animation: fade-in 0.15s ease-out;    transition: all 0.2s; }    .wf__toolbar__input-ctn button {      display: inline-block;      position: absolute;      right: 0;      margin-right: 0; }  .wf__toolbar__input {    display: inline-block;    max-width: 100%;    height: 100%;    margin: 0;    padding: 0;    border: none;    outline: none;    background: none;    color: white;    padding-left: 0.1rem;    font-size: 1em; }  .wf__toolbar-hide-up {    transform: translateY(-150%);    visibility: hidden; }  .wf__toolbar-hide-down {    transform: translateY(150%);    visibility: hidden; }  .wf__toolbar-wide {    width: 15em; }  .wf__toolbar.hide {    display: none !important; }.wf__editor p:first-child:empty:not(:focus)::before,.wf__editor div:first-child:empty:not(:focus)::before {  content: "Try writing here...";  color: grey;  font-style: italic; }/*# sourceMappingURL=site.css.map */';
 
   // writeFree.js
 
@@ -1766,30 +1732,15 @@
     'margin-right': 'auto',
   };
 
-  const defaultLargeHeadingStyle = Object.assign({}, defaultSectionStyle);
+  const defaultLargeHeadingStyle = Object.create(defaultSectionStyle);
   defaultLargeHeadingStyle['font-size'] = '2rem';
 
-  const defaultSmallHeadingStyle = Object.assign({}, defaultSectionStyle);
+  const defaultSmallHeadingStyle = Object.create(defaultSectionStyle);
   defaultSmallHeadingStyle['font-size'] = '1.5rem';
 
-  const defaultImgStyle = Object.assign({}, defaultSectionStyle);
+  const defaultImgStyle = Object.create(defaultSectionStyle);
   defaultImgStyle['max-width'] = '100%';
 
-
-  const defaultOptions = {
-    divOrPar: 'p',
-    sectionClass: '',
-    sectionStyle: defaultSectionStyle,
-    containerClass: '',
-    containerStyle: defaultContainerStyle,
-    largeHeadingClass: '',
-    largeHeadingStyle: defaultLargeHeadingStyle,
-    smallHeadingClass: '',
-    smallHeadingStyle: defaultSmallHeadingStyle,
-    imgClass: '',
-    imgStyle: defaultImgStyle,
-    emptyPlaceholder: 'Try writing here...',
-  };
 
   /**
    * WriteFree - The initialization function used to create instances of the
@@ -1801,6 +1752,23 @@
    * @returns {Editor} The WriteFree editor.
    */
   function WriteFree($ctn, userOptions = {}) {
+    const $toolbarStyle = document.createElement('style');
+    $toolbarStyle.appendChild(document.createTextNode(toolbarStyle));
+    document.getElementsByTagName('head')[0].appendChild($toolbarStyle);
+    const defaultOptions = {
+      divOrPar: 'p',
+      sectionClass: '',
+      sectionStyle: defaultSectionStyle,
+      containerClass: 'wf__editor',
+      containerStyle: defaultContainerStyle,
+      largeHeadingClass: '',
+      largeHeadingStyle: defaultLargeHeadingStyle,
+      smallHeadingClass: '',
+      smallHeadingStyle: defaultSmallHeadingStyle,
+      imgClass: '',
+      imgStyle: defaultImgStyle,
+    };
+
     const options = (function setOptions() {
       const globalOptions = Object.create(defaultOptions);
       if (userOptions && typeof userOptions === 'object') {
@@ -1810,18 +1778,13 @@
       }
       return globalOptions;
     }());
-    const $toolbarStyle = document.createElement('style');
-    const newToolbarStyle = toolbarStyle.replace('placeholder_text', options.emptyPlaceholder);
-    $toolbarStyle.appendChild(document.createTextNode(newToolbarStyle));
-    document.getElementsByTagName('head')[0].appendChild($toolbarStyle);
-
 
     // Create and initialize the editor.
     const Editor = Object.create(editorBase);
     Editor.initWFEditor($ctn, options);
+
     return {
       html: Editor.html.bind(Editor),
-      load: Editor.load.bind(Editor),
     };
   }
 
@@ -2103,6 +2066,15 @@
       return false;
     },
 
+    adjustHeight() {
+      const windowRect = this.$window.getBoundingClientRect();
+      if (windowRect.height > window.innerHeight) {
+        this.$window.classList.add('no-transform');
+      } else {
+        this.$window.classList.remove('no-transform');
+      }
+    },
+
     /**
      * display - Displays the Modal. Attaches the given content to the window and
      *  unhides the overlay.
@@ -2115,12 +2087,7 @@
       this.$currentContent = $content;
       this.$window.insertBefore(this.$currentContent, this.$btnCtn);
       this.$overlay.style.display = 'block';
-      const windowRect = this.$window.getBoundingClientRect();
-      if (windowRect.height > window.innerHeight) {
-        this.$window.classList.add('no-transform');
-      } else {
-        this.$window.classList.remove('no-transform');
-      }
+      this.adjustHeight();
       document.addEventListener('keydown', this.keydownHandler);
       document.addEventListener('click', this.clickOffHandler);
       return this.$overlay;
@@ -2527,7 +2494,7 @@
     },
   };
 
-  const SimpleHelp = {
+  var SimpleHelp = {
     $ctn: generateElement$1('div'),
     $heading: generateElement$1('h1'),
     $allSteps: generateElement$1('div'),
@@ -2548,11 +2515,11 @@
      *
      * @returns {simpleHelp} Returns this simpleHelp view.
      */
-    init(title, steps) {
+    init(title, steps, modal) {
       this.$heading.textContent = title;
       this.steps = steps;
-      console.log(this.steps);
-      // this.steps.map(step => this.$allSteps.appendChild(step));
+      this.modal = modal;
+      this.steps.map(step => this.$allSteps.appendChild(step));
 
       this.$ctn.appendChild(this.$heading);
 
@@ -2561,6 +2528,9 @@
       this.$btnCtn.appendChild(this.$nextBtn);
       this.$ctn.appendChild(this.$btnCtn);
       this.setCurrentStep(0);
+      this.$nextBtn.addEventListener('click', this.nextStep.bind(this));
+      this.$prevBtn.addEventListener('click', this.prevStep.bind(this));
+      this.$displayAllBtn.addEventListener('click', this.toggleDisplayAll.bind(this));
       return this;
     },
 
@@ -2576,14 +2546,12 @@
      *  otherwise returns false.
      */
     setCurrentStep(stepIndex) {
-      console.log(stepIndex);
-      // debugger;
       if (String(stepIndex).toLowerCase() !== 'all' && !this.steps[stepIndex]) return false;
       let stepHTML = null;
       // Remove currently displayed step.
       if (this.currentStep === 'all') {
         this.$ctn.removeChild(this.$allSteps);
-      } else if (this.currentStep) {
+      } else if (this.currentStep >= 0) {
         this.$ctn.removeChild(this.steps[this.currentStep]);
       }
       this.currentStep = stepIndex;
@@ -2593,7 +2561,6 @@
       } else {
         stepHTML = this.steps[stepIndex];
       }
-      // debugger;
       this.$ctn.insertBefore(stepHTML, this.$btnCtn);
       this.toggleDisabledButtons();
       return true;
@@ -2620,7 +2587,7 @@
         } else {
           prevDisabled = true;
         }
-        if (this.steps[this.currentSteps + 1]) {
+        if (this.steps[this.currentStep + 1]) {
           nextDisabled = false;
         } else {
           nextDisabled = true;
@@ -2637,7 +2604,7 @@
      */
     prevStep() {
       if (this.currentStep !== 'all' && this.steps[this.currentStep - 1]) {
-        this.setCurrentStep(this.currentStep - 1);
+        this.render(this.currentStep - 1);
       }
     },
 
@@ -2647,7 +2614,7 @@
      */
     nextStep() {
       if (this.currentStep !== 'all' && this.steps[this.currentStep + 1]) {
-        this.setCurrentStep(this.currentStep + 1);
+        this.render(this.currentStep + 1);
       }
     },
 
@@ -2658,44 +2625,51 @@
      */
     toggleDisplayAll() {
       if (this.currentStep === 'all') {
-        this.setCurrentStep(0);
+        this.render(0);
       } else {
-        this.setCurrentStep('all');
+        this.render('all');
       }
     },
 
     /**
-     * render - Renders this simpleHelp by returning the HTML for this.$ctn.
+     * render - Renders this simpleHelp by setting the current step to that given
+     *  and calling the modal's display method.
      *
      * @returns {Element} Returns this.$ctn.
      */
-    render() {
-      return this.$ctn;
-    },
-  };
-
-  const SimpleHelpStep = {
-    $ctn: generateElement$1('div'),
-    $heading: generateElement$1('h2'),
-
-    init(title, content = null) {
-      this.$heading.textContent = title;
-      this.$ctn.appendChild(this.$heading);
-      if (content) this.$ctn.appendChild(content);
-      return this;
-    },
-
-    addContent(content) {
-      if (content instanceof Element) {
-        this.$ctn.appendChild(content);
+    render(step) {
+      let newStep = step;
+      if (!newStep) {
+        newStep = this.currentStep;
       }
-    },
-
-    render() {
-      return this.$ctn;
+      this.setCurrentStep(newStep);
+      this.modal.display(this.$ctn);
     },
   };
 
+  // export const SimpleHelpStep = {
+  //   $ctn: generateElement('div'),
+  //   $heading: generateElement('h2'),
+  //
+  //   init(title, content = null) {
+  //     this.$heading.textContent = title;
+  //     this.$ctn.appendChild(this.$heading);
+  //     if (content) this.$ctn.appendChild(content);
+  //     return this;
+  //   },
+  //
+  //   addContent(content) {
+  //     if (content instanceof Element) {
+  //       this.$ctn.appendChild(content);
+  //     }
+  //   },
+  //
+  //   render() {
+  //     return this.$ctn;
+  //   },
+  // };
+
+  // import { SimpleHelp, /*SimpleHelpStep*/ } from './simpleHelp.js';
   //
   //
   //
@@ -2703,157 +2677,151 @@
   //   `<h2>`,
   //
   // ]
-  const GRSHelp = (function initialize() {
-    const grsHelpSteps = [];
+  const grsHelpSteps = [];
 
-    const step0Content = ['1. Open GRS\'s HTML Template Editor', `
-    <p>
-      Your first step in sending your email through GRS is creating a template
-      shell to contain your email content. To start, navigate to the
-      <a href="https://grs.studiesabroad.com/tools/" target="_blank">GRS Tools</a>
-      section. Then, click <a href="https://grs.studiesabroad.com/htmltemplate" target="_blank">"HTML Template Editor"</a>
-      (shown below).
-    </p>
-    <img class='img-max-width' src="./.assets/images/grs-help/grs-tools.png" alt="Location of the GRS HTML Template Editor.">
-  `];
-    grsHelpSteps.push(step0Content);
+  const step0Content = ['1. Open GRS\'s HTML Template Editor', `
+  <p>
+    Your first step in sending your email through GRS is creating a template
+    shell to contain your email content. To start, navigate to the
+    <a href="https://grs.studiesabroad.com/tools/" target="_blank">GRS Tools</a>
+    section. Then, click <a href="https://grs.studiesabroad.com/htmltemplate" target="_blank">"HTML Template Editor"</a>
+    (shown below).
+  </p>
+  <img class='img-max-width' src="./.assets/images/grs-help/grs-tools.png" alt="Location of the GRS HTML Template Editor.">
+`];
+  grsHelpSteps.push(step0Content);
 
-    const step1Content = ['2. Create a New Template', `
-    <p>
-      You should now be in the HTML Template Editor seeing a screen similar to
-      that below. Click "New Template" at the top of the screen.
-    </p>
-    <img class='img-max-width' src="./.assets/images/grs-help/template-landing.png" alt="Initial screen of the GRS HTML Template Editor.">
-    <p>
-      You should now see the screen below. Click "Standar Email" to begin creating
-      your template shell.
-    </p>
-    <img class='img-max-width' src="./.assets/images/grs-help/new-template.png" alt="Creating a Standar Email">
-  `];
-    grsHelpSteps.push(step1Content);
+  const step1Content = ['2. Create a New Template', `
+  <p>
+    You should now be in the HTML Template Editor seeing a screen similar to
+    that below. Click "New Template" at the top of the screen.
+  </p>
+  <img class='img-max-width' src="./.assets/images/grs-help/template-landing.png" alt="Initial screen of the GRS HTML Template Editor.">
+  <p>
+    You should now see the screen below. Click "Standar Email" to begin creating
+    your template shell.
+  </p>
+  <img class='img-max-width' src="./.assets/images/grs-help/new-template.png" alt="Creating a Standar Email">
+`];
+  grsHelpSteps.push(step1Content);
 
-    const step2Content = ['3. Complete Template Settings', `
-    <p>
-      You are now ready to begin creating your template. You will see a screen
-      like the one below. Fill out the information as laid out below:
+  const step2Content = ['3. Complete Template Settings', `
+  <p>
+    You are now ready to begin creating your template. You will see a screen
+    like the one below. Fill out the information as laid out below:
+  </p>
+  <dl>
+    <dt>Template Name</dt>
+    <dd>
+      Choose a descriptive name for your email. This is for internal use only
+      and won't be visible to anyone receiving the email.
+    </dd>
+    <dt>Business Division</dt>
+    <dd>Choose the appropriate business division (ISA, WSISACP, etc).</dd>
+    <dt>Category</dt>
+    <dd>
+      Choose the appropriate category (Interested Student, Admissions Email, etc).
+      Please note that different categories may have additional options in this
+      section (eg. Admissions Email have a subcategory option). Choose the options
+      best suited to your use case.
+    </dd>
+    <dt>Include Unsubscribe Link</dt>
+    <dd>Choose "Yes" - <strong>Always</strong> choose Yes.</dd>
+    <dt>Teplate Width (px)</dt>
+    <dd>Type in "600". It defaults to 650 but the format works best at 600px.</dd>
+    <dt>Template Status</dt>
+    <dd>Choose "Active".</dd>
+    <dt>When to Send</dt>
+    <dd>Choose the most appropriate option. In general, this will be "Manual".</dd>
+    <dt>Email To</dt>
+    <dd>Again, choose the most appropriate option. In general, this will be "Primary Email".</dd>
+  </dl>
+  <p>
+    Your setting should now look something like the image below. You now move on
+    to the next step. Click on "Header" at the top. Do <strong>not</strong> click "Save".
     </p>
-    <dl>
-      <dt>Template Name</dt>
-      <dd>
-        Choose a descriptive name for your email. This is for internal use only
-        and won't be visible to anyone receiving the email.
-      </dd>
-      <dt>Business Division</dt>
-      <dd>Choose the appropriate business division (ISA, WSISACP, etc).</dd>
-      <dt>Category</dt>
-      <dd>
-        Choose the appropriate category (Interested Student, Admissions Email, etc).
-        Please note that different categories may have additional options in this
-        section (eg. Admissions Email have a subcategory option). Choose the options
-        best suited to your use case.
-      </dd>
-      <dt>Include Unsubscribe Link</dt>
-      <dd>Choose "Yes" - <strong>Always</strong> choose Yes.</dd>
-      <dt>Teplate Width (px)</dt>
-      <dd>Type in "600". It defaults to 650 but the format works best at 600px.</dd>
-      <dt>Template Status</dt>
-      <dd>Choose "Active".</dd>
-      <dt>When to Send</dt>
-      <dd>Choose the most appropriate option. In general, this will be "Manual".</dd>
-      <dt>Email To</dt>
-      <dd>Again, choose the most appropriate option. In general, this will be "Primary Email".</dd>
-    </dl>
-    <p>
-      Your setting should now look something like the image below. You now move on
-      to the next step. Click on "Header" at the top. Do <strong>not</strong> click "Save".
-      </p>
-    <img class='img-max-width' src="./.assets/images/grs-help/template-settings.png" alt="Initial template settings">
-  `];
-    grsHelpSteps.push(step2Content);
+  <img class='img-max-width' src="./.assets/images/grs-help/template-settings.png" alt="Initial template settings">
+`];
+  grsHelpSteps.push(step2Content);
 
-    const step3Content = ['4. Add Email Headers', `
-    <p>
-      Headers are what keeps our HTML emails uniform and identifiable. As such,
-      it is important that we include them on every email we send. After clicking
-      "Header" at the top, you will be brought to a screen with several check boxes.
-      Check the boxes so your settings look like the image below:
-    </p>
-    <img class='img-max-width' src="./.assets/images/grs-help/header-options.png" alt="Appropriate header options">
-    <p>
-      Ensure "Use General Header?" and "Use General Footer?" are both checked. Once
-      you check "Use General Header?" you will be presented with options for
-      choosing the Google Campaign Name, Campaign Source, and Campaign Medium. These
-      are used by marketing to track the success of email campaigns. You should
-      coordinate with the marketing department to determine the best values of these
-      fields for your email.
-    </p>
-    <p>
-      Once your settings look similar to those above, move on to the next step by
-      clicking "Content" at the top of the page. Do <strong>not</strong> click "Save".
-    </p>
-  `];
-    grsHelpSteps.push(step3Content);
+  const step3Content = ['4. Add Email Headers', `
+  <p>
+    Headers are what keeps our HTML emails uniform and identifiable. As such,
+    it is important that we include them on every email we send. After clicking
+    "Header" at the top, you will be brought to a screen with several check boxes.
+    Check the boxes so your settings look like the image below:
+  </p>
+  <img class='img-max-width' src="./.assets/images/grs-help/header-options.png" alt="Appropriate header options">
+  <p>
+    Ensure "Use General Header?" and "Use General Footer?" are both checked. Once
+    you check "Use General Header?" you will be presented with options for
+    choosing the Google Campaign Name, Campaign Source, and Campaign Medium. These
+    are used by marketing to track the success of email campaigns. You should
+    coordinate with the marketing department to determine the best values of these
+    fields for your email.
+  </p>
+  <p>
+    Once your settings look similar to those above, move on to the next step by
+    clicking "Content" at the top of the page. Do <strong>not</strong> click "Save".
+  </p>
+`];
+  grsHelpSteps.push(step3Content);
 
-    const step4Content = ['5. Finish the Template Shell', `
-    <p>
-      Clicking "Content" at the top of the page will bring you to the standard
-      interface for adding content to your email. This is the interface we are
-      circumventing by using the ISA Easy Email Generator. However, we still need
-      to use it actually insert our generated content into the email in GRS.
-    </p>
-    <p>Start by filling out the Email Subject, Preview, and Title fields as follows:</p>
-    <dl>
-      <dt>Email Subject</dt>
-      <dd>This is the subject of your email. Your subject should be captivating but concise.</dd>
-      <dt>Email Preview</dt>
-      <dd>
-        This is the small blurb displayed to recipients in their email client
-        before actually opening the email. You should write a sentence or two here
-        which summarizes your email and/or entices your recipient to open your email.
-      </dd>
-      <dt>Email Title</dt>
-      <dd>
-        In general, leave this blank. This will insert a large title at the very
-        beginning of your email (before even the header).
-      </dd>
-    </dl>
-    <p>
-      To finish your template shell, you should enter a word or two in the "Body"
-      section. This will allow you to finally click that "Save" button and have
-      GRS save your email template. Remember the template title so you can find it
-      later.
-    </p>
-  `];
-    grsHelpSteps.push(step4Content);
+  const step4Content = ['5. Finish the Template Shell', `
+  <p>
+    Clicking "Content" at the top of the page will bring you to the standard
+    interface for adding content to your email. This is the interface we are
+    circumventing by using the ISA Easy Email Generator. However, we still need
+    to use it actually insert our generated content into the email in GRS.
+  </p>
+  <p>Start by filling out the Email Subject, Preview, and Title fields as follows:</p>
+  <dl>
+    <dt>Email Subject</dt>
+    <dd>This is the subject of your email. Your subject should be captivating but concise.</dd>
+    <dt>Email Preview</dt>
+    <dd>
+      This is the small blurb displayed to recipients in their email client
+      before actually opening the email. You should write a sentence or two here
+      which summarizes your email and/or entices your recipient to open your email.
+    </dd>
+    <dt>Email Title</dt>
+    <dd>
+      In general, leave this blank. This will insert a large title at the very
+      beginning of your email (before even the header).
+    </dd>
+  </dl>
+  <p>
+    To finish your template shell, you should enter a word or two in the "Body"
+    section. This will allow you to finally click that "Save" button and have
+    GRS save your email template. Remember the template title so you can find it
+    later.
+  </p>
+`];
+  grsHelpSteps.push(step4Content);
 
-    const step5Content = ['6. Insert Your Content', `
-    <p>
-      Once your Template Shell is created in GRS, you are ready to compose your
-      email in the ISA Easy Email Generator. To do this, simply press "Copy Code"
-      in the ISA Easy Email Generator to copy the source code of the contents of
-      your email. Then, navigate to the "Content" section of your Template Shell in
-      GRS, click the "<>Source" button in the Body section, and paste your email
-      in the body section (see image below). Click "Save" and your email's contents will be saved in
-      GRS. Click "Preview" at the top to ensure your email has been successfully
-      saved.
-    </p>
-    <img class='img-max-width' src="./.assets/images/grs-help/insert-source.png" alt="Inserting source code into the GRS HTML Template Editor.">
-  `];
-    grsHelpSteps.push(step5Content);
+  const step5Content = ['6. Insert Your Content', `
+  <p>
+    Once your Template Shell is created in GRS, you are ready to compose your
+    email in the ISA Easy Email Generator. To do this, simply press "Copy Code"
+    in the ISA Easy Email Generator to copy the source code of the contents of
+    your email. Then, navigate to the "Content" section of your Template Shell in
+    GRS, click the "<>Source" button in the Body section, and paste your email
+    in the body section (see image below). Click "Save" and your email's contents will be saved in
+    GRS. Click "Preview" at the top to ensure your email has been successfully
+    saved.
+  </p>
+  <img class='img-max-width' src="./.assets/images/grs-help/insert-source.png" alt="Inserting source code into the GRS HTML Template Editor.">
+`];
+  grsHelpSteps.push(step5Content);
 
-    const renderedGrsHelpSteps = grsHelpSteps.map((step) => {
-      const ctn = document.createElement('div');
-      ctn.innerHTML = step[step.length - 1];
-      const simpleHelpStep = Object.create(SimpleHelpStep);
-      simpleHelpStep.init(step[0], ctn);
-      return simpleHelpStep.render();
-    });
-    const returnObj = Object.create(SimpleHelp);
-    returnObj.init('Add and Send Your Email in GRS', renderedGrsHelpSteps);
-    return returnObj;
-  }());
-
-  // import SimpleHelp from './helpViewComponents/simpleHelp.js';
+  const GRSHelpSteps = grsHelpSteps.map((step) => {
+    const ctn = document.createElement('div');
+    ctn.innerHTML = step[step.length - 1];
+    // const simpleHelpStep = Object.create(SimpleHelpStep);
+    // simpleHelpStep.init(step[0], ctn);
+    // return simpleHelpStep.render();
+    return ctn;
+  });
 
   const descriptionHTML = `
   <p>Welcome to the ISA Easy Email Generator! This editor is here to provide
@@ -2919,7 +2887,8 @@
         this.$grsBtn,
         this.$imagesBtn,
       ];
-
+      this.grsHelp = Object.create(SimpleHelp);
+      this.grsHelp.init('Add and Send Your Email in GRS', GRSHelpSteps, this.modal);
       this.$grsBtn.addEventListener('click', this.displayGRSTutorial.bind(this));
       this.setBaseView();
     },
@@ -2936,7 +2905,8 @@
     displayGRSTutorial() {
       this.modal.hide();
       this.modal.setSaveHandler('Back', this.setBaseView.bind(this));
-      this.modal.display(GRSHelp.render());
+      // this.modal.display(this.grsHelp.render());
+      this.grsHelp.render();
     },
 
     displayImagesTutorial() {
