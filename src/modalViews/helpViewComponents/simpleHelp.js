@@ -21,7 +21,6 @@ export default {
     this.$heading.textContent = title;
     this.steps = steps;
     this.modal = modal;
-    console.log(steps);
     this.steps.map(step => this.$allSteps.appendChild(step.cloneNode(true)));
 
     this.$ctn.appendChild(this.$heading);
