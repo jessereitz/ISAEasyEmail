@@ -85,10 +85,14 @@ const helpView = {
     return null;
   },
 
+  /**
+   * displayGRSTutorial - Display the GRS tutorial.
+   *
+   */
   displayGRSTutorial() {
     this.modal.hide();
     this.modal.setSaveHandler('Back', this.display.bind(this));
-    this.grsHelp.render();
+    this.grsHelp.render(0);
   },
 
   displayImagesTutorial() {
