@@ -2904,6 +2904,11 @@
     width: '20em',
   };
 
+  function setModalBackButton() {
+    const backText = 'Back to Help';
+    this.modal.setSaveHandler(backText, this.display.bind(this));
+  }
+
   const helpView = {
     $ctn: generateElement$1('div'),
     $heading: generateElement$1('h1', { textContent: 'Help' }),
@@ -2962,7 +2967,7 @@
      */
     displayGRSTutorial() {
       this.modal.hide();
-      this.modal.setSaveHandler('Back', this.display.bind(this));
+      setModalBackButton.call(this);
       this.grsHelp.render(0);
     },
 
@@ -2973,7 +2978,7 @@
      */
     displayImagesTutorial() {
       this.modal.hide();
-      this.modal.setSaveHandler('Back', this.display.bind(this));
+      setModalBackButton.call(this);
       this.imgHelp.render(0);
     },
 
