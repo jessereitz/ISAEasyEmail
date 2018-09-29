@@ -2894,17 +2894,6 @@
   read the "GRS Help" and "Images Help" sections below to learn about how you
   should create the GRS portion of your email and add images to the ISA server
   for use here.</p>
-
-  <p>If it's your first time using this editor, please click the "Tutorial"
-  button below to learn about its features and how to use them. You should also
-  read the "GRS Help" and "Images Help" sections below to learn about how you
-  should create the GRS portion of your email and add images to the ISA server
-  for use here.</p>
-  <p>If it's your first time using this editor, please click the "Tutorial"
-  button below to learn about its features and how to use them. You should also
-  read the "GRS Help" and "Images Help" sections below to learn about how you
-  should create the GRS portion of your email and add images to the ISA server
-  for use here.</p>
 `;
 
   const btnStyle = {
