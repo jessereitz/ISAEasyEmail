@@ -2653,28 +2653,6 @@
     },
   };
 
-  // export const SimpleHelpStep = {
-  //   $ctn: generateElement('div'),
-  //   $heading: generateElement('h2'),
-  //
-  //   init(title, content = null) {
-  //     this.$heading.textContent = title;
-  //     this.$ctn.appendChild(this.$heading);
-  //     if (content) this.$ctn.appendChild(content);
-  //     return this;
-  //   },
-  //
-  //   addContent(content) {
-  //     if (content instanceof Element) {
-  //       this.$ctn.appendChild(content);
-  //     }
-  //   },
-  //
-  //   render() {
-  //     return this.$ctn;
-  //   },
-  // };
-
   // array to hold each step
   const grsHelpSteps = [];
 
