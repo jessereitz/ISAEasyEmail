@@ -2089,6 +2089,7 @@
      * @returns {Element} Returns the Modal.
      */
     display($content) {
+      if (this.$currentContent) this.$window.removeChild(this.$currentContent);
       this.$currentContent = $content;
       this.$window.insertBefore(this.$currentContent, this.$btnCtn);
       this.$overlay.style.display = 'block';
@@ -2800,6 +2801,7 @@
     ctn.appendChild(heading);
     ctn.appendChild(innerCtn);
     [heading.textContent, innerCtn.innerHTML] = step;
+    ctn.classList.add('max-35');
     return ctn;
   });
 
@@ -2884,8 +2886,7 @@
 
     displayGRSTutorial() {
       this.modal.hide();
-      this.modal.setSaveHandler('Back', this.setBaseView.bind(this));
-      // this.modal.display(this.grsHelp.render());
+      this.modal.setSaveHandler('Back', this.display.bind(this));
       this.grsHelp.render();
     },
 
@@ -2912,6 +2913,7 @@
      *
      */
     display() {
+      this.setBaseView();
       this.modal.display(this.$ctn);
     },
   };

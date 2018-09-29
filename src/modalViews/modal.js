@@ -147,6 +147,7 @@ const Modal = {
    * @returns {Element} Returns the Modal.
    */
   display($content) {
+    if (this.$currentContent) this.$window.removeChild(this.$currentContent);
     this.$currentContent = $content;
     this.$window.insertBefore(this.$currentContent, this.$btnCtn);
     this.$overlay.style.display = 'block';

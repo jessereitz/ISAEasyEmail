@@ -145,6 +145,7 @@ const GRSHelpSteps = grsHelpSteps.map((step) => {
   ctn.appendChild(heading);
   ctn.appendChild(innerCtn);
   [heading.textContent, innerCtn.innerHTML] = step;
+  ctn.classList.add('max-35');
   return ctn;
 });
 export default GRSHelpSteps;

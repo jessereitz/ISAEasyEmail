@@ -87,8 +87,7 @@ const helpView = {
 
   displayGRSTutorial() {
     this.modal.hide();
-    this.modal.setSaveHandler('Back', this.setBaseView.bind(this));
-    // this.modal.display(this.grsHelp.render());
+    this.modal.setSaveHandler('Back', this.display.bind(this));
     this.grsHelp.render();
   },
 
@@ -115,6 +114,7 @@ const helpView = {
    *
    */
   display() {
+    this.setBaseView();
     this.modal.display(this.$ctn);
   },
 };
