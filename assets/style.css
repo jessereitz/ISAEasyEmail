@@ -112,6 +112,18 @@ body {
   margin-bottom: 1em;
 }
 
+.modal-window a,
+.modal-window a:visited {
+  color: #19FFE9;
+  border-bottom: 1px solid rgba(25,255,233, 0);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.modal-window a:hover {
+border-bottom: 1px solid rgba(25,255,233, 1);
+}
+
 #metaDisplayCtn {
   position: fixed;
   bottom: 1em;
