@@ -1,5 +1,5 @@
-// import SimpleHelp from './helpViewComponents/simpleHelp.js';
-import GRSHelp from './helpViewComponents/grsHelp.js';
+import SimpleHelp from './helpViewComponents/simpleHelp.js';
+import GRSHelpSteps from './helpViewComponents/grsHelp.js';
 
 import {
   generateElement,
@@ -70,7 +70,8 @@ const helpView = {
       this.$grsBtn,
       this.$imagesBtn,
     ];
-
+    this.grsHelp = Object.create(SimpleHelp);
+    this.grsHelp.init('Add and Send Your Email in GRS', GRSHelpSteps, this.modal);
     this.$grsBtn.addEventListener('click', this.displayGRSTutorial.bind(this));
     this.setBaseView();
   },
@@ -87,7 +88,8 @@ const helpView = {
   displayGRSTutorial() {
     this.modal.hide();
     this.modal.setSaveHandler('Back', this.setBaseView.bind(this));
-    this.modal.display(GRSHelp.render());
+    // this.modal.display(this.grsHelp.render());
+    this.grsHelp.render();
   },
 
   displayImagesTutorial() {

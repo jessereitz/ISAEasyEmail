@@ -3,7 +3,7 @@ import {
   generateStandardButton,
 } from '../../lib.js';
 
-export const SimpleHelp = {
+export default {
   $ctn: generateElement('div'),
   $heading: generateElement('h1'),
   $allSteps: generateElement('div'),
@@ -24,11 +24,11 @@ export const SimpleHelp = {
    *
    * @returns {simpleHelp} Returns this simpleHelp view.
    */
-  init(title, steps) {
+  init(title, steps, modal) {
     this.$heading.textContent = title;
     this.steps = steps;
-    console.log(this.steps);
-    // this.steps.map(step => this.$allSteps.appendChild(step));
+    this.modal = modal;
+    this.steps.map(step => this.$allSteps.appendChild(step));
 
     this.$ctn.appendChild(this.$heading);
 
@@ -37,6 +37,9 @@ export const SimpleHelp = {
     this.$btnCtn.appendChild(this.$nextBtn);
     this.$ctn.appendChild(this.$btnCtn);
     this.setCurrentStep(0);
+    this.$nextBtn.addEventListener('click', this.nextStep.bind(this));
+    this.$prevBtn.addEventListener('click', this.prevStep.bind(this));
+    this.$displayAllBtn.addEventListener('click', this.toggleDisplayAll.bind(this));
     return this;
   },
 
@@ -52,14 +55,12 @@ export const SimpleHelp = {
    *  otherwise returns false.
    */
   setCurrentStep(stepIndex) {
-    console.log(stepIndex);
-    // debugger;
     if (String(stepIndex).toLowerCase() !== 'all' && !this.steps[stepIndex]) return false;
     let stepHTML = null;
     // Remove currently displayed step.
     if (this.currentStep === 'all') {
       this.$ctn.removeChild(this.$allSteps);
-    } else if (this.currentStep) {
+    } else if (this.currentStep >= 0) {
       this.$ctn.removeChild(this.steps[this.currentStep]);
     }
     this.currentStep = stepIndex;
@@ -69,7 +70,6 @@ export const SimpleHelp = {
     } else {
       stepHTML = this.steps[stepIndex];
     }
-    // debugger;
     this.$ctn.insertBefore(stepHTML, this.$btnCtn);
     this.toggleDisabledButtons();
     return true;
@@ -96,7 +96,7 @@ export const SimpleHelp = {
       } else {
         prevDisabled = true;
       }
-      if (this.steps[this.currentSteps + 1]) {
+      if (this.steps[this.currentStep + 1]) {
         nextDisabled = false;
       } else {
         nextDisabled = true;
@@ -113,7 +113,7 @@ export const SimpleHelp = {
    */
   prevStep() {
     if (this.currentStep !== 'all' && this.steps[this.currentStep - 1]) {
-      this.setCurrentStep(this.currentStep - 1);
+      this.render(this.currentStep - 1);
     }
   },
 
@@ -123,7 +123,7 @@ export const SimpleHelp = {
    */
   nextStep() {
     if (this.currentStep !== 'all' && this.steps[this.currentStep + 1]) {
-      this.setCurrentStep(this.currentStep + 1);
+      this.render(this.currentStep + 1);
     }
   },
 
@@ -134,40 +134,46 @@ export const SimpleHelp = {
    */
   toggleDisplayAll() {
     if (this.currentStep === 'all') {
-      this.setCurrentStep(0);
+      this.render(0);
     } else {
-      this.setCurrentStep('all');
+      this.render('all');
     }
   },
 
   /**
-   * render - Renders this simpleHelp by returning the HTML for this.$ctn.
+   * render - Renders this simpleHelp by setting the current step to that given
+   *  and calling the modal's display method.
    *
    * @returns {Element} Returns this.$ctn.
    */
-  render() {
-    return this.$ctn;
-  },
-};
-
-export const SimpleHelpStep = {
-  $ctn: generateElement('div'),
-  $heading: generateElement('h2'),
-
-  init(title, content = null) {
-    this.$heading.textContent = title;
-    this.$ctn.appendChild(this.$heading);
-    if (content) this.$ctn.appendChild(content);
-    return this;
-  },
-
-  addContent(content) {
-    if (content instanceof Element) {
-      this.$ctn.appendChild(content);
+  render(step) {
+    let newStep = step;
+    if (!newStep) {
+      newStep = this.currentStep;
     }
-  },
-
-  render() {
-    return this.$ctn;
+    this.setCurrentStep(newStep);
+    this.modal.display(this.$ctn);
   },
 };
+
+// export const SimpleHelpStep = {
+//   $ctn: generateElement('div'),
+//   $heading: generateElement('h2'),
+//
+//   init(title, content = null) {
+//     this.$heading.textContent = title;
+//     this.$ctn.appendChild(this.$heading);
+//     if (content) this.$ctn.appendChild(content);
+//     return this;
+//   },
+//
+//   addContent(content) {
+//     if (content instanceof Element) {
+//       this.$ctn.appendChild(content);
+//     }
+//   },
+//
+//   render() {
+//     return this.$ctn;
+//   },
+// };
