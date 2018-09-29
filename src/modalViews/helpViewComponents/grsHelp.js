@@ -10,7 +10,7 @@ const step0Content = ['1. Open GRS\'s HTML Template Editor', `
     section. Then, click <a href="https://grs.studiesabroad.com/htmltemplate" target="_blank">"HTML Template Editor"</a>
     (shown below).
   </p>
-  <img class='img-max-width' src="./.assets/images/grs-help/grs-tools.png" alt="Location of the GRS HTML Template Editor.">
+  <img class='img-max-width' src="./assets/images/grs-help/grs-tools.png" alt="Location of the GRS HTML Template Editor.">
 `];
 grsHelpSteps.push(step0Content);
 
@@ -19,12 +19,12 @@ const step1Content = ['2. Create a New Template', `
     You should now be in the HTML Template Editor seeing a screen similar to
     that below. Click "New Template" at the top of the screen.
   </p>
-  <img class='img-max-width' src="./.assets/images/grs-help/template-landing.png" alt="Initial screen of the GRS HTML Template Editor.">
+  <img class='img-max-width' src="./assets/images/grs-help/template-landing.png" alt="Initial screen of the GRS HTML Template Editor.">
   <p>
     You should now see the screen below. Click "Standar Email" to begin creating
     your template shell.
   </p>
-  <img class='img-max-width' src="./.assets/images/grs-help/new-template.png" alt="Creating a Standar Email">
+  <img class='img-max-width' src="./assets/images/grs-help/new-template.png" alt="Creating a Standar Email">
 `];
 grsHelpSteps.push(step1Content);
 
@@ -63,7 +63,7 @@ const step2Content = ['3. Complete Template Settings', `
     Your setting should now look something like the image below. You now move on
     to the next step. Click on "Header" at the top. Do <strong>not</strong> click "Save".
     </p>
-  <img class='img-max-width' src="./.assets/images/grs-help/template-settings.png" alt="Initial template settings">
+  <img class='img-max-width' src="./assets/images/grs-help/template-settings.png" alt="Initial template settings">
 `];
 grsHelpSteps.push(step2Content);
 
@@ -74,7 +74,7 @@ const step3Content = ['4. Add Email Headers', `
     "Header" at the top, you will be brought to a screen with several check boxes.
     Check the boxes so your settings look like the image below:
   </p>
-  <img class='img-max-width' src="./.assets/images/grs-help/header-options.png" alt="Appropriate header options">
+  <img class='img-max-width' src="./assets/images/grs-help/header-options.png" alt="Appropriate header options">
   <p>
     Ensure "Use General Header?" and "Use General Footer?" are both checked. Once
     you check "Use General Header?" you will be presented with options for
@@ -133,9 +133,24 @@ const step5Content = ['6. Insert Your Content', `
     GRS. Click "Preview" at the top to ensure your email has been successfully
     saved.
   </p>
-  <img class='img-max-width' src="./.assets/images/grs-help/insert-source.png" alt="Inserting source code into the GRS HTML Template Editor.">
+  <img class='img-max-width' src="./assets/images/grs-help/insert-source.png" alt="Inserting source code into the GRS HTML Template Editor.">
 `];
 grsHelpSteps.push(step5Content);
+
+const imgHelpSteps = [];
+
+imgHelpSteps[0] = ['1. Upload Your Image to the ISA Server', `
+  <p>
+    Before you can add any images to your email, you must first create a template
+    shell in GRS's HTML Template editor. See the "GRS Help" section to learn how
+    to do this.
+  </p>
+  <p>
+    Once you have created your template shell, you will need to navigate to the
+    "Content" section of your template shell.
+  </p>
+`];
+
 
 // Wrap each step in a containing div and export the resulting array
 const GRSHelpSteps = grsHelpSteps.map((step) => {
