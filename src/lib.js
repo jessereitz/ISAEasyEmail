@@ -107,7 +107,12 @@ export function validateURL(url) {
 export function generateStandardButton(textContent, addOptions = {}) {
   const options = addOptions;
   options.textContent = textContent;
-  options.klasses = ['standardBtn', 'standardBtn--dark'];
+  if (Array.isArray(options.klasses)) {
+    options.klasses.push('standardBtn');
+    options.klasses.push('standardBtn--dark');
+  } else {
+    options.klasses = ['standardBtn', 'standardBtn--dark'];
+  }
   return generateElement('button', options);
 }
 

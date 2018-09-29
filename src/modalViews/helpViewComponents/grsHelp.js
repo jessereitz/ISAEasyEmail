@@ -1,13 +1,7 @@
-// import { SimpleHelp, /*SimpleHelpStep*/ } from './simpleHelp.js';
-//
-//
-//
-// const steps = [
-//   `<h2>`,
-//
-// ]
+// array to hold each step
 const grsHelpSteps = [];
 
+// steps
 const step0Content = ['1. Open GRS\'s HTML Template Editor', `
   <p>
     Your first step in sending your email through GRS is creating a template
@@ -143,12 +137,14 @@ const step5Content = ['6. Insert Your Content', `
 `];
 grsHelpSteps.push(step5Content);
 
+// Wrap each step in a containing div and export the resulting array
 const GRSHelpSteps = grsHelpSteps.map((step) => {
   const ctn = document.createElement('div');
-  ctn.innerHTML = step[step.length - 1];
-  // const simpleHelpStep = Object.create(SimpleHelpStep);
-  // simpleHelpStep.init(step[0], ctn);
-  // return simpleHelpStep.render();
+  const innerCtn = document.createElement('div');
+  const heading = document.createElement('h2');
+  ctn.appendChild(heading);
+  ctn.appendChild(innerCtn);
+  [heading.textContent, innerCtn.innerHTML] = step;
   return ctn;
 });
 export default GRSHelpSteps;

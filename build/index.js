@@ -1897,7 +1897,12 @@
   function generateStandardButton(textContent, addOptions = {}) {
     const options = addOptions;
     options.textContent = textContent;
-    options.klasses = ['standardBtn', 'standardBtn--dark'];
+    if (Array.isArray(options.klasses)) {
+      options.klasses.push('standardBtn');
+      options.klasses.push('standardBtn--dark');
+    } else {
+      options.klasses = ['standardBtn', 'standardBtn--dark'];
+    }
     return generateElement$1('button', options);
   }
 
@@ -2501,7 +2506,7 @@
     $btnCtn: generateElement$1('div'),
     $prevBtn: generateStandardButton('Previous'),
     $nextBtn: generateStandardButton('Next'),
-    $displayAllBtn: generateStandardButton('Display All Steps'),
+    $displayAllBtn: generateStandardButton('Display All Steps', { klasses: ['standardBtn--margin-right-large', 'standardBtn--margin-left-large'] }),
 
     /**
      * init - Initializes this simpleHelp view. The simpleHelp view simply
@@ -2669,16 +2674,10 @@
   //   },
   // };
 
-  // import { SimpleHelp, /*SimpleHelpStep*/ } from './simpleHelp.js';
-  //
-  //
-  //
-  // const steps = [
-  //   `<h2>`,
-  //
-  // ]
+  // array to hold each step
   const grsHelpSteps = [];
 
+  // steps
   const step0Content = ['1. Open GRS\'s HTML Template Editor', `
   <p>
     Your first step in sending your email through GRS is creating a template
@@ -2814,12 +2813,14 @@
 `];
   grsHelpSteps.push(step5Content);
 
+  // Wrap each step in a containing div and export the resulting array
   const GRSHelpSteps = grsHelpSteps.map((step) => {
     const ctn = document.createElement('div');
-    ctn.innerHTML = step[step.length - 1];
-    // const simpleHelpStep = Object.create(SimpleHelpStep);
-    // simpleHelpStep.init(step[0], ctn);
-    // return simpleHelpStep.render();
+    const innerCtn = document.createElement('div');
+    const heading = document.createElement('h2');
+    ctn.appendChild(heading);
+    ctn.appendChild(innerCtn);
+    [heading.textContent, innerCtn.innerHTML] = step;
     return ctn;
   });
 

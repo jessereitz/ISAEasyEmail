@@ -10,7 +10,7 @@ export default {
   $btnCtn: generateElement('div'),
   $prevBtn: generateStandardButton('Previous'),
   $nextBtn: generateStandardButton('Next'),
-  $displayAllBtn: generateStandardButton('Display All Steps'),
+  $displayAllBtn: generateStandardButton('Display All Steps', { klasses: ['standardBtn--margin-right-large', 'standardBtn--margin-left-large'] }),
 
   /**
    * init - Initializes this simpleHelp view. The simpleHelp view simply

@@ -22,6 +22,14 @@ body {
   background: rgba(0,0,0,0);
 }
 
+.standardBtn--margin-right-large {
+  margin-right: 1em;
+}
+
+.standardBtn--margin-left-large {
+  margin-left: 1em;
+}
+
 .standardBtn:hover {
   background: rgba(136, 136, 136, 1);
   color: #fff;
