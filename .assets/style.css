@@ -37,6 +37,10 @@ body {
   box-shadow: 2px 2px 10px 3px rgba(0,0,0,0.05);
 }
 
+.standardBtn--dark[disabled] {
+  visibility: hidden;
+}
+
 .controller {
   position: fixed;
   display: inline-block;
@@ -94,8 +98,20 @@ body {
 }
 
 .modal-window p,
-.modal-window dl {
+.modal-window dl,
+.modal-window img {
   text-align: left;
+  max-width: 35em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modal-window dt {
+  font-weight: bold;
+}
+
+.modal-window dd {
+  margin-bottom: 1em;
 }
 
 #metaDisplayCtn {
@@ -128,6 +144,8 @@ body {
 
 .img-max-width {
   max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 *.hide {

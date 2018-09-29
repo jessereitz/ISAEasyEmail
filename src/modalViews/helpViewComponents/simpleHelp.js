@@ -28,7 +28,7 @@ export default {
     this.$heading.textContent = title;
     this.steps = steps;
     this.modal = modal;
-    this.steps.map(step => this.$allSteps.appendChild(step));
+    this.steps.map(step => this.$allSteps.appendChild(step.cloneNode(true)));
 
     this.$ctn.appendChild(this.$heading);
 
@@ -70,7 +70,8 @@ export default {
     } else {
       stepHTML = this.steps[stepIndex];
     }
-    this.$ctn.insertBefore(stepHTML, this.$btnCtn);
+    // this.$ctn.insertBefore(stepHTML, this.$btnCtn);
+    this.$ctn.appendChild(stepHTML);
     this.toggleDisabledButtons();
     return true;
   },
@@ -148,7 +149,7 @@ export default {
    */
   render(step) {
     let newStep = step;
-    if (!newStep) {
+    if (!(newStep >= 0) && newStep !== 'all') {
       newStep = this.currentStep;
     }
     this.setCurrentStep(newStep);
