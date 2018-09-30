@@ -104,9 +104,9 @@ export function validateURL(url) {
   return returnVal;
 }
 
-export function generateStandardButton(textContent, addOptions = {}) {
+export function generateStandardButton(innerHTML, addOptions = {}) {
   const options = addOptions;
-  options.textContent = textContent;
+  options.innerHTML = innerHTML;
   if (Array.isArray(options.klasses)) {
     options.klasses.push('standardBtn');
     options.klasses.push('standardBtn--dark');
