@@ -44,7 +44,7 @@ export default function layoutOverview() {
   const next = function next() {
     if (currentIndex === 0) this.$window.classList.remove('vertical-center');
     if (!substeps[currentIndex]) {
-      this.nextStep();
+      return this.nextStep();
     }
     const target = document.getElementById(substeps[currentIndex].target);
     this.highlight(target);
@@ -52,6 +52,7 @@ export default function layoutOverview() {
     this.$window.innerHTML = substeps[currentIndex].description;
     this.$window.appendChild(nextBtn);
     currentIndex += 1;
+    return null;
   };
 
   nextBtn.addEventListener('click', next.bind(this));
