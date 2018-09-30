@@ -1,4 +1,5 @@
 import layoutOverview from './layoutOverview';
+import editorOverview from './editorOverview';
 
 import { generateElement, generateStandardButton } from '../lib.js';
 
@@ -32,13 +33,6 @@ const Tutorial = {
     return this;
   },
 
-  demo() {
-    const target = document.getElementById('wfeditor');
-    this.highlight(target);
-    this.positionWindow(target);
-    this.display();
-  },
-
   /**
    * beginTutorial - Begins the tutorial by calling the first step.
    *
@@ -57,7 +51,8 @@ const Tutorial = {
    */
   nextStep() {
     currentStep += 1;
-    if (!this.steps[currentStep]) this.hide();
+    // debugger;
+    if (!this.steps[currentStep]) return this.hide();
     this.steps[currentStep].call(this);
   },
 
@@ -154,6 +149,7 @@ const Tutorial = {
   },
 };
 
-Tutorial.steps[0] = layoutOverview;
+// Tutorial.steps[0] = layoutOverview;
+Tutorial.steps[0] = editorOverview;
 
 export default Tutorial;

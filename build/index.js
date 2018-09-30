@@ -2657,72 +2657,68 @@
     },
   };
 
-  const substeps = [
-    {
-      target: 'tutorialExitBtn',
-      description: `
-      <p>Click this button at any time to exit this tutorial.</p>
-    `,
-    },
-    {
-      target: 'wfeditor',
-      description: `
-      <!--<h1>Editor / Preview</h1>-->
-      <p>This is the editor and preview section. This section allows you to compose and edit your email.</p>
-    `,
-    },
-    {
-      target: 'controller',
-      description: `
-      <!--<h1>Controller</h1>-->
-      <p>These buttons allow you to manipulate your email in a broad manner, similar to the File menu in most programs.</p>
-    `,
-    },
-    {
-      target: 'metaDisplayCtn',
-      description: `
-      <!--<h1>Email Info</h1>-->
-      <p>You can see important info about your email here, such as its title.</p>
-    `,
-    },
-    {
-      target: 'helpBtnCtn',
-      description: `
-      <!--<h1>Help Section</h1>-->
-      <p>Click this button if you ever need help with ISA Easy Email or if you would like to go through this tutorial again.</p>
-    `,
-    },
-  ];
+  // import { generateStandardButton } from '../lib';
 
-  function layoutOverview() {
-    let currentIndex = 0;
-    const nextBtn = generateStandardButton('Continue');
+  function type(target, string) {
+    const targetHTML = target;
+    const baseDelay = 300;
+    let delay = baseDelay;
+    return new Promise((resolve, reject) => {
+      if (!(targetHTML instanceof Element)) reject(Error('Given target is not HTML'));
+      if (typeof string !== 'string') reject(Error('Given string is not a string'));
+      targetHTML.textContent = '';
+      string.split('').forEach((char, index, arr) => {
+        setTimeout(() => {
+          targetHTML.textContent += char;
+          if (index === arr.length - 1) {
+            setTimeout(() => resolve(targetHTML.textContent), baseDelay);
+          }
+        }, delay);
+        delay += 100;
+      });
+    });
+  }
 
-    const next = function next() {
-      if (currentIndex === 0) this.$window.classList.remove('vertical-center');
-      if (!substeps[currentIndex]) {
-        this.nextStep();
-      }
-      const target = document.getElementById(substeps[currentIndex].target);
-      this.highlight(target);
-      this.positionWindow(target);
-      this.$window.innerHTML = substeps[currentIndex].description;
-      this.$window.appendChild(nextBtn);
-      currentIndex += 1;
+  function getEditButtons() {
+    return {
+      bold: document.querySelector('[title="Bold Selection"]'),
+      italic: document.querySelector('[title="Italicize Selection"]'),
+      heading: document.querySelector('[title="Wrap Selection with Heading"]'),
+      link: document.querySelector('[title="Wrap Selection with Link"]'),
     };
+  }
 
-    nextBtn.addEventListener('click', next.bind(this));
+  function getInsertButtons() {
+    return {
+      image: document.querySelector('[title="Insert an Image"]'),
+      line: document.querySelector('[title="Insert a Horizontal Rule"]'),
+    };
+  }
 
-    this.$window.innerHTML = `
-    <h1>Welcome!</h1>
-    <p>
-      This tutorial is designed to take you through the core features and
-      functions of the ISA Easy Email Generator. We'll start with a basic
-      overview of the layout of the page. Click "Continue" below to begin.
-    </p>
-  `;
-    this.$window.appendChild(nextBtn);
-    this.$window.classList.add('vertical-center');
+  const introHTML = `
+  <p>The editor is where you can do stuff.</p>
+`;
+
+  function editorOverview() {
+    const editor = document.getElementById('wfeditor');
+    const editBtns = getEditButtons();
+    const insertBtns = getInsertButtons();
+    const firstEditorPar = editor.querySelector('.wf__text-section');
+    this.highlight(editor);
+    this.positionWindow(editor);
+    this.$window.innerHTML = introHTML;
+    const text = 'Testing this out.';
+    type(firstEditorPar, text).then(() => {
+      this.$window.textContent = 'cool, it worked';
+    });
+    // prom.then(() => {
+    // });
+    const sel = window.getSelection();
+    const newRange = document.createRange();
+    // newRange.selectNodeContents(firstEditorPar);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+    // this.nextStep();
   }
 
   const windowPosOffset = 20;
@@ -2755,13 +2751,6 @@
       return this;
     },
 
-    demo() {
-      const target = document.getElementById('wfeditor');
-      this.highlight(target);
-      this.positionWindow(target);
-      this.display();
-    },
-
     /**
      * beginTutorial - Begins the tutorial by calling the first step.
      *
@@ -2780,7 +2769,8 @@
      */
     nextStep() {
       currentStep += 1;
-      if (!this.steps[currentStep]) this.hide();
+      // debugger;
+      if (!this.steps[currentStep]) return this.hide();
       this.steps[currentStep].call(this);
     },
 
@@ -2877,7 +2867,8 @@
     },
   };
 
-  Tutorial.steps[0] = layoutOverview;
+  // Tutorial.steps[0] = layoutOverview;
+  Tutorial.steps[0] = editorOverview;
 
   /*
    ######   ########   ######     ##     ## ######## ##       ########
