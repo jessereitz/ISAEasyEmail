@@ -2767,6 +2767,8 @@
      *
      */
     beginTutorial() {
+      // debugger;
+      this.resetWindowPosition();
       currentStep = 0;
       this.display();
       this.steps[currentStep].call(this);
@@ -2783,6 +2785,17 @@
     },
 
     /**
+     * resetWindowPosition - Reset the position of the tutorial popout window.
+     *
+     */
+    resetWindowPosition() {
+      this.$window.style.left = '';
+      this.$window.style.right = '';
+      this.$window.style.top = '';
+      this.$window.style.bottom = '';
+    },
+
+    /**
      * positionWindow - Position the tutorial popout window to display next to the
      *  given HTML Element.
      *
@@ -2793,20 +2806,16 @@
     positionWindow(target) {
       const modalRect = this.$window.getBoundingClientRect();
       const targetRect = target.getBoundingClientRect();
-
+      this.resetWindowPosition();
       if (window.innerWidth - modalRect.width > targetRect.right) {
         this.$window.style.left = targetRect.right + windowPosOffset;
-        this.$window.style.right = '';
       } else {
-        this.$window.style.left = '';
         this.$window.style.right = (window.innerWidth - targetRect.left) + windowPosOffset;
       }
 
       if (targetRect.bottom + modalRect.height < window.innerHeight) {
         this.$window.style.top = targetRect.top;
-        this.$window.style.bottom = '';
       } else {
-        this.$window.style.top = '';
         this.$window.style.bottom = windowPosOffset;
       }
     },
