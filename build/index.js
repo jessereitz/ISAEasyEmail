@@ -1894,9 +1894,9 @@
     return returnVal;
   }
 
-  function generateStandardButton(textContent, addOptions = {}) {
+  function generateStandardButton(innerHTML, addOptions = {}) {
     const options = addOptions;
-    options.textContent = textContent;
+    options.innerHTML = innerHTML;
     if (Array.isArray(options.klasses)) {
       options.klasses.push('standardBtn');
       options.klasses.push('standardBtn--dark');
@@ -2657,28 +2657,139 @@
     },
   };
 
+  const substeps = [
+    {
+      target: 'tutorialExitBtn',
+      description: `
+      <p>Click this button at any time to exit this tutorial.</p>
+    `,
+    },
+    {
+      target: 'wfeditor',
+      description: `
+      <!--<h1>Editor / Preview</h1>-->
+      <p>This is the editor and preview section. This section allows you to compose and edit your email.</p>
+    `,
+    },
+    {
+      target: 'controller',
+      description: `
+      <!--<h1>Controller</h1>-->
+      <p>These buttons allow you to manipulate your email in a broad manner, similar to the File menu in most programs.</p>
+    `,
+    },
+    {
+      target: 'metaDisplayCtn',
+      description: `
+      <!--<h1>Email Info</h1>-->
+      <p>You can see important info about your email here, such as its title.</p>
+    `,
+    },
+    {
+      target: 'helpBtnCtn',
+      description: `
+      <!--<h1>Help Section</h1>-->
+      <p>Click this button if you ever need help with ISA Easy Email or if you would like to go through this tutorial again.</p>
+    `,
+    },
+  ];
+
+  function layoutOverview() {
+    let currentIndex = 0;
+    const nextBtn = generateStandardButton('Continue');
+
+    const next = function next() {
+      if (currentIndex === 0) this.$window.classList.remove('vertical-center');
+      if (!substeps[currentIndex]) {
+        this.nextStep();
+      }
+      const target = document.getElementById(substeps[currentIndex].target);
+      this.highlight(target);
+      this.positionWindow(target);
+      this.$window.innerHTML = substeps[currentIndex].description;
+      this.$window.appendChild(nextBtn);
+      currentIndex += 1;
+    };
+
+    nextBtn.addEventListener('click', next.bind(this));
+
+    this.$window.innerHTML = `
+    <h1>Welcome!</h1>
+    <p>
+      This tutorial is designed to take you through the core features and
+      functions of the ISA Easy Email Generator. We'll start with a basic
+      overview of the layout of the page. Click "Continue" below to begin.
+    </p>
+  `;
+    this.$window.appendChild(nextBtn);
+    this.$window.classList.add('vertical-center');
+  }
+
   const windowPosOffset = 20;
   let currentStep = 0;
 
+  /**
+   * Tutorial - A walkthrough of the features of the ISA Easy Email Generator.
+   *  This tutorial operates by placing an overlay over the entire screen and
+   *  highlighting one component at a time while annotating with a popout box. It
+   *  does this by iterating through the 'steps' property, which is an Array of
+   *  functions which manipulate the popout and highlighted elements to take the
+   *  user through each function.
+   */
   const Tutorial = {
-    $overlay: generateElement$1('div', { klasses: ['modal-overlay'] }),
+    $overlay: generateElement$1('div', { klasses: ['modal-overlay', 'tutorial-overlay'] }),
     $window: generateElement$1('div', { klasses: ['tutorial-window'] }),
+    $exitBtn: generateStandardButton('&times;', { klasses: ['tutorial-exit'], id: 'tutorialExitBtn' }),
     steps: [],
+
+    /**
+     * init - Initialize the Tutorial.
+     *
+     */
     init() {
       currentStep = 0;
-      this.$window.innerHTML = '<p>hello?</p><p>Hello!</p>';
+      this.$exitBtn.addEventListener('click', this.hide.bind(this));
+      this.$overlay.appendChild(this.$exitBtn);
       this.$overlay.appendChild(this.$window);
       document.body.appendChild(this.$overlay);
+      return this;
     },
-    nextStep() {
-      currentStep += 1;
+
+    demo() {
+      const target = document.getElementById('wfeditor');
+      this.highlight(target);
+      this.positionWindow(target);
+      this.display();
+    },
+
+    /**
+     * beginTutorial - Begins the tutorial by calling the first step.
+     *
+     */
+    beginTutorial() {
+      currentStep = 0;
+      this.display();
       this.steps[currentStep].call(this);
     },
 
-    display() {
-      this.$overlay.style.display = 'block';
+    /**
+     * nextStep - Move to the next step in the tutorial process.
+     *
+     */
+    nextStep() {
+      currentStep += 1;
+      if (!this.steps[currentStep]) this.hide();
+      this.steps[currentStep].call(this);
     },
 
+    /**
+     * positionWindow - Position the tutorial popout window to display next to the
+     *  given HTML Element.
+     *
+     * @param {type} target Description
+     *
+     * @returns {type} Description
+     */
     positionWindow(target) {
       const modalRect = this.$window.getBoundingClientRect();
       const targetRect = target.getBoundingClientRect();
@@ -2699,11 +2810,65 @@
         this.$window.style.bottom = windowPosOffset;
       }
     },
+
+    /**
+     * highlight - Highlights the given target by bringing it above the overlay.
+     *
+     * @param {HTML Element} target The Element to highlight.
+     *
+     */
+    highlight(target) {
+      this.releaseHighlighted();
+
+      this.highlightedHTML = target;
+      if (target.id === 'wfeditor') {
+        this.highlightedHTML.style.background = 'white';
+      }
+
+      this.highlightedHTML.prevPos = this.highlightedHTML.style.position;
+      this.highlightedHTML.prevZ = this.highlightedHTML.style.zIndex;
+
+      if (this.highlightedHTML.id === 'controller') {
+        this.highlightedHTML.style.position = 'absolute';
+      } else if (this.highlightedHTML.id === 'wfeditor') {
+        this.highlightedHTML.style.position = 'relative';
+      }
+      this.highlightedHTML.style.zIndex = '10';
+    },
+
+    /**
+     * releaseHighlighted - Releases the currently highlighted element, if there
+     *  is one. It does this by setting its position and zIndex to their previous
+     *  values.
+     *
+     */
+    releaseHighlighted() {
+      if (this.highlightedHTML) {
+        this.highlightedHTML.style.position = this.highlightedHTML.prevPos;
+        this.highlightedHTML.style.zIndex = this.highlightedHTML.prevZ;
+        if (this.highlightedHTML.id === 'wfeditor') this.highlightedHTML.style.background = '';
+      }
+    },
+
+    /**
+     * display - Display the tutorial.
+     *
+     */
+    display() {
+      this.$overlay.style.display = 'block';
+    },
+
+    /**
+     * hide - Hide the tutorial.
+     *
+     */
+    hide() {
+      this.releaseHighlighted();
+      this.$overlay.style.display = 'none';
+    },
   };
 
-  Tutorial.steps[0] = function layoutOverview() {
-
-  };
+  Tutorial.steps[0] = layoutOverview;
 
   /*
    ######   ########   ######     ##     ## ######## ##       ########
@@ -2989,20 +3154,10 @@
         this.$imagesBtn,
       ];
 
-      this.walkthrough = Object.create(Tutorial);
-      this.walkthrough.init();
-      function callPosition(targThis) {
-        const targ = document.getElementById('metaDisplayCtn');
-        function callPositionInner() {
-          targThis.positionWindow(targ);
-        }
-        return callPositionInner;
-      }
-      const blah = callPosition(this.walkthrough);
-      setTimeout(blah, 500);
-      // this.walkthrough.positionWindow(document.getElementById('wfeditor'));
-      this.walkthrough.display();
-      window.tut = this.walkthrough;
+      this.tutorial = Object.create(Tutorial);
+      this.tutorial.init();
+      this.$tutorialBtn.addEventListener('click', this.startTutorial.bind(this));
+      window.tut = this.tutorial;
 
       this.grsHelp = Object.create(SimpleHelp);
       this.grsHelp.init('Add and Send Your Email in GRS', GRSHelpSteps, this.modal);
@@ -3021,7 +3176,8 @@
      * @returns {type} Description
      */
     startTutorial() {
-      return null;
+      this.modal.hide();
+      this.tutorial.beginTutorial();
     },
 
     /**

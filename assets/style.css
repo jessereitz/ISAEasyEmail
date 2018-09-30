@@ -159,19 +159,55 @@ border-bottom: 1px solid rgba(25,255,233, 1);
   margin-right: auto;
 }
 
+@keyframes tutorial-fade-in {
+  from {background: rgba(0,0,0,0);}
+  to {background: rgba(0,0,0,0.5);}
+}
+
+.tutorial-overlay {
+  animation: tutorial-fade-in 0.7s forwards ease-out;
+}
+
 .tutorial-window {
   position: absolute;
   max-width: 20em;
-  /* top: 10vh;
-  left: 10vw; */
   padding: 1em 1rem;
   background: #666;
   color: white;
   font-family: "Open Sans"; sans-serif;
   box-shadow: 0.2rem 0.2rem 2rem 0.75rem rgba(0,0,0,0.3);
   border-radius: 0.35em;
-  min-height: 1em;
-  min-width: 1em;
+  text-align: left;
+}
+
+.tutorial-window h1 {
+  text-align: center;
+}
+
+.tutorial-window .standardBtn {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tutorial-exit {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  margin: 0;
+  border-radius: 50%;
+  padding: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 0.75rem;
+  font-size: 1.5em;
+}
+
+.vertical-center {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 auto;
 }
 
 *.hide {
