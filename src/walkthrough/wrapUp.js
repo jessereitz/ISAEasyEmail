@@ -14,5 +14,5 @@ export default function wrapUp() {
     </p>
   `;
   this.$window.appendChild(closeBtn);
-  this.$window.classList.add('vertical-center');
+  this.centerWindow();
 }

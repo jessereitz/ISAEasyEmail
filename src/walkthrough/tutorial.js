@@ -72,6 +72,7 @@ const Tutorial = {
     this.$window.style.right = '';
     this.$window.style.top = '';
     this.$window.style.bottom = '';
+    if (this.$window.classList.contains('vertical-center')) this.$window.classList.remove('vertical-center');
   },
 
   /**
@@ -155,6 +156,12 @@ const Tutorial = {
     window.location.reload();
   },
 
+  /**
+   * minimizeOverlay - Make the overlay minimized. That is to say, make is so
+   *  the main modal window can be displayed in the tutorial with the tutorial
+   *  modal alongside it.
+   *
+   */
   minimizeOverlay() {
     Object.keys(this.minimizedOverlayStyle).forEach((prop) => {
       this.$overlay.style[prop] = this.minimizedOverlayStyle[prop];
@@ -162,11 +169,23 @@ const Tutorial = {
     this.$window.style.zIndex = '1000';
   },
 
+  /**
+   * maximizeOverlay - Make the overlay cover the entire screen again.
+   *
+   */
   maximizeOverlay() {
     this.$overlay.style = '';
     this.$overlay.style.display = 'block';
   },
 
+  /**
+   * centerWindow - Centers the modal window vertically and horizontally.
+   *
+   */
+  centerWindow() {
+    this.$window.classList.add('vertical-center');
+    this.$window.style = '';
+  },
 };
 
 Tutorial.steps[0] = layoutOverview;

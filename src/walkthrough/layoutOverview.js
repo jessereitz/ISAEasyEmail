@@ -66,5 +66,5 @@ export default function layoutOverview() {
     </p>
   `;
   this.$window.appendChild(nextBtn);
-  this.$window.classList.add('vertical-center');
+  this.centerWindow();
 }
