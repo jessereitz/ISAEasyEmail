@@ -14,13 +14,13 @@ export default function toggleClicksEnabled(allowed) {
     e.stopPropagation();
     return true;
   }
-
   if (document.disableFunction) {
     document.removeEventListener('click', document.disableFunction, true);
     document.removeEventListener('mousedown', document.disableFunction, true);
     document.removeEventListener('mouseup', document.disableFunction, true);
     document.disableFunction = null;
-  } else {
+  }
+  if (allowed && allowed instanceof Element) {
     document.disableFunction = disableClicks.bind(this);
     document.addEventListener('click', document.disableFunction, true);
     document.addEventListener('mousedown', document.disableFunction, true);
