@@ -491,7 +491,6 @@ export default (function init() {
     editBtns = getEditButtons();
     insertBtns = getInsertButtons();
     firstEditorPar = editor.querySelector('.wf__text-section');
-    firstEditorPar.textContent = '';
     this.highlight(editor);
     this.positionWindow(editor);
     currentStep = 0;
@@ -499,24 +498,3 @@ export default (function init() {
   }
   return main;
 }());
-
-// export default main;
-function type(target, string) {
-  const targetHTML = target;
-  const baseDelay = 300;
-  let delay = baseDelay;
-  return new Promise((resolve, reject) => {
-    if (!(targetHTML instanceof Element)) reject(Error('Given target is not HTML'));
-    if (typeof string !== 'string') reject(Error('Given string is not a string'));
-    targetHTML.textContent = '';
-    string.split('').forEach((char, index, arr) => {
-      setTimeout(() => {
-        targetHTML.textContent += char;
-        if (index === arr.length - 1) {
-          setTimeout(() => resolve(targetHTML.textContent), baseDelay);
-        }
-      }, delay);
-      delay += 100;
-    });
-  });
-}
