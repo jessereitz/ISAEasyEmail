@@ -1,5 +1,7 @@
 import layoutOverview from './layoutOverview';
 import editorOverview from './editorOverview';
+import controllerOverview from './controllerOverview';
+import wrapUp from './wrapUp';
 
 import { generateElement, generateStandardButton } from '../lib.js';
 
@@ -19,6 +21,12 @@ const Tutorial = {
   $window: generateElement('div', { klasses: ['tutorial-window'] }),
   $exitBtn: generateStandardButton('&times;', { klasses: ['tutorial-exit'], id: 'tutorialExitBtn' }),
   steps: [],
+  minimizedOverlayStyle: {
+    position: 'static',
+    width: '1px',
+    height: '1px',
+    zIndex: '1',
+  },
 
   /**
    * init - Initialize the Tutorial.
@@ -99,7 +107,6 @@ const Tutorial = {
    */
   highlight(target) {
     this.releaseHighlighted();
-
     this.highlightedHTML = target;
     if (target.id === 'wfeditor') {
       this.highlightedHTML.style.background = 'white';
@@ -147,9 +154,23 @@ const Tutorial = {
     this.$overlay.style.display = 'none';
     window.location.reload();
   },
+
+  minimizeOverlay() {
+    Object.keys(this.minimizedOverlayStyle).forEach((prop) => {
+      this.$overlay.style[prop] = this.minimizedOverlayStyle[prop];
+    });
+    this.$window.style.zIndex = '1000';
+  },
+
+  maximizeOverlay() {
+    this.$overlay.style = '';
+    this.$overlay.style.display = 'block';
+  },
+
 };
 
 Tutorial.steps[0] = layoutOverview;
 Tutorial.steps[1] = editorOverview;
-
+Tutorial.steps[2] = controllerOverview;
+Tutorial.steps[3] = wrapUp;
 export default Tutorial;
