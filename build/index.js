@@ -4200,7 +4200,6 @@
   }
 
   function checkTutorialCookie() {
-    console.log(Cookies.getItem(tutorialCookieTitle));
     return Cookies.getItem(tutorialCookieTitle);
   }
 
