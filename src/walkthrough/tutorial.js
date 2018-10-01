@@ -38,7 +38,6 @@ const Tutorial = {
    *
    */
   beginTutorial() {
-    // debugger;
     this.resetWindowPosition();
     currentStep = 0;
     this.display();
@@ -51,9 +50,9 @@ const Tutorial = {
    */
   nextStep() {
     currentStep += 1;
-    // debugger;
     if (!this.steps[currentStep]) return this.hide();
     this.steps[currentStep].call(this);
+    return null;
   },
 
   /**
@@ -149,7 +148,7 @@ const Tutorial = {
   },
 };
 
-// Tutorial.steps[0] = layoutOverview;
-Tutorial.steps[0] = editorOverview;
+Tutorial.steps[0] = layoutOverview;
+Tutorial.steps[1] = editorOverview;
 
 export default Tutorial;
