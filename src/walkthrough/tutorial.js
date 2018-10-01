@@ -145,6 +145,7 @@ const Tutorial = {
   hide() {
     this.releaseHighlighted();
     this.$overlay.style.display = 'none';
+    window.location.reload();
   },
 };
 
