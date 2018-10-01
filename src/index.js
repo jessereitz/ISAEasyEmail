@@ -1,4 +1,6 @@
 import WriteFree from 'writefree';
+
+import Cookies from './cookies';
 import Modal from './modalViews/modal.js';
 import SettingsView from './modalViews/settingsView.js';
 import CopyView from './modalViews/copyView.js';
@@ -9,6 +11,8 @@ import {
   DocumentFileType,
   generateCurrentDateString,
 } from './lib.js';
+
+const tutorialCookieTitle = 'ISAEasyEmailTutorial';
 
 const containerStyle = {
   'box-sizing': 'border-box',
@@ -72,6 +76,16 @@ function setButtons() {
   };
 }
 
+function checkTutorialCookie() {
+  console.log(Cookies.getItem(tutorialCookieTitle));
+  return Cookies.getItem(tutorialCookieTitle);
+}
+
+function setTutorialCookie() {
+  const date = new Date();
+  Cookies.setItem(tutorialCookieTitle, date.toUTCString());
+}
+
 const Controller = {
   docInfo: {
     // title: `ISA Email ${generateCurrentDateString()}`,
@@ -103,6 +117,10 @@ const Controller = {
 
     window.ed = this.editor;
     window.docInfo = this.docInfo;
+    if (!checkTutorialCookie()) {
+      this.helpView.startTutorial();
+      setTutorialCookie();
+    }
     return this;
   },
 
