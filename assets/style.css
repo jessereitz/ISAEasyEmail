@@ -249,7 +249,7 @@ border-bottom: 1px solid rgba(25,255,233, 1);
   margin-top: -0.15rem;
   margin-left: 0rem;
   background-color: white;
-  transition: 0.4s;
+  transition: all 0.4s, outline 0s;
 }
 
 input:checked + .slider {
@@ -257,7 +257,12 @@ input:checked + .slider {
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 0.2em 0.2em rgba(0,0,0,0.1);
+  box-shadow: 0.1em 0.1em 0.5em 0.2em rgba(0,0,0,0.25);
+}
+
+input:focus + .slider::before {
+  outline: 2px solid Highlight;
+  box-shadow: 0.1em 0.1em 0.5em 0.2em rgba(0,0,0,0.25);
 }
 
 input:checked + .slider::before {
