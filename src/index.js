@@ -1,6 +1,6 @@
 import WriteFree from 'writefree';
 
-import Cookies from './cookies';
+import Cookies from './vendor/cookies';
 import Modal from './modalViews/modal.js';
 import SettingsView from './modalViews/settingsView.js';
 import CopyView from './modalViews/copyView.js';
@@ -77,7 +77,6 @@ function setButtons() {
 }
 
 function checkTutorialCookie() {
-  console.log(Cookies.getItem(tutorialCookieTitle));
   return Cookies.getItem(tutorialCookieTitle);
 }
 
