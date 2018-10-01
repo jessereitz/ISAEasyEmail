@@ -66,8 +66,7 @@ const Modal = {
    */
   createOverlay() {
     const klasses = ['modal-overlay'];
-    const id = 'main-modal';
-    this.$overlay = generateElement('div', { klasses, id });
+    this.$overlay = generateElement('div', { klasses });
     document.body.appendChild(this.$overlay);
     return this.overlay;
   },
@@ -80,7 +79,8 @@ const Modal = {
    */
   createWindow() {
     const klasses = 'modal-window';
-    this.$window = generateElement('div', { klasses });
+    const id = 'main-modal';
+    this.$window = generateElement('div', { klasses, id });
     this.$overlay.appendChild(this.$window);
     return this.window;
   },
