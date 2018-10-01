@@ -19,11 +19,17 @@ function loadField() {
  */
 function saveField() {
   const url = validateURL(this.input.value);
+  this.input.classList.remove('settingsField--error');
   if (url) {
+    this.targetHTML.style.display = 'block';
     this.targetHTML.href = url;
     return true;
   }
-  return false;
+  if (this.input.value.length === 0) {
+    this.targetHTML.style.display = 'none';
+    return false;
+  }
+  throw Error('Invalid URL');
 }
 
 /**
@@ -46,6 +52,41 @@ function saveTitle(value) {
   this.docInfo.title = value;
 }
 
+function createSettingSwitchField(labelText, targetID, targetField) {
+  const ctn = generateElement('div', { style: { 'text-align': 'left' } });
+  const labelCtn = generateElement('label', { klasses: ['switch'] });
+  const labelTxt = generateElement('span', { klasses: ['sitch-text'] });
+  const input = generateElement('input', { type: 'checkbox', checked: 'true' });
+  const slider = generateElement('span', { klasses: ['slider'] });
+  const closedTargetField = targetField;
+  labelTxt.textContent = labelText;
+  labelCtn.appendChild(labelTxt);
+  labelCtn.appendChild(input);
+  labelCtn.appendChild(slider);
+  ctn.appendChild(labelCtn);
+  labelCtn.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      closedTargetField.ctn.style.maxHeight = targetField.ctn.prevHeight;
+    } else {
+      closedTargetField.input.value = '';
+      closedTargetField.ctn.prevHeight = targetField.ctn.style.maxHeight;
+      closedTargetField.ctn.style.maxHeight = 0;
+    }
+  });
+  const field = {
+    ctn,
+    label: labelCtn,
+    input,
+    targetID,
+    load: () => {
+      const checked = !!document.getElementById(targetID);
+      input.checked = checked;
+    },
+    save: () => {},
+  };
+  return field;
+}
+
 /**
  * createSettingsField - Creates a setting field. A settings field is an object
  *  consisting of an HTML div containing a label and input. It also contains
@@ -61,7 +102,7 @@ function saveTitle(value) {
  * @returns {Field} Returns the newly created field.
  */
 function createSettingsField(labelText, targetID, loadCallback, saveCallback) {
-  const ctn = generateElement('div', { style: { 'text-align': 'left' } });
+  const ctn = generateElement('div', { klasses: ['settingsField'], style: { 'text-align': 'left' } });
   const label = generateElement('label');
   label.textContent = labelText;
   const input = generateElement(
@@ -77,8 +118,23 @@ function createSettingsField(labelText, targetID, loadCallback, saveCallback) {
       },
     },
   );
+  const errorMessage = generateElement(
+    'div',
+    {
+      klasses: ['settingsField__error-message'],
+      style: {
+        'margin-top': '-0.25em',
+        background: 'rgba(242, 110, 127, 0.25)',
+        border: '1px solid rgba(242, 110, 127, 1)',
+        display: 'none',
+        padding: '0.1em 0.25rem',
+        'font-size': '0.85em',
+      },
+    },
+  );
   ctn.appendChild(label);
   ctn.appendChild(input);
+  ctn.appendChild(errorMessage);
   const field = {
     ctn,
     label,
@@ -86,6 +142,8 @@ function createSettingsField(labelText, targetID, loadCallback, saveCallback) {
     targetID,
     load: loadCallback && typeof loadCallback === 'function' ? loadCallback : loadField,
     save: saveCallback && typeof saveCallback === 'function' ? saveCallback : saveField,
+    showError: (msg) => { errorMessage.textContent = msg; errorMessage.style.display = 'block'; },
+    hideError: () => { errorMessage.style.display = 'none'; },
   };
   return field;
 }
@@ -112,9 +170,13 @@ const SettingsView = {
 
   generateFields() {
     this.fields = [];
+    const advisingLinkField = createSettingsField('Advising Session URL:', 'advisingLink');
+    const applicationLinkField = createSettingsField('Application URL:', 'applicationLink');
     this.fields.push(createSettingsField('Email Title', '', loadTitle.bind(this), saveTitle.bind(this)));
-    this.fields.push(createSettingsField('Advising Session URL:', 'advisingLink'));
-    this.fields.push(createSettingsField('Application URL:', 'applicationLink'));
+    this.fields.push(createSettingSwitchField('Include Advising Session Link', 'advisingLink', advisingLinkField));
+    this.fields.push(advisingLinkField);
+    this.fields.push(createSettingSwitchField('Include Application Link', 'applicationLink', applicationLinkField));
+    this.fields.push(applicationLinkField);
     this.loadFields();
   },
 
@@ -147,8 +209,22 @@ const SettingsView = {
    *  Otherwise returns false.
    */
   save() {
-    this.fields.forEach(field => field.save(field.input.value));
-    this.modal.hide();
+    const errors = [];
+    this.fields.forEach((field) => {
+      try {
+        if (field.hideError) field.hideError();
+        field.save(field.input.value);
+      } catch (err) {
+        field.input.classList.add('settingsField--error');
+        if (field.showError) {
+          field.showError(err.message);
+        } else {
+          throw err;
+        }
+        errors.push(err);
+      }
+    });
+    if (errors.length === 0) this.modal.hide();
     return true;
   },
 };
