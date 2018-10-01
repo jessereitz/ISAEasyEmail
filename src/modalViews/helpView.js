@@ -43,7 +43,7 @@ const helpView = {
       style: { 'text-align': 'left', 'max-width': '35em', margin: '2em auto' },
     },
   ),
-  $tutorialBtn: generateStandardButton('Tutorial', { style: btnStyle }),
+  $tutorialBtn: generateStandardButton('Tutorial<br/>(unsaved progress will be lost)', { style: btnStyle }),
   $grsBtn: generateStandardButton('GRS Help', { style: btnStyle }),
   $imagesBtn: generateStandardButton('Images Help', { style: btnStyle }),
 
