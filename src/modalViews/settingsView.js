@@ -52,6 +52,18 @@ function saveTitle(value) {
   this.docInfo.title = value;
 }
 
+/**
+ * createSettingSwitchField - Creates a toggle switch to display or hide a
+ *  settings field (given targetField).
+ *
+ * @param {String} labelText   The text to display next to the switch.
+ * @param {String} targetID    The id of the HTML element in the email which
+ *  this switch will affect.
+ * @param {SettingsField} targetField The settingsField which this switch will
+ *  display or hide.
+ *
+ * @returns {SettingsSwitchField} Returns the newly created SettingsSwitchField.
+ */
 function createSettingSwitchField(labelText, targetID, targetField) {
   const ctn = generateElement('div', { style: { 'text-align': 'left' } });
   const labelCtn = generateElement('label', { klasses: ['switch'] });
@@ -66,8 +78,12 @@ function createSettingSwitchField(labelText, targetID, targetField) {
   ctn.appendChild(labelCtn);
   labelCtn.addEventListener('change', (e) => {
     if (e.target.checked) {
+      if (closedTargetField.prevValue) {
+        closedTargetField.input.value = closedTargetField.prevValue;
+      }
       closedTargetField.ctn.style.maxHeight = targetField.ctn.prevHeight;
     } else {
+      closedTargetField.prevValue = closedTargetField.input.value;
       closedTargetField.input.value = '';
       closedTargetField.ctn.prevHeight = targetField.ctn.style.maxHeight;
       closedTargetField.ctn.style.maxHeight = 0;
