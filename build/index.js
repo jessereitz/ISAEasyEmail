@@ -3605,7 +3605,7 @@
         this.$window.style.right = (window.innerWidth - targetRect.left) + windowPosOffset;
       }
 
-      if (targetRect.bottom + modalRect.height < window.innerHeight) {
+      if (targetRect.top + modalRect.height < window.innerHeight) {
         this.$window.style.top = targetRect.top;
       } else {
         this.$window.style.bottom = windowPosOffset;
