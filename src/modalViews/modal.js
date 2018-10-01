@@ -66,7 +66,8 @@ const Modal = {
    */
   createOverlay() {
     const klasses = ['modal-overlay'];
-    this.$overlay = generateElement('div', { klasses });
+    const id = 'main-modal';
+    this.$overlay = generateElement('div', { klasses, id });
     document.body.appendChild(this.$overlay);
     return this.overlay;
   },
