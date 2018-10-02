@@ -87,7 +87,6 @@ function setTutorialCookie() {
 
 const Controller = {
   docInfo: {
-    // title: `ISA Email ${generateCurrentDateString()}`,
     fileType: DocumentFileType,
     dateCreated: generateCurrentDateString(),
   },
@@ -180,6 +179,20 @@ const Controller = {
           return closureTitle;
         },
       });
+      if (!this.docInfo.links) {
+        const advisingLink = document.getElementById('advisingLink');
+        const applicationLink = document.getElementById('applicationLink');
+        this.docInfo.links = {
+          advisingSession: {
+            text: advisingLink.textContent,
+            url: advisingLink.href,
+          },
+          application: {
+            text: applicationLink.textContent,
+            url: applicationLink.href,
+          },
+        };
+      }
       this.docInfo.title = `ISA Email ${this.docInfo.dateCreated}`;
     }
   },
@@ -206,6 +219,9 @@ const Controller = {
       Object.keys(docInfo).forEach((key) => {
         this.docInfo[key] = docInfo[key];
       });
+    }
+    if (this.settingsview) {
+      this.settingsview.init(this.modal, this.docInfo);
     }
     return this.docInfo;
   },

@@ -278,8 +278,6 @@ input:checked + .slider::before {
 .settingsField--error {
   border: none;
   border: 2px solid rgba(242, 90, 97, 1) !important;
-  /* background: rgba(242, 110, 127, 0.25); */
-  /* color: white; */
 }
 
 *.hide {

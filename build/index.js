@@ -2232,7 +2232,12 @@
    */
   function loadField() {
     this.targetHTML = document.getElementById(this.targetID);
-    this.input.value = this.targetHTML.href;
+    if (!this.docInfoRef) this.targetHTML.style.display = 'none';
+    else {
+      this.targetHTML.href = this.docInfoRef.url;
+      this.input.value = this.docInfoRef.url;
+      this.targetHTML.style.display = 'block';
+    }
     return this;
   }
 
@@ -2289,41 +2294,52 @@
    *
    * @returns {SettingsSwitchField} Returns the newly created SettingsSwitchField.
    */
-  function createSettingSwitchField(labelText, targetID, targetField) {
+  function createSettingSwitchField(docInfoTitle, docInfo, labelText, targetID, targetField) {
     const ctn = generateElement$1('div', { style: { 'text-align': 'left' } });
     const labelCtn = generateElement$1('label', { klasses: ['switch'] });
     const labelTxt = generateElement$1('span', { klasses: ['sitch-text'] });
     const input = generateElement$1('input', { type: 'checkbox', checked: 'true' });
     const slider = generateElement$1('span', { klasses: ['slider'] });
-    const closedTargetField = targetField;
+    const closedDocInfo = docInfo;
     labelTxt.textContent = labelText;
     labelCtn.appendChild(labelTxt);
     labelCtn.appendChild(input);
     labelCtn.appendChild(slider);
     ctn.appendChild(labelCtn);
-    labelCtn.addEventListener('change', (e) => {
+    function checkboxHandler(e) {
       if (e.target.checked) {
-        if (closedTargetField.prevValue) {
-          closedTargetField.input.value = closedTargetField.prevValue;
-        }
-        closedTargetField.ctn.style.maxHeight = targetField.ctn.prevHeight;
+        targetField.display();
       } else {
-        closedTargetField.prevValue = closedTargetField.input.value;
-        closedTargetField.input.value = '';
-        closedTargetField.ctn.prevHeight = targetField.ctn.style.maxHeight;
-        closedTargetField.ctn.style.maxHeight = 0;
+        targetField.hide();
       }
-    });
+    }
+    labelCtn.addEventListener('change', checkboxHandler.bind(this));
     const field = {
       ctn,
       label: labelCtn,
       input,
       targetID,
       load: () => {
-        const checked = !!document.getElementById(targetID);
-        input.checked = checked;
+        input.checked = (
+          typeof closedDocInfo.links[docInfoTitle] !== 'undefined'
+          && closedDocInfo.links[docInfoTitle] !== null
+        );
+        if (!input.checked) {
+          // const html = document.getElementById(targetID);
+          // html.style.display = 'none';
+          checkboxHandler.call(this, { target: input });
+        }
       },
-      save: () => {},
+      save: () => {
+        let newVal = null;
+        if (validateURL$1(targetField.input.value)) {
+          newVal = {
+            text: document.getElementById(targetID).textContent,
+            url: targetField.input.value,
+          };
+        }
+        closedDocInfo.links[docInfoTitle] = newVal;
+      },
     };
     return field;
   }
@@ -2342,7 +2358,7 @@
    *
    * @returns {Field} Returns the newly created field.
    */
-  function createSettingsField(labelText, targetID, loadCallback, saveCallback) {
+  function createSettingsField(docInfoRef, labelText, targetID, loadCallback, saveCallback) {
     const ctn = generateElement$1('div', { klasses: ['settingsField'], style: { 'text-align': 'left' } });
     const label = generateElement$1('label');
     label.textContent = labelText;
@@ -2385,6 +2401,18 @@
       save: saveCallback && typeof saveCallback === 'function' ? saveCallback : saveField,
       showError: (msg) => { errorMessage.textContent = msg; errorMessage.style.display = 'block'; },
       hideError: () => { errorMessage.style.display = 'none'; },
+      display: function displayField() {
+        if (this.prevValue) {
+          input.value = this.prevValue;
+        }
+        ctn.style.maxHeight = '10em';
+      },
+      hide: function hideField() {
+        this.prevValue = input.value;
+        input.value = '';
+        ctn.style.maxHeight = 0;
+      },
+      docInfoRef,
     };
     return field;
   }
@@ -2404,6 +2432,7 @@
     init(modal, docInfo) {
       this.modal = modal;
       this.docInfo = docInfo;
+      this.$ctn.innerHTML = '';
       this.$ctn.appendChild(this.$heading);
       this.generateFields();
       return this;
@@ -2411,12 +2440,12 @@
 
     generateFields() {
       this.fields = [];
-      const advisingLinkField = createSettingsField('Advising Session URL:', 'advisingLink');
-      const applicationLinkField = createSettingsField('Application URL:', 'applicationLink');
-      this.fields.push(createSettingsField('Email Title', '', loadTitle.bind(this), saveTitle.bind(this)));
-      this.fields.push(createSettingSwitchField('Include Advising Session Link', 'advisingLink', advisingLinkField));
+      const advisingLinkField = createSettingsField((this.docInfo.links.advisingSession || null), 'Advising Session URL:', 'advisingLink');
+      const applicationLinkField = createSettingsField((this.docInfo.links.application || null), 'Application URL:', 'applicationLink');
+      this.fields.push(createSettingsField('title', 'Email Title', '', loadTitle.bind(this), saveTitle.bind(this)));
+      this.fields.push(createSettingSwitchField('advisingSession', this.docInfo, 'Include Advising Session Link', 'advisingLink', advisingLinkField));
       this.fields.push(advisingLinkField);
-      this.fields.push(createSettingSwitchField('Include Application Link', 'applicationLink', applicationLinkField));
+      this.fields.push(createSettingSwitchField('application', this.docInfo, 'Include Application Link', 'applicationLink', applicationLinkField));
       this.fields.push(applicationLinkField);
       this.loadFields();
     },
@@ -2426,7 +2455,9 @@
      *
      */
     loadFields() {
+      console.log('loading');
       this.fields.forEach((field) => {
+        // debugger;
         field.load(field.input);
         this.$ctn.appendChild(field.ctn);
       });
@@ -2438,6 +2469,7 @@
      * @returns {Element} Returns the modal containing this view.
      */
     display() {
+      this.loadFields();
       this.modal.setSaveHandler('Save', this.save.bind(this));
       return this.modal.display(this.$ctn);
     },
@@ -2465,6 +2497,7 @@
           errors.push(err);
         }
       });
+      console.log(this.docInfo);
       if (errors.length === 0) this.modal.hide();
       return true;
     },
@@ -4302,7 +4335,6 @@
 
   const Controller = {
     docInfo: {
-      // title: `ISA Email ${generateCurrentDateString()}`,
       fileType: DocumentFileType,
       dateCreated: generateCurrentDateString(),
     },
@@ -4395,6 +4427,20 @@
             return closureTitle;
           },
         });
+        if (!this.docInfo.links) {
+          const advisingLink = document.getElementById('advisingLink');
+          const applicationLink = document.getElementById('applicationLink');
+          this.docInfo.links = {
+            advisingSession: {
+              text: advisingLink.textContent,
+              url: advisingLink.href,
+            },
+            application: {
+              text: applicationLink.textContent,
+              url: applicationLink.href,
+            },
+          };
+        }
         this.docInfo.title = `ISA Email ${this.docInfo.dateCreated}`;
       }
     },
@@ -4421,6 +4467,9 @@
         Object.keys(docInfo).forEach((key) => {
           this.docInfo[key] = docInfo[key];
         });
+      }
+      if (this.settingsview) {
+        this.settingsview.init(this.modal, this.docInfo);
       }
       return this.docInfo;
     },
