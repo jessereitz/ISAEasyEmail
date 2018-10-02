@@ -30,11 +30,10 @@ function saveField() {
     this.targetHTML.href = url;
     return true;
   }
-  if (this.input.value.length === 0) {
-    this.targetHTML.style.display = 'none';
-    return false;
-  }
-  throw Error('Invalid URL');
+  this.targetHTML.style.display = 'none';
+  this.targetHTML.href = '';
+  if (!this.hidden) throw Error('Invalid URL');
+  return true;
 }
 
 /**
@@ -75,7 +74,6 @@ function createSettingSwitchField(docInfoTitle, docInfo, labelText, targetID, ta
   const labelTxt = generateElement('span', { klasses: ['sitch-text'] });
   const input = generateElement('input', { type: 'checkbox', checked: 'true' });
   const slider = generateElement('span', { klasses: ['slider'] });
-  const closedTargetField = targetField;
   const closedDocInfo = docInfo;
   labelTxt.textContent = labelText;
   labelCtn.appendChild(labelTxt);
@@ -101,8 +99,6 @@ function createSettingSwitchField(docInfoTitle, docInfo, labelText, targetID, ta
         && closedDocInfo.links[docInfoTitle] !== null
       );
       if (!input.checked) {
-        // const html = document.getElementById(targetID);
-        // html.style.display = 'none';
         checkboxHandler.call(this, { target: input });
       }
     },
@@ -182,11 +178,13 @@ function createSettingsField(docInfoRef, labelText, targetID, loadCallback, save
         input.value = this.prevValue;
       }
       ctn.style.maxHeight = '10em';
+      this.hidden = false;
     },
     hide: function hideField() {
       this.prevValue = input.value;
       input.value = '';
       ctn.style.maxHeight = 0;
+      this.hidden = true;
     },
     docInfoRef,
   };
@@ -231,9 +229,7 @@ const SettingsView = {
    *
    */
   loadFields() {
-    console.log('loading');
     this.fields.forEach((field) => {
-      // debugger;
       field.load(field.input);
       this.$ctn.appendChild(field.ctn);
     });
@@ -273,7 +269,6 @@ const SettingsView = {
         errors.push(err);
       }
     });
-    console.log(this.docInfo);
     if (errors.length === 0) this.modal.hide();
     return true;
   },
