@@ -2486,6 +2486,9 @@
       this.switchField.init(this.docInfo.links, `Include ${fieldTitle} Link:`, '', null, null);
       this.textField.init(this.docInfo.links, `${fieldTitle} URL:`);
 
+      this.switchField.ctn.classList.remove('settingsField');
+      this.textField.ctn.classList.remove('settingsField');
+
       this.showError = this.textField.showError.bind(this.textField);
       this.hideError = this.textField.hideError.bind(this.textField);
 
@@ -3077,7 +3080,73 @@
     }
   }
 
-  (function init() {
+  const substeps = [
+    {
+      target: 'tutorialExitBtn',
+      description: `
+      <p>Click this button at any time to exit this tutorial.</p>
+    `,
+    },
+    {
+      target: 'wfeditor',
+      description: `
+      <p>This is the editor and preview section. This section allows you to compose and edit your email.</p>
+    `,
+    },
+    {
+      target: 'controller',
+      description: `
+      <p>These buttons allow you to manipulate your email in a broad manner, similar to the File menu in most programs.</p>
+    `,
+    },
+    {
+      target: 'metaDisplayCtn',
+      description: `
+      <p>You can see important info about your email here, such as its title.</p>
+    `,
+    },
+    {
+      target: 'helpBtnCtn',
+      description: `
+      <p>Click this button if you ever need help with ISA Easy Email or if you would like to go through this tutorial again.</p>
+    `,
+    },
+  ];
+
+  function layoutOverview() {
+    let currentIndex = 0;
+    const nextBtn = generateStandardButton('Continue');
+    toggleClicksEnabled.call(this, nextBtn);
+    const next = function next() {
+      if (currentIndex === 0) this.$window.classList.remove('vertical-center');
+      if (!substeps[currentIndex]) {
+        toggleClicksEnabled.call(this);
+        return this.nextStep();
+      }
+      const target = document.getElementById(substeps[currentIndex].target);
+      this.highlight(target);
+      this.positionWindow(target);
+      this.$window.innerHTML = substeps[currentIndex].description;
+      this.$window.appendChild(nextBtn);
+      currentIndex += 1;
+      return null;
+    };
+
+    nextBtn.addEventListener('click', next.bind(this));
+
+    this.$window.innerHTML = `
+    <h1>Welcome!</h1>
+    <p>
+      This tutorial is designed to take you through the core features and
+      functions of the ISA Easy Email Generator. We'll start with a basic
+      overview of the layout of the page. Click "Continue" below to begin.
+    </p>
+  `;
+    this.$window.appendChild(nextBtn);
+    this.centerWindow();
+  }
+
+  var editorOverview = (function init() {
     let editor; let editBtns; let insertBtns; let firstEditorPar;
     // An Array of the substeps through which the user will proceed
     const substeps = [];
@@ -3859,9 +3928,97 @@
     substeps[10] = function linkOverview() {
       this.$window.innerHTML = `
       <p>
-        Perfect
+        Perfect. The following fields allow you to manipulate the two large
+        buttons at the bottom of the email. These buttons provide links to a
+        place to book an advising session (eg. SimpleBook.me) and to the online
+        application. They have default values but you can choose to override
+        them here.
       </p>
     `;
+      prepNextBtn.call(this);
+      this.$window.appendChild(nextBtn);
+      toggleClicksEnabled.call(this, nextBtn);
+    };
+
+    substeps[11] = function switchingLinks() {
+      this.$window.innerHTML = `
+      <p>
+        For instance, let's say we <strong>don't</strong> want to include an
+        advising session link but <strong>do</strong> want to provide a link to
+        an online application, but at a new location.
+      </p>
+      <p>
+        First, let's get rid of that advising session link. You can remove it by
+        clicking the toggle switch after "Include Advising Session Link". Try
+        this now.
+      </p>
+    `;
+      const advisingSeshField = mainModal.querySelectorAll('.settingsField')[1];
+      const advisingSeshSwitch = advisingSeshField.querySelector('.switch');
+      function changeToggle(e) {
+        e.target.removeEventListener('change', e.target.tutChangeHandler);
+        nextSubStep.call(this);
+      }
+      advisingSeshSwitch.tutChangeHandler = changeToggle.bind(this);
+      advisingSeshSwitch.addEventListener('change', advisingSeshSwitch.tutChangeHandler);
+      toggleClicksEnabled.call(this, advisingSeshField);
+      this.highlight(advisingSeshField);
+      this.positionWindow(advisingSeshField);
+    };
+
+    substeps[12] = function editingLinkURLs() {
+      const targetText = 'google.com';
+      this.$window.innerHTML = `
+      <p>
+        Did you notice how the text box for the advising session URL went away?
+        Once you hit save the link itself will be removed from the email too.
+        Pretty neat, right?
+      </p>
+      <p>
+        Now let's change the URL for the link to the online application. We'll
+        just set it to something easy, like google for now. Change the contents
+        of the Application Link URL box to say "${targetText}".
+      </p>
+    `;
+      const applicationLinkField = mainModal.querySelectorAll('.settingsField')[2];
+      const applicationLinkTextBox = applicationLinkField.querySelector('input[type="text"]');
+      function isCorrectURL() {
+        if (applicationLinkTextBox.value === targetText) {
+          applicationLinkTextBox.removeEventListener('keyup', applicationLinkTextBox.tutKeyHandler);
+          nextSubStep.call(this);
+        }
+      }
+      applicationLinkTextBox.tutKeyHandler = isCorrectURL.bind(this);
+      applicationLinkTextBox.addEventListener('keyup', applicationLinkTextBox.tutKeyHandler);
+      this.highlight(applicationLinkField);
+      this.positionWindow(applicationLinkField);
+      toggleClicksEnabled.call(this, applicationLinkTextBox);
+    };
+
+    substeps[13] = function thatsIt() {
+      this.$window.innerHTML = `
+      <p>
+        Awesome! Now click "Save" to save these settings.
+      </p>
+    `;
+      const saveBtn = mainModal.lastChild.firstChild;
+      saveBtn.tutClickHandler = closeModalListener.call(this, saveBtn);
+      saveBtn.addEventListener('click', saveBtn.tutClickHandler);
+      toggleClicksEnabled.call(this, saveBtn);
+    };
+
+    substeps[14] = function wrapUp() {
+      this.$window.innerHTML = `
+      <p>
+        That's it for the controller section. Check out the email now: it has
+        only the application link. You should
+        also notice that the title in the bottom right of the corner has changed.
+      </p>
+    `;
+      toggleClicksEnabled.call(this, nextBtn);
+      this.positionWindow(controller);
+      prepNextBtn.call(this);
+      this.$window.appendChild(nextBtn);
     };
 
     function main() {
@@ -3873,6 +4030,23 @@
     }
     return main;
   }());
+
+  function wrapUp() {
+    const closeBtn = generateStandardButton('Exit Tutorial');
+    closeBtn.addEventListener('click', this.hide.bind(this));
+    this.$window.innerHTML = `
+    <h1>And That's It!</h1>
+    <p>
+      Hopefully this tutorial has given you a bit of insight into how to
+      effectively use ISA Easy Email. I encourage you to play around with the
+      editor and explore all its functionality! You should also read the "GRS
+      Help" and "Images Help" in the Help section so you can take full advantage
+      of ISA Easy Email!
+    </p>
+  `;
+    this.$window.appendChild(closeBtn);
+    this.centerWindow();
+  }
 
   const windowPosOffset = 20;
   let currentStep = 0;
@@ -4057,9 +4231,10 @@
     },
   };
 
-  // Tutorial.steps[0] = layoutOverview;
-  // Tutorial.steps[1] = editorOverview;
-  Tutorial.steps[0] = controllerOverview;
+  Tutorial.steps[0] = layoutOverview;
+  Tutorial.steps[1] = editorOverview;
+  Tutorial.steps[2] = controllerOverview;
+  Tutorial.steps[3] = wrapUp;
 
   /*
    ######   ########   ######     ##     ## ######## ##       ########

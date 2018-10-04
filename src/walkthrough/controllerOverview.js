@@ -284,10 +284,98 @@ export default (function init() {
   substeps[10] = function linkOverview() {
     this.$window.innerHTML = `
       <p>
-        Perfect
+        Perfect. The following fields allow you to manipulate the two large
+        buttons at the bottom of the email. These buttons provide links to a
+        place to book an advising session (eg. SimpleBook.me) and to the online
+        application. They have default values but you can choose to override
+        them here.
       </p>
-    `
-  }
+    `;
+    prepNextBtn.call(this);
+    this.$window.appendChild(nextBtn);
+    toggleClicksEnabled.call(this, nextBtn);
+  };
+
+  substeps[11] = function switchingLinks() {
+    this.$window.innerHTML = `
+      <p>
+        For instance, let's say we <strong>don't</strong> want to include an
+        advising session link but <strong>do</strong> want to provide a link to
+        an online application, but at a new location.
+      </p>
+      <p>
+        First, let's get rid of that advising session link. You can remove it by
+        clicking the toggle switch after "Include Advising Session Link". Try
+        this now.
+      </p>
+    `;
+    const advisingSeshField = mainModal.querySelectorAll('.settingsField')[1];
+    const advisingSeshSwitch = advisingSeshField.querySelector('.switch');
+    function changeToggle(e) {
+      e.target.removeEventListener('change', e.target.tutChangeHandler);
+      nextSubStep.call(this);
+    }
+    advisingSeshSwitch.tutChangeHandler = changeToggle.bind(this);
+    advisingSeshSwitch.addEventListener('change', advisingSeshSwitch.tutChangeHandler);
+    toggleClicksEnabled.call(this, advisingSeshField);
+    this.highlight(advisingSeshField);
+    this.positionWindow(advisingSeshField);
+  };
+
+  substeps[12] = function editingLinkURLs() {
+    const targetText = 'google.com';
+    this.$window.innerHTML = `
+      <p>
+        Did you notice how the text box for the advising session URL went away?
+        Once you hit save the link itself will be removed from the email too.
+        Pretty neat, right?
+      </p>
+      <p>
+        Now let's change the URL for the link to the online application. We'll
+        just set it to something easy, like google for now. Change the contents
+        of the Application Link URL box to say "${targetText}".
+      </p>
+    `;
+    const applicationLinkField = mainModal.querySelectorAll('.settingsField')[2];
+    const applicationLinkTextBox = applicationLinkField.querySelector('input[type="text"]');
+    function isCorrectURL() {
+      if (applicationLinkTextBox.value === targetText) {
+        applicationLinkTextBox.removeEventListener('keyup', applicationLinkTextBox.tutKeyHandler);
+        nextSubStep.call(this);
+      }
+    }
+    applicationLinkTextBox.tutKeyHandler = isCorrectURL.bind(this);
+    applicationLinkTextBox.addEventListener('keyup', applicationLinkTextBox.tutKeyHandler);
+    this.highlight(applicationLinkField);
+    this.positionWindow(applicationLinkField);
+    toggleClicksEnabled.call(this, applicationLinkTextBox);
+  };
+
+  substeps[13] = function thatsIt() {
+    this.$window.innerHTML = `
+      <p>
+        Awesome! Now click "Save" to save these settings.
+      </p>
+    `;
+    const saveBtn = mainModal.lastChild.firstChild;
+    saveBtn.tutClickHandler = closeModalListener.call(this, saveBtn);
+    saveBtn.addEventListener('click', saveBtn.tutClickHandler);
+    toggleClicksEnabled.call(this, saveBtn);
+  };
+
+  substeps[14] = function wrapUp() {
+    this.$window.innerHTML = `
+      <p>
+        That's it for the controller section. Check out the email now: it has
+        only the application link. You should
+        also notice that the title in the bottom right of the corner has changed.
+      </p>
+    `;
+    toggleClicksEnabled.call(this, nextBtn);
+    this.positionWindow(controller);
+    prepNextBtn.call(this);
+    this.$window.appendChild(nextBtn);
+  };
 
   function main() {
     getControllerAndButtons();
