@@ -151,3 +151,23 @@ export function cleanFileName(string) {
   cleanedString = cleanedString.replace(/ /g, '_');
   return cleanedString;
 }
+
+/**
+ * appendChildren - Append multiple children to a target node.
+ *
+ * @param {HTML Element} node     The node to which the children will be added.
+ * @param {[HTML Element]} children The children to be added.
+ *
+ * @returns {HTML Element || false} Returns the node if successful. Otherwise
+ *  returns false;
+ */
+export function appendChildren(node, children) {
+  if (node instanceof Element && Array.isArray(children)) {
+    children.forEach((child) => {
+      if (child instanceof Element) node.appendChild(child);
+      else throw Error(`Child ${child} is not an HTML Element`);
+    });
+    return node;
+  }
+  return false;
+}
