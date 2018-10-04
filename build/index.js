@@ -3047,6 +3047,36 @@
     },
   };
 
+  /**
+   * toggleClicksEnabled - Disables or enables click, mousedown, and mouseup
+   *  events in the document. Clicks are always enabled for the exit button and
+   *  can be enabled for a given HTML element (the allowed parameter).
+   *
+   * @param {Element} allowed An HTML Element which should still be clickable.
+   *
+   */
+  function toggleClicksEnabled(allowed) {
+    function disableClicks(e) {
+      if (allowed instanceof Element && allowed.contains(e.target)) return false;
+      if (this.$exitBtn.contains(e.target)) return toggleClicksEnabled.call(this);
+      e.preventDefault();
+      e.stopPropagation();
+      return true;
+    }
+    if (document.disableFunction) {
+      document.removeEventListener('click', document.disableFunction, true);
+      document.removeEventListener('mousedown', document.disableFunction, true);
+      document.removeEventListener('mouseup', document.disableFunction, true);
+      document.disableFunction = null;
+    }
+    if (allowed && allowed instanceof Element) {
+      document.disableFunction = disableClicks.bind(this);
+      document.addEventListener('click', document.disableFunction, true);
+      document.addEventListener('mousedown', document.disableFunction, true);
+      document.addEventListener('mouseup', document.disableFunction, true);
+    }
+  }
+
   const substeps = [
     {
       target: 'tutorialExitBtn',
@@ -3057,28 +3087,24 @@
     {
       target: 'wfeditor',
       description: `
-      <!--<h1>Editor / Preview</h1>-->
       <p>This is the editor and preview section. This section allows you to compose and edit your email.</p>
     `,
     },
     {
       target: 'controller',
       description: `
-      <!--<h1>Controller</h1>-->
       <p>These buttons allow you to manipulate your email in a broad manner, similar to the File menu in most programs.</p>
     `,
     },
     {
       target: 'metaDisplayCtn',
       description: `
-      <!--<h1>Email Info</h1>-->
       <p>You can see important info about your email here, such as its title.</p>
     `,
     },
     {
       target: 'helpBtnCtn',
       description: `
-      <!--<h1>Help Section</h1>-->
       <p>Click this button if you ever need help with ISA Easy Email or if you would like to go through this tutorial again.</p>
     `,
     },
@@ -3087,10 +3113,11 @@
   function layoutOverview() {
     let currentIndex = 0;
     const nextBtn = generateStandardButton('Continue');
-
+    toggleClicksEnabled.call(this, nextBtn);
     const next = function next() {
       if (currentIndex === 0) this.$window.classList.remove('vertical-center');
       if (!substeps[currentIndex]) {
+        toggleClicksEnabled.call(this);
         return this.nextStep();
       }
       const target = document.getElementById(substeps[currentIndex].target);
@@ -3614,36 +3641,6 @@
     }
     return main;
   }());
-
-  /**
-   * toggleClicksEnabled - Disables or enables click, mousedown, and mouseup
-   *  events in the document. Clicks are always enabled for the exit button and
-   *  can be enabled for a given HTML element (the allowed parameter).
-   *
-   * @param {Element} allowed An HTML Element which should still be clickable.
-   *
-   */
-  function toggleClicksEnabled(allowed) {
-    function disableClicks(e) {
-      if (allowed instanceof Element && allowed.contains(e.target)) return false;
-      if (this.$exitBtn.contains(e.target)) return toggleClicksEnabled.call(this);
-      e.preventDefault();
-      e.stopPropagation();
-      return true;
-    }
-    if (document.disableFunction) {
-      document.removeEventListener('click', document.disableFunction, true);
-      document.removeEventListener('mousedown', document.disableFunction, true);
-      document.removeEventListener('mouseup', document.disableFunction, true);
-      document.disableFunction = null;
-    }
-    if (allowed && allowed instanceof Element) {
-      document.disableFunction = disableClicks.bind(this);
-      document.addEventListener('click', document.disableFunction, true);
-      document.addEventListener('mousedown', document.disableFunction, true);
-      document.addEventListener('mouseup', document.disableFunction, true);
-    }
-  }
 
   var controllerOverview = (function init() {
     const substeps = [];

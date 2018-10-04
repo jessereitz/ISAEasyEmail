@@ -1,4 +1,5 @@
 import { generateStandardButton } from '../lib';
+import toggleClicksEnabled from './tutorialLib';
 
 const substeps = [
   {
@@ -10,28 +11,24 @@ const substeps = [
   {
     target: 'wfeditor',
     description: `
-      <!--<h1>Editor / Preview</h1>-->
       <p>This is the editor and preview section. This section allows you to compose and edit your email.</p>
     `,
   },
   {
     target: 'controller',
     description: `
-      <!--<h1>Controller</h1>-->
       <p>These buttons allow you to manipulate your email in a broad manner, similar to the File menu in most programs.</p>
     `,
   },
   {
     target: 'metaDisplayCtn',
     description: `
-      <!--<h1>Email Info</h1>-->
       <p>You can see important info about your email here, such as its title.</p>
     `,
   },
   {
     target: 'helpBtnCtn',
     description: `
-      <!--<h1>Help Section</h1>-->
       <p>Click this button if you ever need help with ISA Easy Email or if you would like to go through this tutorial again.</p>
     `,
   },
@@ -40,10 +37,11 @@ const substeps = [
 export default function layoutOverview() {
   let currentIndex = 0;
   const nextBtn = generateStandardButton('Continue');
-
+  toggleClicksEnabled.call(this, nextBtn);
   const next = function next() {
     if (currentIndex === 0) this.$window.classList.remove('vertical-center');
     if (!substeps[currentIndex]) {
+      toggleClicksEnabled.call(this);
       return this.nextStep();
     }
     const target = document.getElementById(substeps[currentIndex].target);

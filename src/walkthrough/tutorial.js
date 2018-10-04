@@ -3,7 +3,8 @@ import editorOverview from './editorOverview';
 import controllerOverview from './controllerOverview';
 import wrapUp from './wrapUp';
 
-import { generateElement, generateStandardButton } from '../lib.js';
+import { generateElement, generateStandardButton } from '../lib';
+import toggleClicksEnabled from './tutorialLib';
 
 const windowPosOffset = 20;
 let currentStep = 0;
