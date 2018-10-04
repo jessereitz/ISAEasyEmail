@@ -2567,16 +2567,23 @@
       return this;
     },
 
+    /**
+     * generateFields - Generates the settings fields. then loads them.
+     *
+     */
     generateFields() {
       this.fields = [];
+
       const title = Object.create(TextField);
       title.init(this.docInfo, 'Email Title', 'title');
-      this.fields.push(title);
+
       const advisingLink = Object.create(OptionalLinkField);
       advisingLink.init(this.docInfo.links, 'Advising Session', 'advisingLink');
+
       const applicationLink = Object.create(OptionalLinkField);
       applicationLink.init(this.docInfo.links, 'Application Link', 'applicationLink');
-      this.fields.push(advisingLink, applicationLink);
+
+      this.fields.push(title, advisingLink, applicationLink);
       this.loadFields();
     },
 
