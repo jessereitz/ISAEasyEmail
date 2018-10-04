@@ -4482,6 +4482,8 @@
       this.btns = setButtons();
       this.$copyTargetCtn = document.getElementById('copyTargetCtn');
       this.$copyTargetInnerCtn = document.getElementById('copyTargetInnerCtn');
+      this.$copyTargetBottomBtns = document.getElementById('copyTarget-bottomBtns');
+      this.$bottomBtns = document.getElementById('bottomBtns');
       this.$metaDisplay = document.getElementById('metaDisplay');
       // Initialize the editor
       this.editorCtn = document.getElementById('wfeditor');
@@ -4640,6 +4642,12 @@
         window.location.reload();
       } else if (e.target === this.btns.$copyCodeBtn) {
         this.$copyTargetInnerCtn.innerHTML = this.editor.html();
+        this.$copyTargetBottomBtns.innerHTML = this.$bottomBtns.innerHTML;
+        this.$copyTargetBottomBtns.querySelectorAll('a').forEach((link) => {
+          if (link.style.display === 'none') {
+            this.$copyTargetBottomBtns.remove(link.parentNode.parentNode);
+          }
+        });
         this.copyview.displayAndCopy(this.$copyTargetCtn.outerHTML);
         this.btns.$copyCodeBtn.blur();
       } else if (e.target === this.btns.$saveLoadBtn) {
