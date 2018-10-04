@@ -3077,73 +3077,7 @@
     }
   }
 
-  const substeps = [
-    {
-      target: 'tutorialExitBtn',
-      description: `
-      <p>Click this button at any time to exit this tutorial.</p>
-    `,
-    },
-    {
-      target: 'wfeditor',
-      description: `
-      <p>This is the editor and preview section. This section allows you to compose and edit your email.</p>
-    `,
-    },
-    {
-      target: 'controller',
-      description: `
-      <p>These buttons allow you to manipulate your email in a broad manner, similar to the File menu in most programs.</p>
-    `,
-    },
-    {
-      target: 'metaDisplayCtn',
-      description: `
-      <p>You can see important info about your email here, such as its title.</p>
-    `,
-    },
-    {
-      target: 'helpBtnCtn',
-      description: `
-      <p>Click this button if you ever need help with ISA Easy Email or if you would like to go through this tutorial again.</p>
-    `,
-    },
-  ];
-
-  function layoutOverview() {
-    let currentIndex = 0;
-    const nextBtn = generateStandardButton('Continue');
-    toggleClicksEnabled.call(this, nextBtn);
-    const next = function next() {
-      if (currentIndex === 0) this.$window.classList.remove('vertical-center');
-      if (!substeps[currentIndex]) {
-        toggleClicksEnabled.call(this);
-        return this.nextStep();
-      }
-      const target = document.getElementById(substeps[currentIndex].target);
-      this.highlight(target);
-      this.positionWindow(target);
-      this.$window.innerHTML = substeps[currentIndex].description;
-      this.$window.appendChild(nextBtn);
-      currentIndex += 1;
-      return null;
-    };
-
-    nextBtn.addEventListener('click', next.bind(this));
-
-    this.$window.innerHTML = `
-    <h1>Welcome!</h1>
-    <p>
-      This tutorial is designed to take you through the core features and
-      functions of the ISA Easy Email Generator. We'll start with a basic
-      overview of the layout of the page. Click "Continue" below to begin.
-    </p>
-  `;
-    this.$window.appendChild(nextBtn);
-    this.centerWindow();
-  }
-
-  var editorOverview = (function init() {
+  (function init() {
     let editor; let editBtns; let insertBtns; let firstEditorPar;
     // An Array of the substeps through which the user will proceed
     const substeps = [];
@@ -3698,6 +3632,48 @@
     }
 
     /**
+     * openModalListener - Generates the listener for buttons which open up
+     *  modals. Makes sure the tutorial window is positioned properly and that
+     *  the user can interact with the modal. This function generates the actual
+     *  listener and must be given the button to which the listener will be attached.
+     *
+     * @param {HTML Element} target The HTML Button to which the listener will be
+     *  attached.
+     *
+     * @returns {Function} The listener to attach to the button.
+     */
+    function openModalListener(target) {
+      const targetBtn = target;
+      return function innerListener() {
+        targetBtn.removeEventListener('click', targetBtn.tutClickHandler);
+        toggleClicksEnabled.call(this);
+        this.$window.display = 'none';
+        setTimeout(() => {
+          this.$window.display = 'block';
+          this.positionWindow(mainModal);
+        }, 100);
+        nextSubStep.call(this);
+      }.bind(this);
+    }
+
+    /**
+     * closeModalListener - Generates the listener for buttons which close modals.
+     *  Essentially disables all clicks, repositions the tutorial overlay, and
+     *  calls the next step.
+     *
+     * @returns {Function} The listener to attach to the button.
+     */
+    function closeModalListener(close) {
+      const closeBtn = close;
+      return function innerListener() {
+        this.maximizeOverlay();
+        toggleClicksEnabled.call(this);
+        closeBtn.removeEventListener('click', closeBtn.tutClickHandler);
+        nextSubStep.call(this);
+      }.bind(this);
+    }
+
+    /**
      * intro - Provides a brief overview of the Controller section.
      *
      */
@@ -3756,19 +3732,8 @@
       this.$window.innerHTML = `
       <p>Go ahead and give the "Copy Code" button a click to see what happens.</p>
     `;
-      function resetCopyCodeHandler() {
-        controllerBtns.copyCode.removeEventListener('click', controllerBtns.copyCode.tutClickHandler);
-        toggleClicksEnabled.call(this);
-        this.$window.display = 'none';
-        setTimeout(() => {
-          this.$window.display = 'block';
-          this.positionWindow(mainModal);
-        }, 100);
-        nextSubStep.call(this);
-      }
-      // toggleClicksEnabled.call(this);
       toggleClicksEnabled.call(this, controllerBtns.copyCode);
-      controllerBtns.copyCode.tutClickHandler = resetCopyCodeHandler.bind(this);
+      controllerBtns.copyCode.tutClickHandler = openModalListener.call(this, controllerBtns.copyCode);
       controllerBtns.copyCode.addEventListener('click', controllerBtns.copyCode.tutClickHandler);
     };
 
@@ -3795,18 +3760,11 @@
       </p>
     `;
       const closeBtn = mainModal.lastChild.lastChild;
-      function closeBtnClickHandler() {
-        this.maximizeOverlay();
-        toggleClicksEnabled.call(this);
-        closeBtn.removeEventListener('click', closeBtn.tutClickHandler);
-        nextSubStep.call(this);
-      }
-      closeBtn.tutClickHandler = closeBtnClickHandler.bind(this);
+      closeBtn.tutClickHandler = closeModalListener.call(this, closeBtn);
       closeBtn.addEventListener('click', closeBtn.tutClickHandler);
       toggleClicksEnabled.call(this, closeBtn);
       this.highlight(mainModal);
       this.minimizeOverlay();
-      // setTimeout(() => this.positionWindow(mainModal), 50);
     };
 
     /**
@@ -3825,6 +3783,7 @@
     `;
       prepNextBtn.call(this);
       this.$window.appendChild(nextBtn);
+      toggleClicksEnabled.call(this, nextBtn);
       this.highlight(controller);
       this.positionWindow(controllerBtns.saveLoad);
     };
@@ -3833,10 +3792,12 @@
       this.$window.innerHTML = `
       <p>
         The "Settings" button allows you to adjust a few settings in the email.
+        Go ahead and give it a click.
       </p>
     `;
       prepNextBtn.call(this);
       this.$window.appendChild(nextBtn);
+      toggleClicksEnabled.call(this, controllerBtns.settings);
       this.positionWindow(controllerBtns.settings);
     };
 
@@ -3849,23 +3810,6 @@
     }
     return main;
   }());
-
-  function wrapUp() {
-    const closeBtn = generateStandardButton('Exit Tutorial');
-    closeBtn.addEventListener('click', this.hide.bind(this));
-    this.$window.innerHTML = `
-    <h1>And That's It!</h1>
-    <p>
-      Hopefully this tutorial has given you a bit of insight into how to
-      effectively use ISA Easy Email. I encourage you to play around with the
-      editor and explore all its functionality! You should also read the "GRS
-      Help" and "Images Help" in the Help section so you can take full advantage
-      of ISA Easy Email!
-    </p>
-  `;
-    this.$window.appendChild(closeBtn);
-    this.centerWindow();
-  }
 
   const windowPosOffset = 20;
   let currentStep = 0;
@@ -4050,10 +3994,9 @@
     },
   };
 
-  Tutorial.steps[0] = layoutOverview;
-  Tutorial.steps[1] = editorOverview;
-  Tutorial.steps[2] = controllerOverview;
-  Tutorial.steps[3] = wrapUp;
+  // Tutorial.steps[0] = layoutOverview;
+  // Tutorial.steps[1] = editorOverview;
+  Tutorial.steps[0] = controllerOverview;
 
   /*
    ######   ########   ######     ##     ## ######## ##       ########

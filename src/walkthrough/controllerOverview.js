@@ -57,6 +57,48 @@ export default (function init() {
   }
 
   /**
+   * openModalListener - Generates the listener for buttons which open up
+   *  modals. Makes sure the tutorial window is positioned properly and that
+   *  the user can interact with the modal. This function generates the actual
+   *  listener and must be given the button to which the listener will be attached.
+   *
+   * @param {HTML Element} target The HTML Button to which the listener will be
+   *  attached.
+   *
+   * @returns {Function} The listener to attach to the button.
+   */
+  function openModalListener(target) {
+    const targetBtn = target;
+    return function innerListener() {
+      targetBtn.removeEventListener('click', targetBtn.tutClickHandler);
+      toggleClicksEnabled.call(this);
+      this.$window.display = 'none';
+      setTimeout(() => {
+        this.$window.display = 'block';
+        this.positionWindow(mainModal);
+      }, 100);
+      nextSubStep.call(this);
+    }.bind(this);
+  }
+
+  /**
+   * closeModalListener - Generates the listener for buttons which close modals.
+   *  Essentially disables all clicks, repositions the tutorial overlay, and
+   *  calls the next step.
+   *
+   * @returns {Function} The listener to attach to the button.
+   */
+  function closeModalListener(close) {
+    const closeBtn = close;
+    return function innerListener() {
+      this.maximizeOverlay();
+      toggleClicksEnabled.call(this);
+      closeBtn.removeEventListener('click', closeBtn.tutClickHandler);
+      nextSubStep.call(this);
+    }.bind(this);
+  }
+
+  /**
    * intro - Provides a brief overview of the Controller section.
    *
    */
@@ -115,19 +157,8 @@ export default (function init() {
     this.$window.innerHTML = `
       <p>Go ahead and give the "Copy Code" button a click to see what happens.</p>
     `;
-    function resetCopyCodeHandler() {
-      controllerBtns.copyCode.removeEventListener('click', controllerBtns.copyCode.tutClickHandler);
-      toggleClicksEnabled.call(this);
-      this.$window.display = 'none';
-      setTimeout(() => {
-        this.$window.display = 'block';
-        this.positionWindow(mainModal);
-      }, 100);
-      nextSubStep.call(this);
-    }
-    // toggleClicksEnabled.call(this);
     toggleClicksEnabled.call(this, controllerBtns.copyCode);
-    controllerBtns.copyCode.tutClickHandler = resetCopyCodeHandler.bind(this);
+    controllerBtns.copyCode.tutClickHandler = openModalListener.call(this, controllerBtns.copyCode);
     controllerBtns.copyCode.addEventListener('click', controllerBtns.copyCode.tutClickHandler);
   };
 
@@ -154,18 +185,11 @@ export default (function init() {
       </p>
     `;
     const closeBtn = mainModal.lastChild.lastChild;
-    function closeBtnClickHandler() {
-      this.maximizeOverlay();
-      toggleClicksEnabled.call(this);
-      closeBtn.removeEventListener('click', closeBtn.tutClickHandler);
-      nextSubStep.call(this);
-    }
-    closeBtn.tutClickHandler = closeBtnClickHandler.bind(this);
+    closeBtn.tutClickHandler = closeModalListener.call(this, closeBtn);
     closeBtn.addEventListener('click', closeBtn.tutClickHandler);
     toggleClicksEnabled.call(this, closeBtn);
     this.highlight(mainModal);
     this.minimizeOverlay();
-    // setTimeout(() => this.positionWindow(mainModal), 50);
   };
 
   /**
@@ -184,6 +208,7 @@ export default (function init() {
     `;
     prepNextBtn.call(this);
     this.$window.appendChild(nextBtn);
+    toggleClicksEnabled.call(this, nextBtn);
     this.highlight(controller);
     this.positionWindow(controllerBtns.saveLoad);
   };
@@ -192,10 +217,12 @@ export default (function init() {
     this.$window.innerHTML = `
       <p>
         The "Settings" button allows you to adjust a few settings in the email.
+        Go ahead and give it a click.
       </p>
     `;
     prepNextBtn.call(this);
     this.$window.appendChild(nextBtn);
+    toggleClicksEnabled.call(this, controllerBtns.settings);
     this.positionWindow(controllerBtns.settings);
   };
 

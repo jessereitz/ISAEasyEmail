@@ -4,7 +4,6 @@ import controllerOverview from './controllerOverview';
 import wrapUp from './wrapUp';
 
 import { generateElement, generateStandardButton } from '../lib';
-import toggleClicksEnabled from './tutorialLib';
 
 const windowPosOffset = 20;
 let currentStep = 0;
@@ -189,8 +188,8 @@ const Tutorial = {
   },
 };
 
-Tutorial.steps[0] = layoutOverview;
-Tutorial.steps[1] = editorOverview;
-Tutorial.steps[2] = controllerOverview;
-Tutorial.steps[3] = wrapUp;
+// Tutorial.steps[0] = layoutOverview;
+// Tutorial.steps[1] = editorOverview;
+Tutorial.steps[0] = controllerOverview;
+// Tutorial.steps[3] = wrapUp;
 export default Tutorial;
