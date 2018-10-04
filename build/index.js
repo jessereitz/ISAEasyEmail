@@ -2709,7 +2709,6 @@
      * @returns {Element} Returns the modal containing this view.
      */
     display() {
-      // debugger;
       this.modal.setSaveHandler('Copy', this.copyContents.bind(this));
       return this.modal.display(this.$ctn);
     },
