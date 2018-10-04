@@ -10,6 +10,7 @@ import HelpView from './modalViews/helpView.js';
 import {
   DocumentFileType,
   generateCurrentDateString,
+  findAncestorOfType,
 } from './lib.js';
 
 const tutorialCookieTitle = 'ISAEasyEmailTutorial';
@@ -265,7 +266,9 @@ const Controller = {
       this.$copyTargetBottomBtns.innerHTML = this.$bottomBtns.innerHTML;
       this.$copyTargetBottomBtns.querySelectorAll('a').forEach((link) => {
         if (link.style.display === 'none') {
-          this.$copyTargetBottomBtns.remove(link.parentNode.parentNode);
+          const tr = findAncestorOfType('TR', link);
+          tr.parentNode.removeChild(tr);
+          // link.parentNode.parentNode.parentNode.removeChild(link.parentNode.parentNode);
         }
       });
       this.copyview.displayAndCopy(this.$copyTargetCtn.outerHTML);

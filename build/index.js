@@ -2073,6 +2073,27 @@
     return false;
   }
 
+
+  /**
+   * findAncestorOfType - Finds the closest ancestor of the given node which
+   *  matches the given type.
+   *
+   * @param {HTML Element} node The node for which to look for an ancestor
+   *  matching the given type.
+   * @param {String} type The type of node to look for, eg. 'DIV'
+   *
+   * @returns {HTML Element} Returns the ancestor matching the given type, if
+   *  found. Otherwise, simply returns the document.
+   */
+  function findAncestorOfType(type, node) {
+    if (!type || (type && typeof type !== 'string')) return document;
+    if (!node || (node && !(node instanceof Element))) return document;
+    if (node.tagName === type.toUpperCase() || node === document) {
+      return node;
+    }
+    return findAncestorOfType(type, node.parentNode);
+  }
+
   /**
    * defaultSaveButtonHandler - The default function to call when the save button
    *  is clicked. If the saveBtn has a proper saveHandler attached, this function
@@ -4645,7 +4666,9 @@
         this.$copyTargetBottomBtns.innerHTML = this.$bottomBtns.innerHTML;
         this.$copyTargetBottomBtns.querySelectorAll('a').forEach((link) => {
           if (link.style.display === 'none') {
-            this.$copyTargetBottomBtns.remove(link.parentNode.parentNode);
+            const tr = findAncestorOfType('TR', link);
+            tr.parentNode.removeChild(tr);
+            // link.parentNode.parentNode.parentNode.removeChild(link.parentNode.parentNode);
           }
         });
         this.copyview.displayAndCopy(this.$copyTargetCtn.outerHTML);
