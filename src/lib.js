@@ -171,3 +171,24 @@ export function appendChildren(node, children) {
   }
   return false;
 }
+
+
+/**
+ * findAncestorOfType - Finds the closest ancestor of the given node which
+ *  matches the given type.
+ *
+ * @param {HTML Element} node The node for which to look for an ancestor
+ *  matching the given type.
+ * @param {String} type The type of node to look for, eg. 'DIV'
+ *
+ * @returns {HTML Element} Returns the ancestor matching the given type, if
+ *  found. Otherwise, simply returns the document.
+ */
+export function findAncestorOfType(type, node) {
+  if (!type || (type && typeof type !== 'string')) return document;
+  if (!node || (node && !(node instanceof Element))) return document;
+  if (node.tagName === type.toUpperCase() || node === document) {
+    return node;
+  }
+  return findAncestorOfType(type, node.parentNode);
+}
