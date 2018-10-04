@@ -261,20 +261,32 @@ export default (function init() {
     const targetText = 'Fun Tutorial Email';
     this.$window.innerHTML = `
       <p>
-        Let's try changing the Email Title to something more useful. Try typing
-        in the following:
+        Let's try changing the Email Title to something more useful. Try
+        changing it to the following:
       </p>
       <p>
         "${targetText}"
       </p>
     `;
     const emailTitleField = mainModal.querySelector('.settingsField');
-    function isTitle () {
-      if (emailTitleField.value === targetText) {
-        emailTitleField.removeEventListener('keyup', emailTitleField.tutKeyHandler);
-        
+    const emailInput = emailTitleField.querySelector('input');
+    function titleIsTarget() {
+      if (emailInput.value === targetText) {
+        emailInput.removeEventListener('keyup', emailInput.tutKeyHandler);
+        nextSubStep.call(this);
       }
     }
+    emailInput.tutKeyHandler = titleIsTarget.bind(this);
+    emailInput.addEventListener('keyup', emailInput.tutKeyHandler);
+    toggleClicksEnabled.call(this, emailTitleField);
+  };
+
+  substeps[10] = function linkOverview() {
+    this.$window.innerHTML = `
+      <p>
+        Perfect
+      </p>
+    `
   }
 
   function main() {
