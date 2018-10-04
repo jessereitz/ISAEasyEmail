@@ -70,6 +70,8 @@ export default (function init() {
   function openModalListener(target) {
     const targetBtn = target;
     return function innerListener() {
+      this.highlight(mainModal);
+      this.minimizeOverlay();
       targetBtn.removeEventListener('click', targetBtn.tutClickHandler);
       toggleClicksEnabled.call(this);
       this.$window.display = 'none';
@@ -188,8 +190,6 @@ export default (function init() {
     closeBtn.tutClickHandler = closeModalListener.call(this, closeBtn);
     closeBtn.addEventListener('click', closeBtn.tutClickHandler);
     toggleClicksEnabled.call(this, closeBtn);
-    this.highlight(mainModal);
-    this.minimizeOverlay();
   };
 
   /**
@@ -220,11 +220,62 @@ export default (function init() {
         Go ahead and give it a click.
       </p>
     `;
-    prepNextBtn.call(this);
-    this.$window.appendChild(nextBtn);
+    controllerBtns.settings.tutClickHandler = openModalListener.call(this, controllerBtns.settings);
+    controllerBtns.settings.addEventListener('click', controllerBtns.settings.tutClickHandler);
     toggleClicksEnabled.call(this, controllerBtns.settings);
     this.positionWindow(controllerBtns.settings);
   };
+
+  substeps[7] = function settingsInterface() {
+    this.$window.innerHTML = `
+      <p>
+        Here you can see the settings you can adjust within your email.
+      </p>
+    `;
+    prepNextBtn.call(this);
+    this.$window.appendChild(nextBtn);
+    toggleClicksEnabled.call(this, nextBtn);
+  };
+
+  substeps[8] = function emailTitle() {
+    this.$window.innerHTML = `
+      <p>
+        The Email Title allows you to easily keep track of your ISA Easy Email
+        files. Your email is automatically given a title based on the date and
+        time it was created but you can change it here. The title of the current
+        email is displayed in the bottom right of the screen and is used as the
+        name of the file when you save your work.
+      </p>
+      <p>
+        <i>Recipients of the email won't see the title.</i>
+      </p>
+    `;
+    const emailTitleField = mainModal.querySelector('.settingsField');
+    prepNextBtn.call(this);
+    this.$window.appendChild(nextBtn);
+    toggleClicksEnabled.call(this, nextBtn);
+    this.positionWindow(emailTitleField);
+  };
+
+  substeps[9] = function changeTitle() {
+    const targetText = 'Fun Tutorial Email';
+    this.$window.innerHTML = `
+      <p>
+        Let's try changing the Email Title to something more useful. Try typing
+        in the following:
+      </p>
+      <p>
+        "${targetText}"
+      </p>
+    `;
+    const emailTitleField = mainModal.querySelector('.settingsField');
+    function isTitle () {
+      if (emailTitleField.value === targetText) {
+        emailTitleField.removeEventListener('keyup', emailTitleField.tutKeyHandler);
+        
+      }
+    }
+  }
 
   function main() {
     getControllerAndButtons();
