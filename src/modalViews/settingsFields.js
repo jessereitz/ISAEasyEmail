@@ -220,6 +220,9 @@ const OptionalLinkFieldBase = {
     this.switchField.init(this.docInfo.links, `Include ${fieldTitle} Link:`, '', null, null);
     this.textField.init(this.docInfo.links, `${fieldTitle} URL:`);
 
+    this.switchField.ctn.classList.remove('settingsField');
+    this.textField.ctn.classList.remove('settingsField');
+
     this.showError = this.textField.showError.bind(this.textField);
     this.hideError = this.textField.hideError.bind(this.textField);
 
