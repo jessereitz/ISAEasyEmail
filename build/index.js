@@ -2054,6 +2054,26 @@
   }
 
   /**
+   * appendChildren - Append multiple children to a target node.
+   *
+   * @param {HTML Element} node     The node to which the children will be added.
+   * @param {[HTML Element]} children The children to be added.
+   *
+   * @returns {HTML Element || false} Returns the node if successful. Otherwise
+   *  returns false;
+   */
+  function appendChildren(node, children) {
+    if (node instanceof Element && Array.isArray(children)) {
+      children.forEach((child) => {
+        if (child instanceof Element) node.appendChild(child);
+        else throw Error(`Child ${child} is not an HTML Element`);
+      });
+      return node;
+    }
+    return false;
+  }
+
+  /**
    * defaultSaveButtonHandler - The default function to call when the save button
    *  is clicked. If the saveBtn has a proper saveHandler attached, this function
    *  will call that one.
@@ -2226,195 +2246,305 @@
   };
 
   /**
-   * loadField - Loads the value of a link field
-   *
-   * @returns {string} Returns the value of the href attribute of designated link.
+   * field - Base object for all fields.
    */
-  function loadField() {
-    this.targetHTML = document.getElementById(this.targetID);
-    if (!this.docInfoRef) this.targetHTML.style.display = 'none';
-    else {
-      this.targetHTML.href = this.docInfoRef.url;
-      this.input.value = this.docInfoRef.url;
-      this.targetHTML.style.display = 'block';
-    }
-    return this;
-  }
+  const field = {
 
-  /**
-   * saveField - Saves the current value of the input as the href of the
-   *  designated link.
-   *
-   * @returns {boolean} Returns true if href set correctly. Else returns false.
-   */
-  function saveField() {
-    const url = validateURL$1(this.input.value);
-    this.input.classList.remove('settingsField--error');
-    if (url) {
-      this.targetHTML.style.display = 'block';
-      this.targetHTML.href = url;
-      return true;
-    }
-    this.targetHTML.style.display = 'none';
-    this.targetHTML.href = '';
-    if (!this.hidden) throw Error('Invalid URL');
-    return true;
-  }
-
-  /**
-   * loadTitle - Loads the title of the document's docInfo.
-   *
-   * @returns {string} Returns the current title of the document.
-   */
-  function loadTitle(input) {
-    const innerInput = input;
-    innerInput.value = this.docInfo.title;
-  }
-
-  /**
-   * saveTitle - Sets the title of the current document to the given value.
-   *
-   * @param {string} value The value to which to set the title of the document.
-   *
-   */
-  function saveTitle(value) {
-    this.docInfo.title = value;
-  }
-
-  /**
-   * createSettingSwitchField - Creates a toggle switch to display or hide a
-   *  settings field (given targetField).
-   *
-   * @param {String} labelText   The text to display next to the switch.
-   * @param {String} targetID    The id of the HTML element in the email which
-   *  this switch will affect.
-   * @param {SettingsField} targetField The settingsField which this switch will
-   *  display or hide.
-   *
-   * @returns {SettingsSwitchField} Returns the newly created SettingsSwitchField.
-   */
-  function createSettingSwitchField(docInfoTitle, docInfo, labelText, targetID, targetField) {
-    const ctn = generateElement$1('div', { style: { 'text-align': 'left' } });
-    const labelCtn = generateElement$1('label', { klasses: ['switch'] });
-    const labelTxt = generateElement$1('span', { klasses: ['sitch-text'] });
-    const input = generateElement$1('input', { type: 'checkbox', checked: 'true' });
-    const slider = generateElement$1('span', { klasses: ['slider'] });
-    const closedDocInfo = docInfo;
-    labelTxt.textContent = labelText;
-    labelCtn.appendChild(labelTxt);
-    labelCtn.appendChild(input);
-    labelCtn.appendChild(slider);
-    ctn.appendChild(labelCtn);
-    function checkboxHandler(e) {
-      if (e.target.checked) {
-        targetField.display();
-      } else {
-        targetField.hide();
+    /**
+     * initField - Initializes the field. Creates the container, sets local vars.
+     *
+     * @param {Object} docInfo  The docInfo to use to load/save from.
+     * @param {type} loadFunc Description
+     * @param {type} saveFunc Description
+     *
+     * @returns {type} Description
+     */
+    initField(docInfo, saveFunc, loadFunc) {
+      this.docInfo = docInfo;
+      this.ctn = generateElement$1(
+        'div',
+        {
+          klasses: ['settingsField'],
+          style: { 'text-align': 'left' },
+        },
+      );
+      if (
+        (saveFunc && typeof saveFunc === 'function')
+        || saveFunc === null
+      ) {
+        this.save = saveFunc;
       }
-    }
-    labelCtn.addEventListener('change', checkboxHandler.bind(this));
-    const field = {
-      ctn,
-      label: labelCtn,
-      input,
-      targetID,
-      load: () => {
-        input.checked = (
-          typeof closedDocInfo.links[docInfoTitle] !== 'undefined'
-          && closedDocInfo.links[docInfoTitle] !== null
-        );
-        if (!input.checked) {
-          checkboxHandler.call(this, { target: input });
-        }
-      },
-      save: () => {
-        let newVal = null;
-        if (validateURL$1(targetField.input.value)) {
-          newVal = {
-            text: document.getElementById(targetID).textContent,
-            url: targetField.input.value,
-          };
-        }
-        closedDocInfo.links[docInfoTitle] = newVal;
-      },
-    };
-    return field;
-  }
+      if (
+        (loadFunc && typeof loadFunc === 'function')
+        || loadFunc === null
+      ) {
+        this.load = loadFunc;
+      }
+    },
+  };
 
   /**
-   * createSettingsField - Creates a setting field. A settings field is an object
-   *  consisting of an HTML div containing a label and input. It also contains
-   *  reference to the HTML link in the email to which it corresponds. Each
-   *  settingsField has a load method and a save method. The load method loads the
-   *  current url to which the link points while the save method will validate the
-   *  given url and set the link to point to it.
-   *
-   * @param {string} labelText The string to be displayed in the label.
-   * @param {string} targetID  The id of the HTML element containing the link to
-   *  which this field will be connected.
-   *
-   * @returns {Field} Returns the newly created field.
+   * TextFieldBase - A Text Field provides label, input, and error message
+   *  elements as well as basic save/load funcitonality (to provided docInfo
+   *  object).
    */
-  function createSettingsField(docInfoRef, labelText, targetID, loadCallback, saveCallback) {
-    const ctn = generateElement$1('div', { klasses: ['settingsField'], style: { 'text-align': 'left' } });
-    const label = generateElement$1('label');
-    label.textContent = labelText;
-    const input = generateElement$1(
-      'input',
-      {
-        type: 'text',
-        style: {
-          width: '100%',
-          margin: '0.25em auto 1em auto',
-          border: '1px solid #fff',
-          'border-radius': '0.1em',
-          padding: '0.25em',
-        },
-      },
-    );
-    const errorMessage = generateElement$1(
-      'div',
-      {
-        klasses: ['settingsField__error-message'],
-        style: {
-          'margin-top': '-0.25em',
-          background: 'rgba(242, 110, 127, 0.25)',
-          border: '1px solid rgba(242, 110, 127, 1)',
-          display: 'none',
-          padding: '0.1em 0.25rem',
-          'font-size': '0.85em',
-        },
-      },
-    );
-    ctn.appendChild(label);
-    ctn.appendChild(input);
-    ctn.appendChild(errorMessage);
-    const field = {
-      ctn,
-      label,
-      input,
-      targetID,
-      load: loadCallback && typeof loadCallback === 'function' ? loadCallback : loadField,
-      save: saveCallback && typeof saveCallback === 'function' ? saveCallback : saveField,
-      showError: (msg) => { errorMessage.textContent = msg; errorMessage.style.display = 'block'; },
-      hideError: () => { errorMessage.style.display = 'none'; },
-      display: function displayField() {
-        if (this.prevValue) {
-          input.value = this.prevValue;
+  const TextFieldBase = {
+
+    /**
+     * init - Initialize a text field.
+     *
+     * @param {Object} docInfo   The docInfo to use to load/save from.
+     * @param {String} labelText The string to be used in the label.
+     * @param {type} targetID  The id of the HTML object which this settings field
+     *  will affect.
+     *
+     * @returns {TextField} Returns the newly initialized TextField.
+     */
+    init(docInfo, labelText, targetID, saveFunc, loadFunc) {
+      this.targetID = targetID;
+      this.initField(docInfo, saveFunc, loadFunc);
+      this.html = document.getElementById('targetID');
+      this.ctn.appendChild(generateElement$1('label', { textContent: labelText }));
+      this.input = generateElement$1('input', { type: 'text' });
+      this.errorMessage = generateElement$1('div', { klasses: ['settingsField__error--message'] });
+      appendChildren(this.ctn, [this.input, this.errorMessage]);
+      return this;
+    },
+
+    /**
+     * save - Saves the value of the input to the docInfo.
+     *
+     */
+    save() {
+      this.docInfo[this.targetID] = this.input.value;
+      if (this.html) this.textContent = this.input.value;
+    },
+
+    load() {
+      this.input.value = this.docInfo[this.targetID];
+    },
+
+    /**
+     * showError - Sets the error message to the given value then displays it.
+     *
+     * @param {String} msg The message to display as an error.
+     *
+     */
+    showError(msg) {
+      this.errorMessage.textContent = msg;
+      this.errorMessage.style.display = 'block';
+      this.input.classList.add('settingsField--error');
+    },
+
+    /**
+     * hideError - Removes the error message text then hides it.
+     *
+     */
+    hideError() {
+      this.errorMessage.textContent = '';
+      this.errorMessage.style.display = 'none';
+      this.input.classList.remove('settingsField--error');
+    },
+
+    /**
+     * display - Display the text field.
+     *
+     */
+    display() {
+      if (this.prevValue) {
+        this.input.value = this.prevValue;
+      }
+      this.ctn.style.maxHeight = '10em';
+      this.hidden = false;
+    },
+
+    /**
+     * hide - Hide the text field.
+     *
+     */
+    hide() {
+      this.prevValue = this.input.value;
+      this.input.value = '';
+      this.ctn.style.maxHeight = 0;
+      this.hidden = true;
+    },
+
+    /**
+     * value - Get the current value of the input.
+     *
+     * @returns {String} Returns the current value of the input.
+     */
+    value() {
+      return this.input.value;
+    },
+  };
+
+  const TextField = Object.assign(TextFieldBase, field);
+
+  /**
+   * SwitchFieldBase - A SwitchField creates a toggle switch.
+   */
+  const SwitchFieldBase = {
+
+    /**
+     * init - Initializes the Switch Field. Creates all the necessary HTML
+     *  elements to display it properly.
+     *
+     * @param {type} docInfo   Description
+     * @param {type} labelText Description
+     * @param {type} targetID  Description
+     *
+     * @returns {type} Description
+     */
+    init(docInfo, labelText, targetID, saveFunc, loadFunc) {
+      this.targetID = targetID;
+      this.initField(docInfo, saveFunc, loadFunc);
+      this.labelCtn = generateElement$1('label', { klasses: ['switch'] });
+      this.labelTxt = generateElement$1('span', { klasses: ['sitch-text'], textContent: labelText });
+      this.input = generateElement$1('input', { type: 'checkbox', checked: 'true' });
+      this.slider = generateElement$1('span', { klasses: ['slider'] });
+      appendChildren(this.labelCtn, [this.labelTxt, this.input, this.slider]);
+      this.ctn.appendChild(this.labelCtn);
+    },
+
+    /**
+     * save - Save the state of the switch.
+     *
+     */
+    save() {
+      this.docInfo[this.targetID] = this.input.checked;
+    },
+
+    /**
+     * load - Load the state of the switch.
+     *
+     */
+    load() {
+      this.input.checked = this.docInfo[this.targetID];
+    },
+
+    /**
+     * value - Returns the current state of the switch.
+     *
+     * @returns {boolean} Returns true if switch is checked else false.
+     */
+    value() {
+      return this.input.checked;
+    },
+  };
+  const SwitchField = Object.assign(SwitchFieldBase, field);
+
+  /**
+   * OptionalLinkFieldBase - An Optional Link Field provides a Switch Field and
+   *  Text Field together. This allows the user to choose if they want to include
+   *  the link at all and let's them edit the url for that link.
+   */
+  const OptionalLinkFieldBase = {
+
+    /**
+     * init - Initializes the Optional Link Field. Creates the Switch Field and
+     *  Text Field.
+     *
+     * @param {Object} docInfo    The docInfo to read from and save to.
+     * @param {String} fieldTitle The title of the field.
+     * @param {String} targetID   The string to use as the property name when
+     *  reading from/writing to the docInfo. This is also used to find and set the
+     *  link in the HTML.
+     *
+     * @returns {type} Description
+     */
+    init(docInfo, fieldTitle, targetID) {
+      this.fieldTitle = fieldTitle;
+      this.targetID = targetID;
+      this.initField(docInfo);
+      this.html = document.getElementById(targetID);
+
+      this.switchField = Object.create(SwitchField);
+      this.textField = Object.create(TextField);
+
+      this.switchField.init(this.docInfo.links, `Include ${fieldTitle} Link:`, '', null, null);
+      this.textField.init(this.docInfo.links, `${fieldTitle} URL:`);
+
+      this.showError = this.textField.showError.bind(this.textField);
+      this.hideError = this.textField.hideError.bind(this.textField);
+
+      appendChildren(this.ctn, [this.switchField.ctn, this.textField.ctn]);
+
+      this.switchField.input.addEventListener('change', this.switchChangeListener.bind(this));
+    },
+
+    /**
+     * setHTML - Sets the state of the HTML based on the values of the Switch
+     *  Field and Text Field. If the switch is checked then the HTML is displayed
+     *  with its href set to the value of the textField.
+     *
+     */
+    setHTML() {
+      if (this.html) {
+        if (this.switchField.value()) {
+          const url = validateURL$1(this.textField.value());
+          if (!url) throw Error('Invalid URL');
+          this.html.href = url;
+          this.html.style.display = 'block';
+        } else {
+          this.html.style.display = 'none';
         }
-        ctn.style.maxHeight = '10em';
-        this.hidden = false;
-      },
-      hide: function hideField() {
-        this.prevValue = input.value;
-        input.value = '';
-        ctn.style.maxHeight = 0;
-        this.hidden = true;
-      },
-      docInfoRef,
-    };
-    return field;
-  }
+      }
+    },
+
+    /**
+     * switchChangeListener - Hides or displays the text field depending on the
+     *  state of the switch.
+     *
+     */
+    switchChangeListener() {
+      if (this.switchField.value() === true) {
+        this.textField.display();
+      } else {
+        this.textField.hide();
+      }
+    },
+
+    /**
+     * save - Saves the state of the Optional Link Field. If the switch is checked
+     *  and there is a valid url in the text field, it will be saved to the
+     *  docInfo. Otherwise, it will be removed from the docInfo.
+     *
+     */
+    save() {
+      let val = null;
+      if (this.switchField.value() === true) {
+        const url = validateURL$1(this.textField.value());
+        if (!url) throw Error('Invalid URL');
+        if (this.html) this.html.href = url;
+        val = {
+          text: this.html ? this.html.textContent : null,
+          url,
+        };
+      }
+      this.setHTML();
+      this.docInfo[this.targetID] = val;
+    },
+
+    /**
+     * load - Loads the state of the Optional Link Field form the docInfo and sets
+     *  the HTML.
+     *
+     */
+    load() {
+      if (this.docInfo[this.targetID]) {
+        this.switchField.input.checked = true;
+        this.textField.input.value = this.docInfo[this.targetID].url;
+        this.textField.display();
+      } else {
+        this.switchField.input.checked = false;
+        this.textField.hide();
+      }
+      this.setHTML();
+    },
+  };
+
+  const OptionalLinkField = Object.assign(OptionalLinkFieldBase, field);
 
   const SettingsView = {
     $ctn: generateElement$1('div'),
@@ -2439,13 +2569,14 @@
 
     generateFields() {
       this.fields = [];
-      const advisingLinkField = createSettingsField((this.docInfo.links.advisingSession || null), 'Advising Session URL:', 'advisingLink');
-      const applicationLinkField = createSettingsField((this.docInfo.links.application || null), 'Application URL:', 'applicationLink');
-      this.fields.push(createSettingsField('title', 'Email Title', '', loadTitle.bind(this), saveTitle.bind(this)));
-      this.fields.push(createSettingSwitchField('advisingSession', this.docInfo, 'Include Advising Session Link', 'advisingLink', advisingLinkField));
-      this.fields.push(advisingLinkField);
-      this.fields.push(createSettingSwitchField('application', this.docInfo, 'Include Application Link', 'applicationLink', applicationLinkField));
-      this.fields.push(applicationLinkField);
+      const title = Object.create(TextField);
+      title.init(this.docInfo, 'Email Title', 'title');
+      this.fields.push(title);
+      const advisingLink = Object.create(OptionalLinkField);
+      advisingLink.init(this.docInfo.links, 'Advising Session', 'advisingLink');
+      const applicationLink = Object.create(OptionalLinkField);
+      applicationLink.init(this.docInfo.links, 'Application Link', 'applicationLink');
+      this.fields.push(advisingLink, applicationLink);
       this.loadFields();
     },
 
@@ -2483,9 +2614,8 @@
       this.fields.forEach((field) => {
         try {
           if (field.hideError) field.hideError();
-          field.save(field.input.value);
+          field.save();
         } catch (err) {
-          field.input.classList.add('settingsField--error');
           if (field.showError) {
             field.showError(err.message);
           } else {
@@ -4427,11 +4557,11 @@
           const advisingLink = document.getElementById('advisingLink');
           const applicationLink = document.getElementById('applicationLink');
           this.docInfo.links = {
-            advisingSession: {
+            advisingLink: {
               text: advisingLink.textContent,
               url: advisingLink.href,
             },
-            application: {
+            applicationLink: {
               text: applicationLink.textContent,
               url: applicationLink.href,
             },

@@ -1,4 +1,5 @@
 import { generateElement, validateURL } from '../lib.js';
+import { TextField, OptionalLinkField } from './settingsFields';
 
 /**
  * loadField - Loads the value of a link field
@@ -214,13 +215,14 @@ const SettingsView = {
 
   generateFields() {
     this.fields = [];
-    const advisingLinkField = createSettingsField((this.docInfo.links.advisingSession || null), 'Advising Session URL:', 'advisingLink');
-    const applicationLinkField = createSettingsField((this.docInfo.links.application || null), 'Application URL:', 'applicationLink');
-    this.fields.push(createSettingsField('title', 'Email Title', '', loadTitle.bind(this), saveTitle.bind(this)));
-    this.fields.push(createSettingSwitchField('advisingSession', this.docInfo, 'Include Advising Session Link', 'advisingLink', advisingLinkField));
-    this.fields.push(advisingLinkField);
-    this.fields.push(createSettingSwitchField('application', this.docInfo, 'Include Application Link', 'applicationLink', applicationLinkField));
-    this.fields.push(applicationLinkField);
+    const title = Object.create(TextField);
+    title.init(this.docInfo, 'Email Title', 'title');
+    this.fields.push(title);
+    const advisingLink = Object.create(OptionalLinkField);
+    advisingLink.init(this.docInfo.links, 'Advising Session', 'advisingLink');
+    const applicationLink = Object.create(OptionalLinkField);
+    applicationLink.init(this.docInfo.links, 'Application Link', 'applicationLink');
+    this.fields.push(advisingLink, applicationLink);
     this.loadFields();
   },
 
@@ -258,9 +260,8 @@ const SettingsView = {
     this.fields.forEach((field) => {
       try {
         if (field.hideError) field.hideError();
-        field.save(field.input.value);
+        field.save();
       } catch (err) {
-        field.input.classList.add('settingsField--error');
         if (field.showError) {
           field.showError(err.message);
         } else {

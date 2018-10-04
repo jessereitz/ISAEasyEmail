@@ -183,11 +183,11 @@ const Controller = {
         const advisingLink = document.getElementById('advisingLink');
         const applicationLink = document.getElementById('applicationLink');
         this.docInfo.links = {
-          advisingSession: {
+          advisingLink: {
             text: advisingLink.textContent,
             url: advisingLink.href,
           },
-          application: {
+          applicationLink: {
             text: applicationLink.textContent,
             url: applicationLink.href,
           },
