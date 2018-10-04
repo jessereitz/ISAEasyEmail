@@ -1,21 +1,5 @@
-import { generateElement, validateURL } from '../lib.js';
+import { generateElement } from '../lib.js';
 import { TextField, OptionalLinkField } from './settingsFields';
-
-/**
- * loadField - Loads the value of a link field
- *
- * @returns {string} Returns the value of the href attribute of designated link.
- */
-function loadField() {
-  this.targetHTML = document.getElementById(this.targetID);
-  if (!this.docInfoRef) this.targetHTML.style.display = 'none';
-  else {
-    this.targetHTML.href = this.docInfoRef.url;
-    this.input.value = this.docInfoRef.url;
-    this.targetHTML.style.display = 'block';
-  }
-  return this;
-}
 
 const SettingsView = {
   $ctn: generateElement('div'),
