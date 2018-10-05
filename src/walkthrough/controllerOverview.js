@@ -327,7 +327,7 @@ export default (function init() {
     this.$window.innerHTML = `
       <p>
         Did you notice how the text box for the advising session URL went away?
-        Once you hit save the link itself will be removed from the email too.
+        Once you hit save the link itself will be removed from the email, too.
         Pretty neat, right?
       </p>
       <p>
@@ -366,12 +366,12 @@ export default (function init() {
   substeps[14] = function wrapUp() {
     this.$window.innerHTML = `
       <p>
-        That's it for the controller section. Check out the email now: it has
-        only the application link. You should
-        also notice that the title in the bottom right of the corner has changed.
+        That's it for the controller section. Check out the email now: it only
+        has the application link. You should also notice that the title in the
+        bottom right of the corner has changed.
       </p>
     `;
-    toggleClicksEnabled.call(this, nextBtn);
+    toggleClicksEnabled.call(this);
     this.positionWindow(controller);
     prepNextBtn.call(this);
     this.$window.appendChild(nextBtn);
