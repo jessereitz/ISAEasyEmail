@@ -21,7 +21,7 @@ it.
 
 ![ISA Easy Email Editor Screenshot](./readme-assets/screenshots/full-editor.png)
 
-The editor is built around the [WriteFree](https://jessereitz.github.io/WriteFree/)
+The editor is built around the [WriteFree](https://github.com/jessereitz/WriteFree)
 editor, an open source editor I designed to mimic the excellent editor by the
 folks at [Medium](https://www.medium.com). It provides core editing functionality
 (bold and italic text, headings, links, images, and horizontal rules) in a sleek
@@ -56,7 +56,7 @@ of the page.
 ## Build Tools & Build Process
 ### Dependecies
 When in production, ISA Easy Email relies on only two dependencies:
-[WriteFree](https://jessereitz.github.io/WriteFree/) and
+[WriteFree](https://github.com/jessereitz/WriteFree) and
 [Cookies.js](https://github.com/madmurphy/cookies.js). Both are installed in the
 `src/vendor` directory. I have modified the latter slightly to be exported as an
 es6 module.
