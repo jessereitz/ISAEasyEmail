@@ -57,11 +57,13 @@ of the page.
 ### Dependecies
 When in production, ISA Easy Email relies on only two dependencies:
 [WriteFree](https://jessereitz.github.io/WriteFree/) and
-[Cookies.js](https://github.com/madmurphy/cookies.js). The former is installed
-as an npm package while I have modified the latter slightly to be exported as an
-es6 module included in the `src/vendor` directory.
+[Cookies.js](https://github.com/madmurphy/cookies.js). Both are installed in the
+`src/vendor` directory. I have modified the latter slightly to be exported as an
+es6 module.
 
 ### Build Tools
 Everything is bundled up using [Rollup.js](https://github.com/rollup/rollup)
-after passing through [ESLint](https://github.com/eslint/eslint) using
-[AirBnB's JavaScript Style Guide](https://github.com/airbnb/javascript).
+after being linted by [ESLint](https://github.com/eslint/eslint) (using
+[AirBnB's JavaScript Style Guide](https://github.com/airbnb/javascript)),
+transpiled using [Babel](https://github.com/babel/babel), and minified by
+[Uglify](https://github.com/mishoo/UglifyJS).
