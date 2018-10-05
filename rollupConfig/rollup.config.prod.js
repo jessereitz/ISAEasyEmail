@@ -5,7 +5,6 @@ import { uglify } from 'rollup-plugin-uglify';
 
 module.exports = {
   input: 'src/index.js',
-  // input: 'build/index.js',
   output: {
     file: 'build/prodIndex.js',
     format: 'iife',
@@ -18,8 +17,8 @@ module.exports = {
     }),
     eslint(),
     babel({
-      // exclude: 'node_modules/**',
-      // include: 'node_modules/writefree',
+      exclude: 'node_modules/**',
     }),
+    uglify(),
   ],
 };

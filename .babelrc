@@ -3,10 +3,8 @@
     [
       "@babel/preset-env",
       {
-      "targets": {
-        "ie": "7"
+        "modules": false
       }
-    }
     ]
   ],
   "plugins": [
