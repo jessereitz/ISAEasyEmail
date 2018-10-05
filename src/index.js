@@ -168,6 +168,7 @@ const Controller = {
     if (!this.docInfo.title) {
       let closureTitle = '';
       const closureMetaDisplay = this.$metaDisplay;
+      const title = document.getElementsByTagName('TITLE')[0];
       // title defined with setter to facilitate side-effects like updating the
       // current title at the bottom of the screen.
       Object.defineProperty(this.docInfo, 'title', {
@@ -177,6 +178,7 @@ const Controller = {
         set(val) {
           closureTitle = val;
           closureMetaDisplay.textContent = val;
+          title.textContent = `Editing ${val} | ISA Easy Email`;
         },
         get() {
           return closureTitle;
