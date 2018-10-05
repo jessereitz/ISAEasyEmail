@@ -62,6 +62,7 @@ const TextFieldBase = {
     this.ctn.appendChild(generateElement('label', { textContent: labelText }));
     this.input = generateElement('input', { type: 'text' });
     this.errorMessage = generateElement('div', { klasses: ['settingsField__error--message'] });
+    this.ctn.classList.add('settingsField--transition');
     appendChildren(this.ctn, [this.input, this.errorMessage]);
     return this;
   },

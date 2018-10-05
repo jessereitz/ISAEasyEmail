@@ -269,6 +269,7 @@ input:checked + .slider::before {
   transform: translateX(1.25rem);
 }
 
+.settingsField--transition,
 .settingsField {
   overflow: hidden;
   max-height: 10em;

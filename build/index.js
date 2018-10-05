@@ -2328,6 +2328,7 @@
       this.ctn.appendChild(generateElement$1('label', { textContent: labelText }));
       this.input = generateElement$1('input', { type: 'text' });
       this.errorMessage = generateElement$1('div', { klasses: ['settingsField__error--message'] });
+      this.ctn.classList.add('settingsField--transition');
       appendChildren(this.ctn, [this.input, this.errorMessage]);
       return this;
     },
