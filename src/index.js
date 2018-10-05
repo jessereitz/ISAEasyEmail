@@ -1,4 +1,4 @@
-import WriteFree from 'writefree';
+import WriteFree from './vendor/writefree.es6.js';
 
 import Cookies from './vendor/cookies';
 import Modal from './modalViews/modal.js';

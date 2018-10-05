@@ -1,0 +1,15 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+      "targets": {
+        "ie": "7"
+      }
+    }
+    ]
+  ],
+  "plugins": [
+    "@babel/plugin-external-helpers"
+  ]
+}
