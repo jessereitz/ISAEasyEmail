@@ -6,7 +6,7 @@ import { uglify } from 'rollup-plugin-uglify';
 module.exports = {
   input: 'src/index.js',
   output: {
-    file: 'build/prodIndex.js',
+    file: 'assets/index.js',
     format: 'iife',
     sourcemap: false,
   },
