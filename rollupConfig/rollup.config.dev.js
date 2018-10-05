@@ -1,4 +1,3 @@
-import resolve from 'rollup-plugin-node-resolve';
 import { eslint } from 'rollup-plugin-eslint';
 
 module.exports = {
@@ -9,10 +8,6 @@ module.exports = {
     sourcemap: true,
   },
   plugins: [
-    resolve({
-      module: true,
-      main: true,
-    }),
     eslint(),
   ],
 };
